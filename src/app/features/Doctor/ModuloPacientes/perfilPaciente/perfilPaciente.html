@@ -1,0 +1,63 @@
+<div class="historia-clinica-container">
+  <div class="header">
+    <h2>Antecedentes Médicos y Perfil</h2>
+    <p>Complete la información clínica inicial del paciente.</p>
+  </div>
+
+  <form [formGroup]="perfilForm" (ngSubmit)="guardarPerfil()" class="formulario-medico">
+    
+    <div class="form-group">
+      <label for="grupoSanguineo">Grupo Sanguíneo <span class="required">*</span></label>
+      <select id="grupoSanguineo" formControlName="grupoSanguineo">
+        <option value="">Seleccione un grupo...</option>
+        <option value="A+">A+</option>
+        <option value="A-">A-</option>
+        <option value="B+">B+</option>
+        <option value="B-">B-</option>
+        <option value="AB+">AB+</option>
+        <option value="AB-">AB-</option>
+        <option value="O+">O+</option>
+        <option value="O-">O-</option>
+      </select>
+      <div class="error" *ngIf="perfilForm.get('grupoSanguineo')?.touched && perfilForm.get('grupoSanguineo')?.invalid">
+        El grupo sanguíneo es obligatorio.
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="motivoConsultaInicial">Motivo de Consulta Inicial <span class="required">*</span></label>
+      <textarea id="motivoConsultaInicial" formControlName="motivoConsultaInicial" rows="3" 
+                placeholder="Describa el motivo principal por el cual asiste el paciente..."></textarea>
+      <div class="error" *ngIf="perfilForm.get('motivoConsultaInicial')?.touched && perfilForm.get('motivoConsultaInicial')?.invalid">
+        El motivo de consulta es obligatorio.
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="alergias">Alergias Conocidas</label>
+        <textarea id="alergias" formControlName="alergias" rows="3" 
+                  placeholder="Ej. Penicilina, látex (Dejar en blanco si no aplica)"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="medicamentosHabituales">Medicamentos Habituales</label>
+        <textarea id="medicamentosHabituales" formControlName="medicamentosHabituales" rows="3" 
+                  placeholder="Ej. Losartán 50mg, Metformina (Dejar en blanco si no aplica)"></textarea>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="antecedentesFamiliares">Antecedentes Familiares</label>
+      <textarea id="antecedentesFamiliares" formControlName="antecedentesFamiliares" rows="3" 
+                placeholder="Ej. Padre con hipertensión, madre con diabetes..."></textarea>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="btn-primary" [disabled]="perfilForm.invalid || cargando">
+        {{ cargando ? 'Guardando...' : 'Guardar Historia Clínica' }}
+      </button>
+    </div>
+
+  </form>
+</div>

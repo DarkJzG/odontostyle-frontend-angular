@@ -1,0 +1,334 @@
+/* ===== CONTENEDOR BASE ===== */
+.admin-wrapper {
+  background-color: #f4f6f8; /* Un gris muy claro, estilo dashboard administrativo */
+  min-height: 100vh;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Animación */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(15px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in-up {
+  animation: fadeInUp 0.5s ease-out forwards;
+}
+
+/* ===== BARRA SUPERIOR ===== */
+.admin-header {
+  background-color: #ffffff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 3%;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.brand .logo-icon {
+  font-size: 1px;
+}
+
+.brand h1 {
+  font-size: 1.3rem;
+  color: #502763;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.badge-doctor {
+  background-color: #c69d54;
+  color: white;
+  font-size: 0.75rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 12px;
+  font-weight: 600;
+}
+
+.user-profile {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.avatar {
+  background-color: #f5eef8;
+  font-size: 1.5rem;
+  width: 45px;
+  height: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.user-info .name {
+  font-weight: 700;
+  color: #1e293b;
+  font-size: 0.95rem;
+}
+
+.user-info .role {
+  font-size: 0.8rem;
+  color: #64748b;
+}
+
+.btn-logout {
+  background-color: #fee2e2;
+  color: #ef4444;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-left: 1rem;
+}
+
+.btn-logout:hover {
+  background-color: #ef4444;
+  color: white;
+}
+
+/* ===== DASHBOARD CONTAINER ===== */
+.dashboard-container {
+  display: flex;
+  gap: 2rem;
+  padding: 2rem 3%;
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+/* Encabezados de paneles */
+.panel-header {
+  margin-bottom: 1.5rem;
+}
+
+.panel-header h2 {
+  font-size: 1.4rem;
+  color: #1e293b;
+  margin-bottom: 0.2rem;
+}
+
+.panel-header p {
+  color: #64748b;
+  font-size: 0.95rem;
+}
+
+/* ===== COLUMNA IZQUIERDA: CITAS (SIDEBAR) ===== */
+.appointments-panel {
+  width: 350px;
+  background-color: #ffffff;
+  border-radius: 20px;
+  padding: 1.5rem;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.03);
+  height: calc(100vh - 140px);
+  overflow-y: auto;
+}
+
+.appointments-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.appointment-card {
+  display: flex;
+  background-color: #faf8fc;
+  border: 1px solid #f1f5f9;
+  border-radius: 15px;
+  padding: 1rem;
+  transition: transform 0.2s;
+}
+
+.appointment-card:hover {
+  transform: translateX(5px);
+  border-color: #e2d5ec;
+}
+
+.time-column {
+  padding-right: 1rem;
+  border-right: 2px dashed #cbd5e1;
+  margin-right: 1rem;
+  display: flex;
+  align-items: center;
+}
+
+.time {
+  font-weight: 700;
+  color: #502763;
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+
+.details-column h4 {
+  margin: 0 0 0.3rem 0;
+  color: #1e293b;
+  font-size: 1rem;
+}
+
+.details-column p {
+  margin: 0 0 0.6rem 0;
+  color: #64748b;
+  font-size: 0.85rem;
+}
+
+.status-badge {
+  font-size: 0.75rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 10px;
+  background-color: #fef3c7; /* Amarillo suave (Pendiente) */
+  color: #b45309;
+  font-weight: 600;
+}
+
+.status-badge.confirmed {
+  background-color: #dcfce7; /* Verde suave (Confirmada) */
+  color: #15803d;
+}
+
+/* ===== COLUMNA DERECHA: CUADRÍCULA MÓDULOS ===== */
+.modules-panel {
+  flex: 1;
+}
+
+.modules-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+}
+
+.module-card {
+  background-color: #ffffff;
+  border: 1px solid #f1f5f9;
+  border-radius: 20px;
+  padding: 2.5rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.02);
+}
+
+
+/* ===== ICONO DEL DOCTOR EN EL HEADER ===== */
+.icon-doctor {
+  color: #502763;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f5eef8;
+  padding: 8px;
+  border-radius: 50%;
+}
+
+.icon-doctor mat-icon {
+  font-size: 28px;
+  width: 28px;
+  height: 28px;
+}
+
+/* ===== ICONOS DE LOS MÓDULOS (Material Icons) ===== */
+.icon-circle {
+  width: 75px;
+  height: 75px;
+  background-color: #f5eef8;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.2rem;
+  transition: all 0.3s ease;
+}
+
+.icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s ease;
+}
+
+/* Configuramos el tamaño y transición del mat-icon */
+.icon mat-icon {
+  font-size: 36px;
+  width: 36px;
+  height: 36px;
+  color: #502763;
+  transition: color 0.3s ease, transform 0.3s ease;
+}
+
+/* ===== EFECTOS HOVER ===== */
+.module-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 15px 30px rgba(80, 39, 99, 0.1);
+  border-color: #e2d5ec;
+}
+
+.module-card:hover .icon-circle {
+  background-color: #502763;
+}
+
+/* Cambia a blanco al pasar el mouse */
+.module-card:hover .icon mat-icon {
+  color: #ffffff;
+  transform: scale(1.1);
+}
+
+.module-card h3 {
+  color: #1e293b;
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0;
+  transition: color 0.3s ease;
+}
+
+.module-card:hover h3 {
+  color: #502763;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 1200px) {
+  .modules-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 992px) {
+  .dashboard-container {
+    flex-direction: column;
+  }
+
+  .appointments-panel {
+    width: 100%;
+    height: auto;
+    max-height: 400px;
+  }
+}
+
+@media (max-width: 600px) {
+  .modules-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .user-info, .badge-doctor {
+    display: none; /* Oculta detalles en móviles para ahorrar espacio */
+  }
+}

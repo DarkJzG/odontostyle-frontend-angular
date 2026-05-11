@@ -1,0 +1,68 @@
+<div class="login-wrapper">
+  
+  <div class="login-container fade-in-up">
+    
+    <!-- Lado Izquierdo: Branding Visual -->
+    <div class="login-brand">
+      <div class="brand-overlay">
+        <img src="../assets/ico-navbar.png" alt="OdontoStyle" class="brand-logo">
+        <h2>Bienvenido a tu portal de salud</h2>
+        <p>Gestiona tus citas, historiales médicos y tratamientos desde un solo lugar.</p>
+      </div>
+    </div>
+
+    <!-- Lado Derecho: Formulario de Ingreso -->
+    <div class="login-form-section">
+      
+      <button class="btn-back" (click)="volverInicio()">
+        <span>←</span> Volver al inicio
+      </button>
+      
+      <div class="form-header">
+        <h3>Iniciar Sesión</h3>
+        <p>Ingresa tus credenciales para acceder al sistema</p>
+      </div>
+
+      <!-- El formulario llama a la función iniciarSesion() al enviar -->
+      <form (ngSubmit)="iniciarSesion()" #loginForm="ngForm">
+        
+        <div class="input-group">
+          <label for="usuario">Usuario</label>
+          <input 
+            type="text" 
+            id="usuario" 
+            name="usuario" 
+            [(ngModel)]="usuario" 
+            required 
+            placeholder="Ej. Doctor o Paciente"
+            autocomplete="off">
+        </div>
+
+        <div class="input-group">
+          <label for="contrasena">Contraseña</label>
+          <input 
+            type="password" 
+            id="contrasena" 
+            name="contrasena" 
+            [(ngModel)]="contrasena" 
+            required 
+            placeholder="Ingresa tu contraseña">
+        </div>
+
+        <!-- Mensaje de Error dinámico -->
+        <div class="error-message" *ngIf="mensajeError">
+          {{ mensajeError }}
+        </div>
+
+        <button type="submit" class="btn-submit" [disabled]="!loginForm.form.valid">
+          Ingresar al portal
+        </button>
+      </form>
+      
+      <div class="form-footer">
+        <p>¿Olvidaste tu contraseña? <a href="#">Recuperar aquí</a></p>
+      </div>
+
+    </div>
+  </div>
+</div>

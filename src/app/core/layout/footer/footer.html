@@ -1,0 +1,52 @@
+<footer class="footer-container">
+  <div class="footer-content">
+    
+    <!-- Columna 1: Marca y descripción -->
+    <div class="footer-brand">
+      <img src="../assets/ico-navbar.png" alt="OdontoStyle Logo" class="footer-logo">
+      <p>Brindando atención dental ética, accesible y cálida en Tulcán desde 2022. Tu sonrisa y confianza son nuestra prioridad.</p>
+    </div>
+
+    <!-- Columna 2: Enlaces Rápidos -->
+    <div class="footer-links">
+      <h3>Explorar</h3>
+      <ul>
+        <li (click)="navegarA('/')">Inicio</li>
+        <li (click)="navegarA('/servicios')">Servicios</li>
+        <li (click)="navegarA('/nosotros')">Nosotros</li>
+        <li (click)="navegarA('/contacto')">Contacto</li>
+      </ul>
+    </div>
+
+    <!-- Columna 3: Información de Contacto -->
+    <div class="footer-contact">
+      <h3>Contáctanos</h3>
+      <ul>
+        <li>Ubicación: Centro de Tulcán, Carchi</li>
+        <li>Teléfono: +593 000 000 000</li>
+        <li>Email: hola&#64;odontostyle.com</li>
+      </ul>
+    </div>
+
+    <!-- Columna 4: Horario de Atención -->
+    <div class="footer-schedule">
+      <h3>Horarios</h3>
+      <ul>
+        <li>Lunes - Viernes: 08:00 - 18:00</li>
+        <li>Sábados: 09:00 - 13:00</li>
+        <li>Domingos: Cerrado</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <!-- Barra inferior: Copyright y Redes -->
+  <div class="footer-bottom">
+    <p>&copy; {{ year }} OdontoStyle. Todos los derechos reservados.</p>
+    <div class="social-links">
+      <a href="#" aria-label="Facebook">Facebook</a>
+      <a href="#" aria-label="Instagram">Instagram</a>
+      <a href="https://wa.me/593000000000" target="_blank" aria-label="WhatsApp">WhatsApp</a>
+    </div>
+  </div>
+</footer>

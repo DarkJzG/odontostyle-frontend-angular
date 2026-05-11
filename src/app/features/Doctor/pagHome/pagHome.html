@@ -1,0 +1,67 @@
+<div class="admin-wrapper">
+  
+  <header class="admin-header">
+    <div class="brand">
+      <img src="./assets/ico-navbar.png" alt="Logo" style="height: 80px;">
+      <h1><span class="badge-doctor">Portal Médico</span></h1>
+    </div>
+    <div class="user-profile">
+      
+      <span class="icon-doctor">
+        <mat-icon>health_and_safety</mat-icon>
+      </span>
+      
+      <div class="user-info">
+        <span class="name">Dr. OdontoStyle</span>
+        <span class="role">Odontólogo General</span>
+      </div>
+      <button class="btn-logout" (click)="cerrarSesion()" title="Cerrar Sesión">Salir</button>
+    </div>
+  </header>
+
+  <main class="dashboard-container fade-in-up">
+    
+    <aside class="appointments-panel">
+      <div class="panel-header">
+        <h2>Citas de Hoy</h2>
+        <p class="date">{{ fechaHoy | date:'longDate' }}</p>
+      </div>
+
+      <div class="appointments-list">
+        <div class="appointment-card" *ngFor="let cita of citasHoy">
+          <div class="time-column">
+            <span class="time">{{ cita.hora }}</span>
+          </div>
+          <div class="details-column">
+            <h4>{{ cita.paciente }}</h4>
+            <p>{{ cita.tratamiento }}</p>
+            <span class="status-badge" [ngClass]="{'confirmed': cita.estado === 'Confirmada'}">
+              {{ cita.estado }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <section class="modules-panel">
+      <div class="panel-header">
+        <h2>Accesos Rápidos</h2>
+        <p>Selecciona un módulo para comenzar a trabajar</p>
+      </div>
+
+      <div class="modules-grid">
+        <button class="module-card" *ngFor="let mod of modulos" (click)="navegarModulo(mod.ruta, mod.nombre)">
+          <div class="icon-circle">
+            
+            <span class="icon">
+              <mat-icon>{{ mod.icono }}</mat-icon>
+            </span>
+
+          </div>
+          <h3>{{ mod.nombre }}</h3>
+        </button>
+      </div>
+    </section>
+
+  </main>
+</div>

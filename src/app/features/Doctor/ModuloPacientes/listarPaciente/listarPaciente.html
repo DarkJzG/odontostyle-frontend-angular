@@ -1,0 +1,62 @@
+<div class="lista-container fade-in-up">
+  
+  <div class="page-header">
+    <div class="header-titles">
+      <h2>Directorio de Pacientes</h2>
+      <p>Gestione la información y los perfiles médicos de sus pacientes.</p>
+    </div>
+    <div class="header-actions">
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input type="text" placeholder="Buscar por cédula o nombre...">
+      </div>
+      <button class="btn-primary" (click)="irARegistroNuevo()">
+        + Nuevo Paciente
+      </button>
+    </div>
+  </div>
+
+  <div class="table-card">
+    <table class="pacientes-table">
+      <thead>
+        <tr>
+          <th>Cédula</th>
+          <th>Paciente</th>
+          <th>Contacto</th>
+          <th class="text-center">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let paciente of pacientes">
+          <td class="font-mono">{{ paciente.cedula }}</td>
+          <td>
+            <div class="paciente-info">
+              <strong>{{ paciente.nombres }} {{ paciente.apellidos }}</strong>
+            </div>
+          </td>
+          <td>
+            <div class="contacto-info">
+              <span>📞 {{ paciente.telefono }}</span>
+              <span class="email-text">✉️ {{ paciente.email }}</span>
+            </div>
+          </td>
+          <td class="acciones-cell">
+            <button class="btn-icon btn-edit" (click)="irAPerfilMedico(paciente.idUsuario)" title="Historia Clínica">
+              📋 Perfil Clínico
+            </button>
+            <button class="btn-icon btn-delete" (click)="eliminarPaciente(paciente.idUsuario, paciente.nombres)" title="Eliminar Paciente">
+              🗑️
+            </button>
+          </td>
+        </tr>
+        
+        <tr *ngIf="pacientes.length === 0">
+          <td colspan="4" class="empty-state">
+            No hay pacientes registrados en el sistema.
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>

@@ -1,0 +1,117 @@
+.historia-clinica-container {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 2.5rem;
+  background-color: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(80, 39, 99, 0.05);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.historia-clinica-container .header {
+  border-bottom: 2px solid #f1f5f9;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+}
+
+.historia-clinica-container .header h2 {
+  margin: 0;
+  color: #502763; /* Morado OdontoStyle */
+  font-size: 1.8rem;
+}
+
+.historia-clinica-container .header p {
+  color: #64748b;
+  margin-top: 0.5rem;
+  font-size: 0.95rem;
+}
+
+.formulario-medico {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.formulario-medico .form-row {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.formulario-medico .form-row .form-group {
+  flex: 1;
+}
+
+.formulario-medico .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.formulario-medico .form-group label {
+  font-weight: 600;
+  color: #1e293b;
+  font-size: 0.95rem;
+}
+
+.formulario-medico .form-group label .required {
+  color: #ef4444;
+}
+
+.formulario-medico .form-group select, 
+.formulario-medico .form-group textarea {
+  padding: 0.8rem 1rem;
+  border: 2px solid #e2e8f0;
+  border-radius: 10px;
+  font-family: inherit;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+  background-color: #faf7fc;
+}
+
+.formulario-medico .form-group select:focus, 
+.formulario-medico .form-group textarea:focus {
+  outline: none;
+  border-color: #c69d54; /* Dorado OdontoStyle */
+  background-color: #ffffff;
+  box-shadow: 0 0 0 3px rgba(198, 157, 84, 0.1);
+}
+
+.formulario-medico .form-group textarea {
+  resize: vertical;
+}
+
+.formulario-medico .form-group .error {
+  color: #ef4444;
+  font-size: 0.8rem;
+  margin-top: 0.25rem;
+  font-weight: 500;
+}
+
+.formulario-medico .form-actions {
+  margin-top: 1.5rem;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.formulario-medico .form-actions .btn-primary {
+  background-color: #502763;
+  color: white;
+  padding: 1rem 2rem;
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.formulario-medico .form-actions .btn-primary:hover:not(:disabled) {
+  background-color: #3a1c49;
+  transform: translateY(-2px);
+}
+
+.formulario-medico .form-actions .btn-primary:disabled {
+  background-color: #cbd5e1;
+  cursor: not-allowed;
+  transform: none;
+}

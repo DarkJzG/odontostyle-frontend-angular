@@ -1,0 +1,103 @@
+<div class="registro-wrapper">
+  <div class="registro-container fade-in-up">
+    
+    <div class="wizard-header">
+      <h2>Registro de Nuevo Paciente</h2>
+      <div class="stepper">
+        <div class="step" [class.active]="pasoActual === 1" [class.completed]="pasoActual > 1">
+          <div class="step-circle">1</div>
+          <span>Datos Personales</span>
+        </div>
+        <div class="step-line"></div>
+        <div class="step" [class.active]="pasoActual === 2">
+          <div class="step-circle">2</div>
+          <span>Perfil Médico</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="error-banner" *ngIf="mensajeError">{{ mensajeError }}</div>
+
+    <form *ngIf="pasoActual === 1" [formGroup]="usuarioForm" (ngSubmit)="guardarPaso1()" class="form-grid">
+      
+      <div class="input-group full-width">
+        <label>Cédula de Identidad *</label>
+        <input type="text" formControlName="cedula" placeholder="10 dígitos numéricos">
+        <span class="error-text" *ngIf="usuarioForm.get('cedula')?.touched && usuarioForm.get('cedula')?.invalid">
+          Cédula inválida (10 dígitos requeridos).
+        </span>
+      </div>
+
+      <div class="input-group">
+        <label>Nombres *</label>
+        <input type="text" formControlName="nombres" placeholder="Ej. Juan Carlos">
+      </div>
+
+      <div class="input-group">
+        <label>Apellidos *</label>
+        <input type="text" formControlName="apellidos" placeholder="Ej. Pérez Gómez">
+      </div>
+
+      <div class="input-group">
+        <label>Correo Electrónico *</label>
+        <input type="email" formControlName="email" placeholder="correo@ejemplo.com">
+      </div>
+
+      <div class="input-group">
+        <label>Teléfono *</label>
+        <input type="text" formControlName="telefono" placeholder="10 dígitos numéricos">
+      </div>
+
+      <div class="form-actions full-width">
+        <button type="submit" class="btn-primary" [disabled]="cargando">
+          {{ cargando ? 'Guardando...' : 'Siguiente: Perfil Médico →' }}
+        </button>
+      </div>
+    </form>
+
+    <form *ngIf="pasoActual === 2" [formGroup]="perfilForm" (ngSubmit)="guardarPaso2()" class="form-grid">
+      
+      <div class="input-group">
+        <label>Grupo Sanguíneo *</label>
+        <select formControlName="grupoSanguineo">
+          <option value="" disabled selected>Seleccione...</option>
+          <option value="O+">O+</option>
+          <option value="O-">O-</option>
+          <option value="A+">A+</option>
+          <option value="A-">A-</option>
+          <option value="B+">B+</option>
+          <option value="B-">B-</option>
+          <option value="AB+">AB+</option>
+          <option value="AB-">AB-</option>
+        </select>
+      </div>
+
+      <div class="input-group full-width">
+        <label>Motivo de Consulta Inicial *</label>
+        <textarea formControlName="motivoConsultaInicial" rows="2" placeholder="¿Por qué acude el paciente a la clínica?"></textarea>
+      </div>
+
+      <div class="input-group full-width">
+        <label>Alergias</label>
+        <textarea formControlName="alergias" rows="2" placeholder="Dejar en blanco si no aplica"></textarea>
+      </div>
+
+      <div class="input-group full-width">
+        <label>Medicamentos Habituales</label>
+        <textarea formControlName="medicamentosHabituales" rows="2" placeholder="Dejar en blanco si no aplica"></textarea>
+      </div>
+
+      <div class="input-group full-width">
+        <label>Antecedentes Familiares</label>
+        <textarea formControlName="antecedentesFamiliares" rows="2" placeholder="Dejar en blanco si no aplica"></textarea>
+      </div>
+
+      <div class="form-actions full-width">
+        <button type="submit" class="btn-primary" [disabled]="cargando">
+          {{ cargando ? 'Guardando...' : 'Finalizar Registro ✓' }}
+        </button>
+      </div>
+    </form>
+
+  </div>
+</div>

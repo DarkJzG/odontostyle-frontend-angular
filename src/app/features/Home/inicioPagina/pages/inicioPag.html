@@ -1,0 +1,122 @@
+<app-navbar></app-navbar>
+
+<div class="landing-wrapper">
+  
+  <!-- ================= HERO SECTION ================= -->
+  <header class="hero-section">
+    <div class="hero-content fade-in-up">
+      <span class="badge">Atención Dental en Tulcán</span>
+      <h1>Sonrisas sanas,<br><span class="text-highlight">confianza real</span></h1>
+      <p>Desde 2022 brindando atención ética, accesible y cálida. Nos apoyamos en la mejor tecnología para cuidar de tu salud bucal.</p>
+      
+      <div class="hero-buttons">
+        <button class="btn-primary" (click)="agendarCita()">Reservar cita</button>
+        <!-- Botón preparado para navegar a la página de servicios cuando esté lista -->
+        <button class="btn-secondary">Ver tratamientos</button>
+      </div>
+
+      <div class="hero-features">
+        <div class="feature-item"><i class="check-icon">✓</i> Calidad</div>
+        <div class="feature-item"><i class="check-icon">✓</i> Atención integral</div>
+        <div class="feature-item"><i class="check-icon">✓</i> Urgencias</div>
+      </div>
+    </div>
+
+    <div class="hero-image fade-in-up delay-1">
+      <div class="image-decoration"></div>
+      <img src="https://images.unsplash.com/photo-1606811841689-23dfddce3e95?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Consultorio OdontoStyle">
+    </div>
+  </header>
+
+  <!-- ================= STATS SECTION ================= -->
+  <section class="stats-section fade-in-up delay-2">
+    <div class="stat-box">
+      <h3>+2</h3>
+      <p>Años de experiencia</p>
+    </div>
+    <div class="stat-box">
+      <h3>100%</h3>
+      <p>Materiales estériles</p>
+    </div>
+    <div class="stat-box">
+      <h3>+500</h3>
+      <p>Pacientes felices</p>
+    </div>
+  </section>
+
+  <!-- ================= SERVICES PREVIEW ================= -->
+  <section class="services-preview section-padding">
+    <div class="section-header text-center">
+      <h2>Cuidamos de ti con <span class="text-highlight">excelencia</span></h2>
+      <p>Conoce algunos de nuestros tratamientos principales. Descubre más en nuestra sección de servicios.</p>
+    </div>
+
+    <div class="services-grid">
+      <!-- Tarjeta 1 -->
+      <div class="service-card">
+        <img src="https://images.unsplash.com/photo-1629909613654-28e377c37b09?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Ortodoncia">
+        <div class="service-content">
+          <h3>Odontología General</h3>
+          <p>Prevención, limpieza y curaciones para mantener una salud bucal impecable día a día.</p>
+        </div>
+      </div>
+
+      <!-- Tarjeta 2 -->
+      <div class="service-card">
+        <img src="https://images.unsplash.com/photo-1629909613654-28e377c37b09?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Ortodoncia">
+        <div class="service-content">
+          <h3>Ortodoncia</h3>
+          <p>Alineamos tu sonrisa con tratamientos modernos, brackets estéticos y metálicos.</p>
+        </div>
+      </div>
+
+      <!-- Tarjeta 3 -->
+      <div class="service-card">
+        <img src="https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Estética Dental">
+        <div class="service-content">
+          <h3>Estética Dental</h3>
+          <p>Diseño de sonrisa y blanqueamiento para que luzcas una sonrisa radiante y natural.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= TESTIMONIALS ================= -->
+  <section class="testimonials-section section-padding">
+    <div class="section-header text-center">
+      <h2>Lo que dicen <span class="text-highlight">nuestros pacientes</span></h2>
+    </div>
+
+    <div class="testimonials-grid">
+      <div class="testimonial-card">
+        <div class="stars">★★★★★</div>
+        <p>"Excelente atención. Me explicaron todo el tratamiento con mucha paciencia. El consultorio es muy moderno y limpio. Totalmente recomendado."</p>
+        <h4>— María F.</h4>
+      </div>
+      
+      <div class="testimonial-card">
+        <div class="stars">★★★★★</div>
+        <p>"Fui por una urgencia dental y me atendieron rápido. Perfil muy profesional, te hacen sentir en confianza y sin dolor."</p>
+        <h4>— Carlos R.</h4>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= FINAL CTA ================= -->
+  <section class="cta-section">
+    <div class="cta-container">
+      <h2>¿Listo para mejorar tu salud dental?</h2>
+      <p>Agenda tu primera consulta hoy mismo y déjanos cuidar de tu sonrisa.</p>
+      <button class="btn-primary" (click)="agendarCita()">Agendar mi consulta</button>
+    </div>
+  </section>
+
+  <!-- ================= WHATSAPP FLOATING ================= -->
+  <a href="https://wa.me/593000000000" class="whatsapp-btn fade-in-up delay-2" target="_blank" aria-label="Contactar por WhatsApp">
+    <svg viewBox="0 0 24 24" width="32" height="32" fill="white">
+      <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.618-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86s.274.072.376-.043c.101-.116.433-.506.549-.68.116-.173.231-.145.39-.087s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.099.824z"/>
+    </svg>
+  </a>
+
+</div>
+<app-footer></app-footer>

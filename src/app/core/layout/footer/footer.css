@@ -1,0 +1,119 @@
+/* ===== CONTENEDOR PRINCIPAL ===== */
+.footer-container {
+  background-color: var(--color-primary); /* #502763 */
+  color: var(--color-white);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  padding: 4rem 5% 1rem;
+  margin-top: 5rem;
+}
+
+.footer-content {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 3rem;
+  max-width: 1300px;
+  margin: 0 auto;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 3rem;
+}
+
+/* ===== COLUMNA DE MARCA ===== */
+.footer-brand .footer-logo {
+  height: 60px;
+  margin-bottom: 1.5rem;
+  /* Si tu logo original es muy oscuro, esta línea lo invierte a blanco para que resalte. 
+     Si tu logo ya tiene versión blanca o transparente, puedes borrar esta línea: */
+  filter: brightness(0) invert(1); 
+}
+
+.footer-brand p {
+  color: rgba(255, 255, 255, 0.8);
+  line-height: 1.6;
+  font-size: 0.95rem;
+}
+
+/* ===== TÍTULOS Y LISTAS ===== */
+.footer-links h3,
+.footer-contact h3,
+.footer-schedule h3 {
+  color: var(--color-secondary); /* #c69d54 */
+  font-size: 1.2rem;
+  margin-bottom: 1.5rem;
+  font-weight: 600;
+}
+
+.footer-container ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-container ul li {
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 0.8rem;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+}
+
+/* Efecto hover interactivo para los enlaces */
+.footer-links ul li {
+  cursor: pointer;
+}
+
+.footer-links ul li:hover {
+  color: var(--color-secondary);
+  transform: translateX(5px); /* Pequeño salto hacia la derecha */
+}
+
+/* ===== BARRA INFERIOR (COPYRIGHT) ===== */
+.footer-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1300px;
+  margin: 1.5rem auto 0;
+  padding-top: 1rem;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.9rem;
+}
+
+.social-links {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.social-links a {
+  color: rgba(255, 255, 255, 0.8);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: color 0.3s;
+}
+
+.social-links a:hover {
+  color: var(--color-secondary);
+}
+
+/* ===== RESPONSIVE PARA MÓVILES ===== */
+@media (max-width: 768px) {
+  .footer-content {
+    grid-template-columns: 1fr; /* Pone todo en una sola columna */
+    text-align: center;
+    gap: 2.5rem;
+  }
+
+  .footer-brand .footer-logo {
+    margin: 0 auto 1.5rem;
+  }
+
+  /* Quitamos el efecto de desplazar a la derecha en móviles para evitar problemas de toques erróneos */
+  .footer-links ul li:hover {
+    transform: none; 
+  }
+
+  .footer-bottom {
+    flex-direction: column-reverse;
+    gap: 1.5rem;
+    text-align: center;
+  }
+}
