@@ -1,0 +1,100 @@
+/* ===== BARRA SUPERIOR ===== */
+.admin-header {
+  background-color: #ffffff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 3%;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.brand h1 {
+  font-size: 1.3rem;
+  color: #502763;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.badge-doctor {
+  background-color: #c69d54;
+  color: white;
+  font-size: 0.75rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 12px;
+  font-weight: 600;
+}
+
+.user-profile {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.user-info .name {
+  font-weight: 700;
+  color: #1e293b;
+  font-size: 0.95rem;
+}
+
+.user-info .role {
+  font-size: 0.8rem;
+  color: #64748b;
+}
+
+.btn-logout {
+  background-color: #fee2e2;
+  color: #ef4444;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-left: 1rem;
+}
+
+.btn-logout:hover {
+  background-color: #ef4444;
+  color: white;
+}
+
+/* ===== ICONO DEL DOCTOR EN EL HEADER ===== */
+.icon-doctor {
+  color: var(--color-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f5eef8;
+  padding: 8px;
+  border-radius: 50%;
+}
+
+.icon-doctor mat-icon {
+  font-size: 28px;
+  width: 28px;
+  height: 28px;
+}
+
+/* Ocultar detalles en pantallas pequeñas */
+@media (max-width: 600px) {
+  .user-info, .badge-doctor {
+    display: none;
+  }
+}

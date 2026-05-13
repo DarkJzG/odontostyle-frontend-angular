@@ -1,3 +1,4 @@
+<app-navbar-panel-doctor></app-navbar-panel-doctor>
 <div class="lista-container fade-in-up">
   
   <div class="page-header">
@@ -7,11 +8,11 @@
     </div>
     <div class="header-actions">
       <div class="search-box">
-        <span class="search-icon">🔍</span>
-        <input type="text" placeholder="Buscar por cédula o nombre...">
+        <span class="icon"><mat-icon>search</mat-icon></span>
+        <input  type="text" placeholder=" Buscar por cédula o nombre...">
       </div>
       <button class="btn-primary" (click)="irARegistroNuevo()">
-        + Nuevo Paciente
+        <mat-icon>add</mat-icon> Nuevo Paciente
       </button>
     </div>
   </div>
@@ -36,16 +37,16 @@
           </td>
           <td>
             <div class="contacto-info">
-              <span>📞 {{ paciente.telefono }}</span>
-              <span class="email-text">✉️ {{ paciente.email }}</span>
+              <span class="email-text"><mat-icon>phone</mat-icon> {{ paciente.telefono }}</span>
+              <span class="email-text"><mat-icon>email</mat-icon> {{ paciente.email }}</span>
             </div>
           </td>
           <td class="acciones-cell">
             <button class="btn-icon btn-edit" (click)="irAPerfilMedico(paciente.idUsuario)" title="Historia Clínica">
-              📋 Perfil Clínico
+              <mat-icon>folder</mat-icon> Perfil Clínico
             </button>
             <button class="btn-icon btn-delete" (click)="eliminarPaciente(paciente.idUsuario, paciente.nombres)" title="Eliminar Paciente">
-              🗑️
+              <mat-icon>delete</mat-icon>
             </button>
           </td>
         </tr>

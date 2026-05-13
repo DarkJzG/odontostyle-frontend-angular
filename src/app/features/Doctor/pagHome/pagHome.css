@@ -1,6 +1,6 @@
 /* ===== CONTENEDOR BASE ===== */
 .admin-wrapper {
-  background-color: #f4f6f8; /* Un gris muy claro, estilo dashboard administrativo */
+  background-color: #f4f6f8;
   min-height: 100vh;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
@@ -13,97 +13,6 @@
 
 .fade-in-up {
   animation: fadeInUp 0.5s ease-out forwards;
-}
-
-/* ===== BARRA SUPERIOR ===== */
-.admin-header {
-  background-color: #ffffff;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem 3%;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-  position: sticky;
-  top: 0;
-  z-index: 100;
-}
-
-.brand {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-.brand .logo-icon {
-  font-size: 1px;
-}
-
-.brand h1 {
-  font-size: 1.3rem;
-  color: #502763;
-  margin: 0;
-  display: flex;
-  align-items: center;
-  gap: 0.8rem;
-}
-
-.badge-doctor {
-  background-color: #c69d54;
-  color: white;
-  font-size: 0.75rem;
-  padding: 0.2rem 0.6rem;
-  border-radius: 12px;
-  font-weight: 600;
-}
-
-.user-profile {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-.avatar {
-  background-color: #f5eef8;
-  font-size: 1.5rem;
-  width: 45px;
-  height: 45px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-}
-
-.user-info {
-  display: flex;
-  flex-direction: column;
-}
-
-.user-info .name {
-  font-weight: 700;
-  color: #1e293b;
-  font-size: 0.95rem;
-}
-
-.user-info .role {
-  font-size: 0.8rem;
-  color: #64748b;
-}
-
-.btn-logout {
-  background-color: #fee2e2;
-  color: #ef4444;
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-  margin-left: 1rem;
-}
-
-.btn-logout:hover {
-  background-color: #ef4444;
-  color: white;
 }
 
 /* ===== DASHBOARD CONTAINER ===== */
@@ -193,13 +102,13 @@
   font-size: 0.75rem;
   padding: 0.2rem 0.6rem;
   border-radius: 10px;
-  background-color: #fef3c7; /* Amarillo suave (Pendiente) */
+  background-color: #fef3c7; 
   color: #b45309;
   font-weight: 600;
 }
 
 .status-badge.confirmed {
-  background-color: #dcfce7; /* Verde suave (Confirmada) */
+  background-color: #dcfce7;
   color: #15803d;
 }
 
@@ -228,24 +137,6 @@
   box-shadow: 0 10px 25px rgba(0,0,0,0.02);
 }
 
-
-/* ===== ICONO DEL DOCTOR EN EL HEADER ===== */
-.icon-doctor {
-  color: #502763;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: #f5eef8;
-  padding: 8px;
-  border-radius: 50%;
-}
-
-.icon-doctor mat-icon {
-  font-size: 28px;
-  width: 28px;
-  height: 28px;
-}
-
 /* ===== ICONOS DE LOS MÓDULOS (Material Icons) ===== */
 .icon-circle {
   width: 75px;
@@ -266,7 +157,6 @@
   transition: transform 0.3s ease;
 }
 
-/* Configuramos el tamaño y transición del mat-icon */
 .icon mat-icon {
   font-size: 36px;
   width: 36px;
@@ -286,7 +176,6 @@
   background-color: #502763;
 }
 
-/* Cambia a blanco al pasar el mouse */
 .module-card:hover .icon mat-icon {
   color: #ffffff;
   transform: scale(1.1);
@@ -315,7 +204,6 @@
   .dashboard-container {
     flex-direction: column;
   }
-
   .appointments-panel {
     width: 100%;
     height: auto;
@@ -326,9 +214,5 @@
 @media (max-width: 600px) {
   .modules-grid {
     grid-template-columns: 1fr;
-  }
-  
-  .user-info, .badge-doctor {
-    display: none; /* Oculta detalles en móviles para ahorrar espacio */
   }
 }

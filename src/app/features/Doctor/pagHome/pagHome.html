@@ -1,23 +1,6 @@
 <div class="admin-wrapper">
   
-  <header class="admin-header">
-    <div class="brand">
-      <img src="./assets/ico-navbar.png" alt="Logo" style="height: 80px;">
-      <h1><span class="badge-doctor">Portal Médico</span></h1>
-    </div>
-    <div class="user-profile">
-      
-      <span class="icon-doctor">
-        <mat-icon>health_and_safety</mat-icon>
-      </span>
-      
-      <div class="user-info">
-        <span class="name">Dr. OdontoStyle</span>
-        <span class="role">Odontólogo General</span>
-      </div>
-      <button class="btn-logout" (click)="cerrarSesion()" title="Cerrar Sesión">Salir</button>
-    </div>
-  </header>
+  <app-navbar-panel-doctor></app-navbar-panel-doctor>
 
   <main class="dashboard-container fade-in-up">
     
@@ -52,11 +35,9 @@
       <div class="modules-grid">
         <button class="module-card" *ngFor="let mod of modulos" (click)="navegarModulo(mod.ruta, mod.nombre)">
           <div class="icon-circle">
-            
             <span class="icon">
               <mat-icon>{{ mod.icono }}</mat-icon>
             </span>
-
           </div>
           <h3>{{ mod.nombre }}</h3>
         </button>
