@@ -1,7 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+// Asegúrate de poner la ruta correcta a tu auth.service
+import { AuthService } from '../../../core/services/auth'; 
 
 @Component({
   selector: 'app-login',
@@ -12,31 +14,45 @@ import { CommonModule } from '@angular/common';
 })
 export class Login {
   
-  // Variables para enlazar con el HTML
   usuario: string = '';
   contrasena: string = '';
   mensajeError: string = '';
+  cargando: boolean = false;
 
-  constructor(private router: Router) {}
+  private router = inject(Router);
+  private authService = inject(AuthService); // <-- Inyectamos el servicio
 
   iniciarSesion() {
-    this.mensajeError = ''; // Limpiamos errores previos
+    this.cargando = true;
+    this.mensajeError = ''; 
 
-    // Simulación de autenticación temporal (Antes de implementar JWT/Keycloak)
-    if (this.usuario === 'Doctor' && this.contrasena === 'doctor123') {
-      
-      // Redirige a tu módulo (Módulo A)
-      this.router.navigate(['/doctor/home']);
-      
-    } else if (this.usuario === 'Paciente' && this.contrasena === 'paciente123') {
-      
-      // Redirige al módulo de Anderson (Módulo B)
-      this.router.navigate(['/portal-paciente']);
-      
-    } else {
-      // Credenciales incorrectas
-      this.mensajeError = 'Usuario o contraseña incorrectos. Verifique sus datos.';
-    }
+    // Preparamos las credenciales
+    const credenciales = { username: this.usuario, password: this.contrasena };
+
+    // Llamamos al MODO DEMO del servicio
+    this.authService.iniciarSesion(credenciales).subscribe({
+      next: (respuesta) => {
+        // 1. Guardamos el token simulado ('fake-jwt-token-doctor')
+        this.authService.guardarToken(respuesta.token);
+
+        // 2. Leemos el rol desde el token falso
+        const rol = this.authService.obtenerRolUsuario();
+
+        // 3. Redirigimos según el rol (El Guard ahora sí te dejará pasar)
+        if (rol === 'DOCTOR' || rol === 'ASISTENTE') {
+          this.router.navigate(['/doctor/home']);
+        } else if (rol === 'PACIENTE') {
+          this.router.navigate(['/portal-paciente']);
+        }
+        
+        this.cargando = false;
+      },
+      error: (err) => {
+        // Si escribe mal la clave, el servicio lanza el error y cae aquí
+        this.mensajeError = 'Usuario o contraseña incorrectos. Verifique sus datos.';
+        this.cargando = false;
+      }
+    });
   }
 
   volverInicio() {
