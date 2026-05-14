@@ -5,16 +5,32 @@ import { Inicio } from './features/Home/inicioPagina/pages/inicioPag';
 import { PagHome } from './features/Doctor/pagHome/pagHome';
 import { ListaPaciente } from './features/Doctor/ModuloPacientes/listarPaciente/listarPaciente';
 import { RegistroPaciente } from './features/Doctor/ModuloPacientes/registroPaciente/registroPaciente';
+import { roleGuard } from './core/guards/roleGuard';
 
 export const routes: Routes = [
   { path: '', component: Inicio },
   { path: 'login', component: Login },
 
   //Rutas Portal Doctor
-  { path: 'doctor/home', component: PagHome },
-  { path: 'doctor/pacientes', component: ListaPaciente },
-  { path: 'doctor/pacientes/registro', component: RegistroPaciente },
-  { path: 'doctor/pacientes/:id/perfil', component: PerfilPaciente },
+  { path: 'doctor/home', 
+    component: PagHome, 
+    canActivate: [roleGuard], 
+    data: { roles: ['DOCTOR'] } },
+  
+  { path: 'doctor/pacientes', 
+    component: ListaPaciente, 
+    canActivate: [roleGuard], 
+    data: { roles: ['DOCTOR', 'ASISTENTE'] } },
+  
+  { path: 'doctor/pacientes/registro', 
+    component: RegistroPaciente, 
+    canActivate: [roleGuard], 
+    data: { roles: ['DOCTOR', 'ASISTENTE'] } },
+  
+  { path: 'doctor/pacientes/:id/perfil', 
+    component: PerfilPaciente, 
+    canActivate: [roleGuard], 
+    data: { roles: ['DOCTOR'] } },
 
   { path: '**', redirectTo: '' }
 ];
