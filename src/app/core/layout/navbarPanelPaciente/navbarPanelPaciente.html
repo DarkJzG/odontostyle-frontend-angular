@@ -1,0 +1,19 @@
+<header class="admin-header">
+  <div class="brand">
+    <img src="./assets/ico-navbar.png" alt="Logo" style="height: 80px;">
+    <h1><span class="badge-paciente">Portal Paciente</span></h1>
+  </div>
+  
+  <div class="user-profile">
+    <span class="icon-paciente">
+      <mat-icon>person</mat-icon>
+    </span>
+    
+    <div class="user-info">
+      <span class="name">{{ nombrePaciente }}</span>
+      <span class="role">Paciente Registrado</span>
+    </div>
+    
+    <button class="btn-logout" (click)="cerrarSesion()" title="Cerrar Sesión">Salir</button>
+  </div>
+</header>
