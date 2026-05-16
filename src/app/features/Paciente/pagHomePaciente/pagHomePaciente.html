@@ -1,1 +1,62 @@
-<p>pag-home-paciente works!</p>
+<div class="admin-wrapper">
+  
+    <app-navbar-panel-paciente></app-navbar-panel-paciente>
+  <main class="dashboard-container fade-in-up">
+    
+    <aside class="next-appointment-panel">
+      <div class="panel-header">
+        <h2>Hola, {{ nombrePaciente }} 👋</h2>
+        <p>Tu próxima atención odontológica</p>
+      </div>
+
+      <div class="highlight-card" *ngIf="proximaCita; else noCitas">
+        <div class="date-header">
+          <mat-icon>event</mat-icon>
+          <span>{{ proximaCita.fecha }} a las {{ proximaCita.hora }}</span>
+        </div>
+        
+        <div class="card-body">
+          <h4>{{ proximaCita.tratamiento }}</h4>
+          <p class="doctor-name">
+            <mat-icon>medical_services</mat-icon>
+            {{ proximaCita.doctor }}
+          </p>
+        </div>
+
+        <div class="card-footer">
+          <span class="status-badge" [ngClass]="{'confirmed': proximaCita.estado === 'Confirmada'}">
+            {{ proximaCita.estado }}
+          </span>
+          <button class="btn-outline">Ver detalle</button>
+        </div>
+      </div>
+
+      <ng-template #noCitas>
+        <div class="empty-state">
+          <mat-icon>calendar_today</mat-icon>
+          <p>No tienes citas programadas.</p>
+          <button class="btn-primary" (click)="navegarModulo('/paciente/agendar', 'Agendar Cita')">Agendar ahora</button>
+        </div>
+      </ng-template>
+    </aside>
+
+    <section class="modules-panel">
+      <div class="panel-header">
+        <h2>Servicios en línea</h2>
+        <p>¿Qué necesitas hacer hoy?</p>
+      </div>
+
+      <div class="modules-grid">
+        <button class="module-card" *ngFor="let mod of modulos" (click)="navegarModulo(mod.ruta, mod.nombre)">
+          <div class="icon-circle">
+            <span class="icon">
+              <mat-icon>{{ mod.icono }}</mat-icon>
+            </span>
+          </div>
+          <h3>{{ mod.nombre }}</h3>
+        </button>
+      </div>
+    </section>
+
+  </main>
+</div>

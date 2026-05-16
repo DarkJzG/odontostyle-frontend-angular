@@ -1,29 +1,46 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule, Router } from '@angular/router'; // 1. Agregamos RouterModule
+import { Router } from '@angular/router';
+import { MatIconModule } from '@angular/material/icon';
+import { NavbarPanelPaciente } from '../../../core/layout/navbarPanelPaciente/navbarPanelPaciente';
 
 @Component({
   selector: 'app-pag-home-paciente',
-  standalone: true, // Asegúrate de que tenga esto si es un componente independiente
-  imports: [
-    CommonModule, 
-    RouterModule // 2. Cambiamos Router por RouterModule aquí
-  ],
+  standalone: true,
+  imports: [CommonModule, MatIconModule, NavbarPanelPaciente], // Agrega NavbarPanelPaciente cuando lo tengas
   templateUrl: './pagHomePaciente.html',
-  styleUrl: './pagHomePaciente.css',
+  styleUrl: './pagHomePaciente.css'
 })
 export class PagHomePaciente implements OnInit {
+  
+  // Simulamos los datos del paciente logueado
+  nombrePaciente: string = 'Anderson'; 
+  
+  // Simulamos la próxima cita
+  proximaCita = {
+    fecha: '18 de Mayo, 2026',
+    hora: '10:00 AM',
+    doctor: 'Dr. Fernando López',
+    tratamiento: 'Limpieza Dental',
+    estado: 'Confirmada'
+  };
 
-  // 3. Si necesitas usar el Router para navegar desde el código (.ts)
-  // lo inyectas en el constructor:
+  modulos = [
+    { nombre: 'Agendar Cita', icono: 'event_available', ruta: '/paciente/agendar' },
+    { nombre: 'Mis Citas', icono: 'calendar_month', ruta: '/paciente/citas' },
+    { nombre: 'Mi Historial', icono: 'history', ruta: '/paciente/historial' },
+    { nombre: 'Mi Perfil', icono: 'person', ruta: '/paciente/perfil' },
+  ];
+
   constructor(private router: Router) {}
 
-  ngOnInit(): void {
-    // Lógica inicial
-  }
+  ngOnInit(): void {}
 
-  // Ejemplo de uso del servicio Router
-  irALogin() {
-    this.router.navigate(['/login']);
+  navegarModulo(ruta: string, nombre: string) {
+    if (ruta) {
+      this.router.navigate([ruta]);
+    } else {
+      alert(`El módulo de ${nombre} estará disponible pronto.`);
+    }
   }
 }
