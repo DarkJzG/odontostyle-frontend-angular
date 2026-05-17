@@ -23,12 +23,21 @@ export class AuthService {
     return throwError(() => new Error('Credenciales inválidas'));
   }
 
+  // === MÉTODOS ACTUALIZADOS PARA EVITAR EL ERROR DEL SERVIDOR (SSR) ===
+
   guardarToken(token: string) {
-    localStorage.setItem('jwt_token', token);
+    // Validamos que estamos en el navegador antes de guardar
+    if (typeof window !== 'undefined' && window.localStorage) {
+      localStorage.setItem('jwt_token', token);
+    }
   }
 
   obtenerToken(): string | null {
-    return localStorage.getItem('jwt_token');
+    // Validamos que estamos en el navegador antes de leer
+    if (typeof window !== 'undefined' && window.localStorage) {
+      return localStorage.getItem('jwt_token');
+    }
+    return null; // Si estamos en el servidor, devuelve null
   }
 
   // En lugar de descodificar un JWT real, leemos el token falso que inventamos arriba
@@ -43,6 +52,9 @@ export class AuthService {
   }
 
   cerrarSesion() {
-    localStorage.removeItem('jwt_token');
+    // Validamos que estamos en el navegador antes de borrar
+    if (typeof window !== 'undefined' && window.localStorage) {
+      localStorage.removeItem('jwt_token');
+    }
   }
 }
