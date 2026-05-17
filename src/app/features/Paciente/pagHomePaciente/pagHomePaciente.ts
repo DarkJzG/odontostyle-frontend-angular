@@ -26,7 +26,7 @@ export class PagHomePaciente implements OnInit {
   };
 
   modulos = [
-    { nombre: 'Agendar Cita', icono: 'event_available', ruta: '/paciente/agendar' },
+    { nombre: 'Agendar Cita', icono: 'event_available', ruta: '/paciente/agendar-cita' },
     { nombre: 'Mis Citas', icono: 'calendar_month', ruta: '/paciente/citas' },
     { nombre: 'Mi Historial', icono: 'history', ruta: '/paciente/historial' },
     { nombre: 'Mi Perfil', icono: 'person', ruta: '/paciente/perfil' },
@@ -43,4 +43,6 @@ export class PagHomePaciente implements OnInit {
       alert(`El módulo de ${nombre} estará disponible pronto.`);
     }
   }
+
+
 }
