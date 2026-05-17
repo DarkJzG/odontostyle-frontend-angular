@@ -7,6 +7,7 @@ import { ListaPaciente } from './features/Doctor/ModuloPaciente/listarPaciente/l
 import { RegistroPaciente } from './features/Doctor/ModuloPaciente/registroPaciente/registroPaciente';
 import { roleGuard } from './core/guards/roleGuard';
 import { PagHomePaciente } from './features/Paciente/pagHomePaciente/pagHomePaciente';
+import { AgendarCita } from './features/Paciente/agendarCita/agendarCita';
 
 export const routes: Routes = [
   { path: '', component: Inicio },
@@ -36,6 +37,11 @@ export const routes: Routes = [
   // Rutas Portal Paciente
   { path: 'paciente/home', 
     component: PagHomePaciente, 
+    canActivate: [roleGuard], 
+    data: { roles: ['PACIENTE'] } },
+  
+  { path: 'paciente/agendar-cita', 
+    component: AgendarCita, 
     canActivate: [roleGuard], 
     data: { roles: ['PACIENTE'] } },
 

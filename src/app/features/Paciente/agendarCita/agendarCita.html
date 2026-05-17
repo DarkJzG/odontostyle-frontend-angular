@@ -1,0 +1,105 @@
+<div class="admin-wrapper">
+  
+  <app-navbar-panel-paciente></app-navbar-panel-paciente>
+
+  <main class="dashboard-container fade-in-up">
+    
+    <div class="booking-layout">
+      <section class="form-section">
+        <div class="panel-header">
+          <h2>Agendar Nueva Cita</h2>
+          <p>Completa los pasos para reservar tu atención</p>
+        </div>
+
+        <div class="form-card">
+          <div class="form-group">
+            <label><mat-icon>medical_services</mat-icon> 1. ¿Qué tratamiento necesitas?</label>
+            <select [(ngModel)]="cita.tratamientoId" class="custom-select">
+              <option [value]="null" disabled selected>Selecciona una opción...</option>
+              <option *ngFor="let trat of tratamientos" [value]="trat.id">
+                {{ trat.nombre }} ({{ trat.duracion }})
+              </option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label><mat-icon>calendar_today</mat-icon> 2. Elige la fecha</label>
+            
+            <div style="position: relative; display: flex; align-items: center;">
+              <input class="custom-input" 
+                     [(ngModel)]="cita.fecha" 
+                     [matDatepicker]="miCalendario" 
+                     placeholder="Seleccione un día" 
+                     readonly 
+                     (click)="miCalendario.open()"
+                     style="cursor: pointer; background-color: #fff;">
+              
+              <mat-icon (click)="miCalendario.open()" 
+                        style="position: absolute; right: 15px; color: #502763; cursor: pointer;">
+                event
+              </mat-icon>
+              
+              <mat-datepicker #miCalendario></mat-datepicker>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label><mat-icon>schedule</mat-icon> 3. Horarios disponibles</label>
+            <div class="time-grid" *ngIf="cita.fecha; else noFecha">
+              <button class="time-pill" 
+                      *ngFor="let hora of horasDisponibles" 
+                      [class.selected]="cita.hora === hora"
+                      (click)="cita.hora = hora">
+                {{ hora }}
+              </button>
+            </div>
+            <ng-template #noFecha>
+              <p class="helper-text">Selecciona una fecha primero para ver los horarios.</p>
+            </ng-template>
+          </div>
+        </div>
+      </section>
+
+      <aside class="summary-section">
+        <div class="summary-card">
+          <h3>Resumen de tu Cita</h3>
+          
+          <div class="summary-item">
+            <mat-icon>medical_services</mat-icon>
+            <div>
+              <span class="label">Tratamiento</span>
+              <span class="value">{{ obtenerNombreTratamiento() }}</span>
+            </div>
+          </div>
+
+          <div class="summary-item">
+            <mat-icon>event</mat-icon>
+            <div>
+              <span class="label">Fecha</span>
+              <span class="value">{{ cita.fecha ? (cita.fecha | date:'dd/MM/yyyy') : 'Por definir' }}</span>
+            </div>
+          </div>
+
+          <div class="summary-item">
+            <mat-icon>schedule</mat-icon>
+            <div>
+              <span class="label">Hora</span>
+              <span class="value">{{ cita.hora ? cita.hora : 'Por definir' }}</span>
+            </div>
+          </div>
+
+          <div class="action-buttons">
+            <button class="btn-secondary full-width" (click)="cancelar()">Volver</button>
+            <button class="btn-primary full-width" 
+                    [disabled]="!cita.tratamientoId || !cita.fecha || !cita.hora"
+                    (click)="agendar()">
+              Confirmar Reserva
+            </button>
+          </div>
+          
+        </div>
+      </aside>
+    </div>
+
+  </main>
+</div>

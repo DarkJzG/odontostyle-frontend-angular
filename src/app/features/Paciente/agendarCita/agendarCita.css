@@ -1,0 +1,234 @@
+/* Heredamos de tus estilos base */
+.booking-layout {
+  display: flex;
+  gap: 2rem;
+  width: 100%;
+}
+
+.form-section {
+  flex: 2;
+}
+
+.summary-section {
+  flex: 1;
+  min-width: 300px;
+}
+
+/* Tarjetas */
+.form-card, .summary-card {
+  background-color: #ffffff;
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.03);
+  border: 1px solid #f1f5f9;
+}
+
+/* Formulario */
+.form-group {
+  margin-bottom: 2rem;
+}
+
+.form-group label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 0.8rem;
+  font-size: 1.05rem;
+}
+
+.form-group label mat-icon {
+  color: #502763;
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+}
+
+.custom-select, .custom-input {
+  width: 100%;
+  padding: 1rem;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  font-size: 1rem;
+  color: #475569;
+  outline: none;
+  transition: all 0.3s;
+  font-family: inherit;
+}
+
+.custom-select:focus, .custom-input:focus {
+  border-color: #502763;
+  box-shadow: 0 0 0 3px rgba(80, 39, 99, 0.1);
+}
+
+/* Horarios (Pills) */
+.time-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 1rem;
+}
+
+.time-pill {
+  background-color: #f8fafc;
+  border: 2px solid #e2e8f0;
+  color: #475569;
+  padding: 0.8rem 0;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.time-pill:hover {
+  border-color: #cbd5e1;
+  background-color: #f1f5f9;
+}
+
+.time-pill.selected {
+  background-color: #502763;
+  border-color: #502763;
+  color: white;
+}
+
+.helper-text {
+  color: #94a3b8;
+  font-style: italic;
+  font-size: 0.9rem;
+}
+
+/* Resumen (Columna derecha) */
+.summary-card h3 {
+  color: #1e293b;
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px dashed #e2e8f0;
+}
+
+.summary-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.summary-item mat-icon {
+  background-color: #f5eef8;
+  color: #502763;
+  padding: 10px;
+  border-radius: 12px;
+}
+
+.summary-item .label {
+  display: block;
+  font-size: 0.8rem;
+  color: #64748b;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.summary-item .value {
+  display: block;
+  font-weight: 700;
+  color: #1e293b;
+  font-size: 1rem;
+}
+
+/* Botón Confirmar */
+.btn-primary {
+  background-color: #502763;
+  color: white;
+  border: none;
+  padding: 1rem;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background-color: #3b1d49;
+}
+
+.btn-primary:disabled {
+  background-color: #cbd5e1;
+  cursor: not-allowed;
+}
+
+.full-width {
+  width: 100%;
+  margin-top: 1rem;
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+  .booking-layout {
+    flex-direction: column;
+  }
+}
+
+/* Estilos para el nuevo grupo de botones en el resumen */
+.action-buttons {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.btn-secondary {
+  background-color: transparent;
+  color: #64748b;
+  border: 2px solid #cbd5e1;
+  padding: 1rem;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.btn-secondary:hover {
+  background-color: #f1f5f9;
+  color: #1e293b;
+  border-color: #94a3b8;
+}
+
+/* Ajuste responsive para que los botones se apilen en pantallas muy pequeñas */
+@media (max-width: 450px) {
+  .action-buttons {
+    flex-direction: column;
+  }
+}
+
+/* =========================================
+   ESTILOS PARA EL CALENDARIO PROFESIONAL
+   ========================================= */
+.custom-datepicker {
+  width: 100%;
+}
+
+/* Ocultar el espacio extra de errores que trae Material por defecto */
+::ng-deep .custom-datepicker .mdc-text-field-helper-line {
+  display: none;
+}
+
+/* Modificar el campo para que se parezca a tu custom-select */
+::ng-deep .custom-datepicker .mdc-text-field--outlined {
+  background-color: #ffffff;
+  border-radius: 12px;
+}
+
+/* Cambiar el color del borde al hacer focus */
+::ng-deep .custom-datepicker .mdc-text-field--outlined.mdc-text-field--focused .mdc-notched-outline__item {
+  border-color: #502763 !important;
+}
+
+/* Estilizar el calendario flotante con tu color morado */
+::ng-deep .mat-calendar-body-selected {
+  background-color: #502763 !important;
+}
+
+::ng-deep .mat-datepicker-toggle-active {
+  color: #502763 !important;
+}
