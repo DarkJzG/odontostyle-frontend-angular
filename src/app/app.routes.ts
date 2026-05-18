@@ -8,6 +8,7 @@ import { RegistroPaciente } from './features/Doctor/ModuloPaciente/registroPacie
 import { roleGuard } from './core/guards/roleGuard';
 import { PagHomePaciente } from './features/Paciente/pagHomePaciente/pagHomePaciente';
 import { AgendarCita } from './features/Paciente/agendarCita/agendarCita';
+import { MisCitas } from './features/Paciente/misCitas/misCitas';
 
 export const routes: Routes = [
   { path: '', component: Inicio },
@@ -42,6 +43,11 @@ export const routes: Routes = [
   
   { path: 'paciente/agendar-cita', 
     component: AgendarCita, 
+    canActivate: [roleGuard], 
+    data: { roles: ['PACIENTE'] } },
+
+  { path: 'paciente/citas', 
+    component: MisCitas, 
     canActivate: [roleGuard], 
     data: { roles: ['PACIENTE'] } },
 
