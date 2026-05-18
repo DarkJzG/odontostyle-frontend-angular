@@ -1,0 +1,170 @@
+<div class="admin-wrapper">
+  <app-navbar-panel-paciente></app-navbar-panel-paciente>
+
+  <main class="dashboard-container fade-in-up">
+    
+    <div class="page-header">
+      <div>
+        <h2>Mis Citas</h2>
+        <p>Administra tus reservas y revisa tu historial de atenciones</p>
+      </div>
+      <button class="btn-secondary btn-back" (click)="volver()">
+        <mat-icon>arrow_back</mat-icon> Volver al Inicio
+      </button>
+    </div>
+
+    <div class="filters-wrapper">
+      <div class="search-box">
+        <mat-icon>search</mat-icon>
+        <input type="text" placeholder="Buscar por tratamiento o doctor..." [(ngModel)]="terminoBusqueda">
+      </div>
+
+      <div class="filter-controls">
+        <div class="select-wrapper">
+          <mat-icon>filter_alt</mat-icon>
+          <select [(ngModel)]="estadoFiltro">
+            <option value="Todos">Todos los estados</option>
+            <option value="Pendiente">Pendientes</option>
+            <option value="Completada">Completadas</option>
+            <option value="Cancelada">Canceladas</option>
+          </select>
+        </div>
+
+        <div class="date-wrapper">
+          <mat-icon>calendar_today</mat-icon>
+          <input type="date" [(ngModel)]="fechaFiltro">
+        </div>
+
+        <button class="btn-clear" (click)="limpiarFiltros()" *ngIf="terminoBusqueda || estadoFiltro !== 'Todos' || fechaFiltro" title="Limpiar filtros">
+          <mat-icon>backspace</mat-icon>
+        </button>
+      </div>
+    </div>
+
+    <div class="cards-grid" *ngIf="citasFiltradas.length > 0; else noResultados">
+      <div class="appointment-card" *ngFor="let cita of citasFiltradas">
+        <div class="card-header">
+          <span class="badge" 
+                [ngClass]="{'badge-pendiente': cita.estado === 'Pendiente', 'badge-completada': cita.estado === 'Completada', 'badge-cancelada': cita.estado === 'Cancelada'}">
+            {{ cita.estado }}
+          </span>
+          <span class="cita-id">#{{ cita.id }}</span>
+        </div>
+        <div class="card-body">
+          <h3 class="tratamiento-title">{{ cita.tratamiento }}</h3>
+          <div class="info-row"><mat-icon>event</mat-icon><span>{{ cita.fecha | date:'dd/MM/yyyy' }}</span></div>
+          <div class="info-row"><mat-icon>schedule</mat-icon><span>{{ cita.hora }}</span></div>
+          <div class="info-row"><mat-icon>medical_services</mat-icon><span>{{ cita.doctor }}</span></div>
+        </div>
+        <div class="card-footer">
+          <button class="btn-outline-primary full-width" (click)="verDetalles(cita)">Ver Detalles</button>
+        </div>
+      </div>
+    </div>
+
+    <ng-template #noResultados>
+      <div class="no-data-box">
+        <mat-icon>search_off</mat-icon>
+        <h3>No se encontraron citas</h3>
+        <p>Prueba modificando los filtros de búsqueda o la fecha seleccionada.</p>
+        <button class="btn-primary" (click)="limpiarFiltros()">Restablecer Búsqueda</button>
+      </div>
+    </ng-template>
+
+    <div class="modal-overlay" *ngIf="citaSeleccionada" (click)="cerrarDetalles()">
+      <div class="modal-card" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h3>{{ modoEdicion ? 'Reprogramar Cita' : 'Detalles de la Cita' }}</h3>
+          <button class="btn-icon" (click)="cerrarDetalles()"><mat-icon>close</mat-icon></button>
+        </div>
+        <div class="modal-body">
+          <ng-container *ngIf="!modoEdicion">
+            <div class="detail-group"><label>Tratamiento</label><p>{{ citaSeleccionada.tratamiento }}</p></div>
+            <div class="detail-row">
+              <div class="detail-group"><label>Fecha</label><p>{{ citaSeleccionada.fecha | date:'dd/MM/yyyy' }}</p></div>
+              <div class="detail-group"><label>Hora</label><p>{{ citaSeleccionada.hora }}</p></div>
+            </div>
+            <div class="detail-group"><label>Doctor Asignado</label><p>{{ citaSeleccionada.doctor }}</p></div>
+            <div class="detail-group">
+              <label>Estado actual</label>
+              <p class="status-text" [class.text-pend]="citaSeleccionada.estado === 'Pendiente'" [class.text-comp]="citaSeleccionada.estado === 'Completada'" [class.text-canc]="citaSeleccionada.estado === 'Cancelada'">
+                {{ citaSeleccionada.estado }}
+              </p>
+            </div>
+            <div class="detail-group notes-box"><label>Notas adicionales</label><p>{{ citaSeleccionada.notes || 'Sin notas adicionales.' }}</p></div>
+          </ng-container>
+
+          <ng-container *ngIf="modoEdicion">
+            <div class="detail-group">
+              <label>Tratamiento (No editable)</label>
+              <p>{{ citaEditando.tratamiento }}</p>
+            </div>
+            
+            <div class="form-group edit-form">
+              <label><mat-icon>calendar_today</mat-icon> Nueva Fecha</label>
+              <div style="position: relative; display: flex; align-items: center;">
+                <input class="custom-input" 
+                       [(ngModel)]="citaEditando.fecha" 
+                       [matDatepicker]="pickerEdicion" 
+                       placeholder="Seleccione un día"
+                       readonly 
+                       (click)="pickerEdicion.open()"
+                       style="cursor: pointer; background-color: #fff;">
+                
+                <mat-icon (click)="pickerEdicion.open()" 
+                          style="position: absolute; right: 15px; color: #502763; cursor: pointer;">
+                  event
+                </mat-icon>
+                
+                <mat-datepicker #pickerEdicion></mat-datepicker>
+              </div>
+            </div>
+
+            <div class="form-group edit-form mt-3">
+              <label><mat-icon>schedule</mat-icon> Nueva Hora</label>
+              <select class="custom-input" [(ngModel)]="citaEditando.hora">
+                <option *ngFor="let hora of horasDisponibles" [value]="hora">{{ hora }}</option>
+              </select>
+            </div>
+          </ng-container>
+        </div>
+        <div class="modal-footer">
+          <div class="action-buttons-grid" *ngIf="!modoEdicion">
+            <button class="btn-primary full-width" *ngIf="citaSeleccionada.estado === 'Pendiente'" (click)="activarEdicion()">
+              <mat-icon>edit</mat-icon> Reprogramar
+            </button>
+            <button class="btn-danger full-width" *ngIf="citaSeleccionada.estado === 'Pendiente'" (click)="pedirCancelacion(citaSeleccionada.id)">
+              Cancelar Cita
+            </button>
+            <button class="btn-outline-danger full-width" *ngIf="citaSeleccionada.estado !== 'Pendiente'" (click)="pedirEliminacion(citaSeleccionada.id)">
+              <mat-icon>delete</mat-icon> Eliminar Historial
+            </button>
+          </div>
+          <div class="action-buttons-grid" *ngIf="modoEdicion">
+            <button class="btn-secondary full-width" (click)="modoEdicion = false">Cancelar</button>
+            <button class="btn-primary full-width" (click)="guardarEdicion()">Guardar Cambios</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-overlay dialog-overlay" *ngIf="dialogo.visible">
+      <div class="dialog-card fade-in-up">
+        <div class="dialog-icon" [class.icon-danger]="dialogo.tipo === 'peligro'" [class.icon-warning]="dialogo.tipo === 'alerta'" [class.icon-success]="dialogo.tipo === 'exito'">
+          <mat-icon *ngIf="dialogo.tipo === 'peligro'">error_outline</mat-icon>
+          <mat-icon *ngIf="dialogo.tipo === 'alerta'">warning_amber</mat-icon>
+          <mat-icon *ngIf="dialogo.tipo === 'exito'">check_circle_outline</mat-icon>
+        </div>
+        <h3>{{ dialogo.tipo === 'exito' ? '¡Listo!' : 'Confirmación Requerida' }}</h3>
+        <p>{{ dialogo.mensaje }}</p>
+        <div class="dialog-actions">
+          <button *ngIf="dialogo.tipo !== 'exito'" class="btn-secondary" (click)="cerrarDialogo()">No, volver</button>
+          <button class="btn-primary" [class.btn-danger]="dialogo.tipo === 'peligro' || dialogo.tipo === 'alerta'" (click)="dialogo.accionConfirmar()">
+            {{ dialogo.tipo === 'exito' ? 'Entendido' : 'Sí, continuar' }}
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
