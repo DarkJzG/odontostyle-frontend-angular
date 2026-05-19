@@ -9,6 +9,8 @@ import { roleGuard } from './core/guards/roleGuard';
 import { PagHomePaciente } from './features/Paciente/pagHomePaciente/pagHomePaciente';
 import { AgendarCita } from './features/Paciente/agendarCita/agendarCita';
 import { MisCitas } from './features/Paciente/misCitas/misCitas';
+import { AjustesCuentaPaciente } from './features/Paciente/ajustesCuentaPaciente/ajustesCuentaPaciente';
+import { HistorialClinicoPaciente } from './features/Paciente/historialClinicoPaciente/historialClinicoPaciente';
 
 export const routes: Routes = [
   { path: '', component: Inicio },
@@ -50,6 +52,22 @@ export const routes: Routes = [
     component: MisCitas, 
     canActivate: [roleGuard], 
     data: { roles: ['PACIENTE'] } },
+  
+  { path: 'paciente/cuenta-paciente', 
+    component: AjustesCuentaPaciente, 
+    canActivate: [roleGuard], 
+    data: { roles: ['PACIENTE'] } },
 
-  { path: '**', redirectTo: '' }
+  {
+    path: 'paciente/historial',
+    component: HistorialClinicoPaciente,
+    canActivate: [roleGuard],
+    data: { roles: ['PACIENTE'] }
+  },
+
+  // EL COMODÍN DE RUTAS NO ENCONTRADAS
+  { 
+    path: '**', 
+    redirectTo: '' 
+  }
 ];
