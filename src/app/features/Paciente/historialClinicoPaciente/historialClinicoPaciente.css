@@ -1,0 +1,231 @@
+/* ===== CABECERA ===== */
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.page-header h2 { color: #1e293b; margin: 0 0 0.3rem 0; }
+.page-header p { color: #64748b; margin: 0; font-size: 0.95rem; }
+
+.btn-secondary {
+  background: transparent;
+  color: #64748b;
+  border: 2px solid #cbd5e1;
+  padding: 0.9rem 1.5rem;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.btn-secondary:hover { background-color: #f1f5f9; color: #1e293b; }
+
+/* ===== PESTAÑAS (TABS) ===== */
+.tabs-container {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  border-bottom: 2px solid #e2e8f0;
+  padding-bottom: 1rem;
+  overflow-x: auto; /* Permite scroll en móviles */
+}
+
+.tab-btn {
+  background: transparent;
+  border: none;
+  color: #64748b;
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 0.8rem 1.5rem;
+  border-radius: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.3s ease;
+  white-space: nowrap; /* Evita que el texto se parta en 2 líneas */
+}
+
+.tab-btn:hover { background: #f8fafc; color: #1e293b; }
+
+.tab-btn.active {
+  background: #502763;
+  color: white;
+  box-shadow: 0 4px 10px rgba(80, 39, 99, 0.2);
+}
+
+.content-card {
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+  border: 1px solid #f1f5f9;
+  padding: 2.5rem;
+  min-height: 400px;
+}
+
+/* ===== LÍNEA DE TIEMPO (TIMELINE) ===== */
+.timeline {
+  position: relative;
+  padding-left: 2rem;
+}
+
+/* La línea vertical central */
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 2px;
+  background-color: #e2e8f0;
+}
+
+.timeline-item {
+  position: relative;
+  margin-bottom: 3rem;
+}
+
+.timeline-item:last-child { margin-bottom: 0; }
+
+/* El punto morado en la línea */
+.timeline-dot {
+  position: absolute;
+  left: -2.35rem; /* Ajusta para centrar en la línea */
+  top: 0;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background-color: #502763;
+  border: 4px solid #f5eef8;
+}
+
+.timeline-date {
+  font-weight: 700;
+  color: #502763;
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+  text-transform: uppercase;
+}
+
+.timeline-content {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 1.5rem;
+}
+
+.tc-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid #cbd5e1;
+  padding-bottom: 0.8rem;
+}
+
+.tc-header h3 { margin: 0; color: #1e293b; font-size: 1.2rem; }
+
+.doctor-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  background: #e0e7ff;
+  color: #3730a3;
+  padding: 0.3rem 0.8rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.doctor-badge mat-icon { font-size: 16px; width: 16px; height: 16px; }
+
+.tc-body .detail-block { margin-bottom: 1rem; }
+.tc-body .detail-block:last-child { margin-bottom: 0; }
+.tc-body .detail-block strong { color: #64748b; font-size: 0.85rem; text-transform: uppercase; display: block; margin-bottom: 0.3rem; }
+.tc-body .detail-block p { color: #1e293b; margin: 0; line-height: 1.5; }
+
+/* ===== DOCUMENTOS Y RADIOGRAFÍAS ===== */
+.document-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.5rem;
+}
+
+.doc-card {
+  display: flex;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  background: #ffffff;
+  transition: all 0.3s;
+}
+
+.doc-card:hover {
+  border-color: #502763;
+  box-shadow: 0 4px 12px rgba(80, 39, 99, 0.08);
+}
+
+.doc-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 1rem;
+}
+
+.doc-icon mat-icon { font-size: 28px; width: 28px; height: 28px; }
+
+.pdf-icon { background: #fee2e2; color: #ef4444; }
+.img-icon { background: #e0f2fe; color: #0284c7; }
+
+.doc-info { flex: 1; }
+.doc-info h4 { margin: 0 0 0.2rem 0; color: #1e293b; font-size: 1rem; }
+.doc-info p { margin: 0; color: #64748b; font-size: 0.85rem; }
+
+.btn-icon {
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.btn-icon:hover { background: #f5eef8; color: #502763; }
+
+/* ===== ESTADO VACÍO (SIN DATOS) ===== */
+.empty-state {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: #94a3b8;
+}
+
+.empty-state mat-icon {
+  font-size: 60px;
+  width: 60px;
+  height: 60px;
+  margin-bottom: 1rem;
+  opacity: 0.5;
+}
+
+.empty-state p { font-size: 1.1rem; margin: 0; }
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 600px) {
+  .tc-header { flex-direction: column; align-items: flex-start; gap: 0.8rem; }
+  .content-card { padding: 1.5rem; }
+}
