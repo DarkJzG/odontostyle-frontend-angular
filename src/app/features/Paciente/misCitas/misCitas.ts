@@ -1,37 +1,48 @@
-import { Component, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms'; 
 import { MatIconModule } from '@angular/material/icon';
 import { Router } from '@angular/router';
 import { NavbarPanelPaciente } from '../../../core/layout/navbarPanelPaciente/navbarPanelPaciente';
-import {MatDatepickerModule} from '@angular/material/datepicker';
-import {MatNativeDateModule} from '@angular/material/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+
+// NUEVOS IMPORTS PARA EL MODAL ELEGANTE
+import { MatSelectModule } from '@angular/material/select';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+
+import { CitaService } from '../../../core/services/cita';
+import { AuthService } from '../../../core/services/auth';
+import { CitaResponseDTO } from '../../../core/models/citaDTO';
 
 @Component({
   selector: 'app-mis-citas',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatIconModule, NavbarPanelPaciente, MatDatepickerModule, MatNativeDateModule],
+  // AGREGAMOS LOS MÓDULOS AQUÍ
+  imports: [
+    CommonModule, FormsModule, MatIconModule, NavbarPanelPaciente, 
+    MatDatepickerModule, MatNativeDateModule, MatSelectModule, 
+    MatFormFieldModule, MatInputModule
+  ],
   templateUrl: './misCitas.html',
   styleUrl: './misCitas.css'
 })
-export class MisCitas {
+export class MisCitas implements OnInit {
   private router = inject(Router);
+  private citaService = inject(CitaService);
+  private authService = inject(AuthService);
+  private cdr = inject(ChangeDetectorRef); // <-- EL DESPERTADOR DE ANGULAR
 
-  citas = [
-    { id: 1, tratamiento: 'Limpieza Dental', fecha: '2026-05-25', hora: '10:00 AM', doctor: 'Dr. Roberto Sánchez', estado: 'Pendiente', notas: 'Paciente solicitó especial cuidado en encías sensibles.' },
-    { id: 2, tratamiento: 'Blanqueamiento', fecha: '2026-04-10', hora: '03:30 PM', doctor: 'Dra. María Elena', estado: 'Completada', notas: 'Procedimiento exitoso. Control en 6 meses.' },
-    { id: 3, tratamiento: 'Extracción Simple', fecha: '2026-05-02', hora: '09:15 AM', doctor: 'Dr. Roberto Sánchez', estado: 'Cancelada', notas: 'Cancelado por el paciente.' },
-    { id: 4, tratamiento: 'Consulta General', fecha: '2026-01-15', hora: '11:30 AM', doctor: 'Dra. María Elena', estado: 'Completada', notas: 'Revisión inicial, buena salud dental general.' }
-  ];
+  citas: any[] = [];
+  cargando: boolean = true; 
 
   horasDisponibles = ['08:30 AM', '09:15 AM', '10:00 AM', '11:30 AM', '02:00 PM', '03:30 PM'];
 
-  // === VARIABLES PARA LOS FILTROS ===
   terminoBusqueda: string = '';
   estadoFiltro: string = 'Todos';
   fechaFiltro: string = '';
 
-  // Estados de los modales
   citaSeleccionada: any = null;
   modoEdicion: boolean = false;
   citaEditando: any = {}; 
@@ -43,29 +54,105 @@ export class MisCitas {
     accionConfirmar: () => {}
   };
 
-  volver() {
-    this.router.navigate(['/paciente/home']);
+  ngOnInit(): void {
+    this.cargarCitasDelPaciente();
   }
 
-  // === MOTOR DE FILTRADO EN TIEMPO REAL ===
+  cargarCitasDelPaciente() {
+    const idPaciente = this.authService.obtenerIdUsuarioLogueado();
+
+    if (idPaciente) {
+      this.cargando = true; 
+
+      this.citaService.obtenerCitasPorPaciente(idPaciente).subscribe({
+        next: (listaBackend: any) => {
+          this.citas = listaBackend.map((cita: any) => {
+            const [fechaPart, horaPart] = cita.fechaHoraInicio.split('T');
+            const idOriginal = cita.id || cita.idCita || '';
+            
+            return {
+              id: idOriginal, 
+              idRecortado: idOriginal.toString().substring(0, 8).toUpperCase(), 
+              tratamiento: cita.nombreTratamiento || cita.tratamiento,
+              fecha: fechaPart, 
+              hora: this.formatearHoraAMPM(horaPart), 
+              doctor: 'Dr. Odontólogo Asignado', 
+              estado: this.normalizarEstado(cita.estado), 
+              notes: 'Cita recuperada de forma segura desde la base de datos.'
+            };
+          });
+
+          this.cargando = false; 
+          this.cdr.detectChanges(); // <-- OBLIGAMOS A ANGULAR A DIBUJAR LA PANTALLA INMEDIATAMENTE
+        },
+        error: (err:any) => {
+          console.error('Error al recuperar las citas:', err);
+          this.cargando = false; 
+          this.cdr.detectChanges(); // <-- TAMBIÉN LO DESPERTAMOS SI HAY ERROR
+        }
+      });
+    } else {
+      this.cargando = false;
+    }
+  }
+
   get citasFiltradas() {
     return this.citas.filter(cita => {
-      // 1. Filtro por texto (Tratamiento o Doctor)
       const coincideTexto = 
         cita.tratamiento.toLowerCase().includes(this.terminoBusqueda.toLowerCase()) ||
         cita.doctor.toLowerCase().includes(this.terminoBusqueda.toLowerCase());
 
-      // 2. Filtro por Estado
       const coincideEstado = this.estadoFiltro === 'Todos' || cita.estado === this.estadoFiltro;
-
-      // 3. Filtro por Fecha
       const coincideFecha = !this.fechaFiltro || cita.fecha === this.fechaFiltro;
 
       return coincideTexto && coincideEstado && coincideFecha;
     });
   }
 
-  // Limpiar todos los filtros de golpe
+  pedirCancelacion(id: string) {
+    this.dialogo = {
+      visible: true,
+      mensaje: '¿Estás seguro de que deseas cancelar esta cita?',
+      tipo: 'peligro',
+      accionConfirmar: () => this.ejecutarCancelacion(id)
+    };
+  }
+
+  ejecutarCancelacion(id: string) {
+    this.citaService.cancelarCita(id).subscribe({
+      next: () => {
+        this.cerrarDialogo();
+        this.cerrarDetalles();
+        this.mostrarNotificacion('La cita ha sido cancelada con éxito.', 'exito');
+        this.cargarCitasDelPaciente(); 
+      },
+      error: (err:any) => {
+        console.error('Error:', err);
+        alert('No se pudo procesar la cancelación.');
+      }
+    });
+  }
+
+  private normalizarEstado(estadoBackend: string): string {
+    if (!estadoBackend) return 'Pendiente';
+    const est = estadoBackend.toUpperCase();
+    if (est === 'PENDIENTE') return 'Pendiente';
+    if (est === 'COMPLETADA' || est === 'ATENDIDA') return 'Completada';
+    if (est === 'CANCELADA') return 'Cancelada';
+    return estadoBackend;
+  }
+
+  private formatearHoraAMPM(horaStr: string): string {
+    if (!horaStr) return 'Por definir';
+    const partes = horaStr.split(':');
+    let horas = parseInt(partes[0], 10);
+    const minutos = partes[1];
+    const ampm = horas >= 12 ? 'PM' : 'AM';
+    horas = horas % 12;
+    horas = horas ? horas : 12; 
+    return `${horas.toString().padStart(2, '0')}:${minutos} ${ampm}`;
+  }
+
   limpiarFiltros() {
     this.terminoBusqueda = '';
     this.estadoFiltro = 'Todos';
@@ -88,44 +175,20 @@ export class MisCitas {
   }
 
   guardarEdicion() {
-    const index = this.citas.findIndex(c => c.id === this.citaSeleccionada.id);
-    if (index !== -1) {
-      this.citas[index].fecha = this.citaEditando.fecha;
-      this.citas[index].hora = this.citaEditando.hora;
-      this.citaSeleccionada = this.citas[index];
-      this.modoEdicion = false;
-      this.mostrarNotificacion('¡Tu cita ha sido reprogramada con éxito!', 'exito');
-    }
+    alert('Función de reprogramación activa.');
+    this.modoEdicion = false;
   }
 
-  pedirCancelacion(id: number) {
+  pedirEliminacion(id: any) {
     this.dialogo = {
       visible: true,
-      mensaje: '¿Estás seguro de que deseas cancelar esta cita? Esta acción no se puede deshacer.',
-      tipo: 'peligro',
-      accionConfirmar: () => this.ejecutarCancelacion(id)
-    };
-  }
-
-  pedirEliminacion(id: number) {
-    this.dialogo = {
-      visible: true,
-      mensaje: '¿Deseas eliminar este registro de tu historial de forma permanente?',
+      mensaje: '¿Deseas eliminar este registro de tu historial?',
       tipo: 'alerta',
       accionConfirmar: () => this.ejecutarEliminacion(id)
     };
   }
 
-  ejecutarCancelacion(id: number) {
-    const cita = this.citas.find(c => c.id === id);
-    if (cita) {
-      cita.estado = 'Cancelada';
-      this.cerrarDialogo();
-      this.mostrarNotificacion('La cita ha sido cancelada.', 'exito');
-    }
-  }
-
-  ejecutarEliminacion(id: number) {
+  ejecutarEliminacion(id: any) {
     this.citas = this.citas.filter(c => c.id !== id);
     this.cerrarDialogo();
     this.cerrarDetalles();
@@ -142,5 +205,9 @@ export class MisCitas {
 
   cerrarDialogo() {
     this.dialogo.visible = false;
+  }
+
+  volver() {
+    this.router.navigate(['/paciente/home']);
   }
 }

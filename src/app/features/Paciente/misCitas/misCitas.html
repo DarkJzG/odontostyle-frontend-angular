@@ -41,14 +41,20 @@
       </div>
     </div>
 
-    <div class="cards-grid" *ngIf="citasFiltradas.length > 0; else noResultados">
+    <div class="loading-box" *ngIf="cargando">
+      <mat-icon class="spinner-icon">sync</mat-icon>
+      <h3>Conectando con la clínica...</h3>
+      <p>Por favor espera un momento mientras recuperamos tus citas.</p>
+    </div>
+
+    <div class="cards-grid" *ngIf="!cargando && citasFiltradas.length > 0">
       <div class="appointment-card" *ngFor="let cita of citasFiltradas">
         <div class="card-header">
           <span class="badge" 
                 [ngClass]="{'badge-pendiente': cita.estado === 'Pendiente', 'badge-completada': cita.estado === 'Completada', 'badge-cancelada': cita.estado === 'Cancelada'}">
             {{ cita.estado }}
           </span>
-          <span class="cita-id">#{{ cita.id }}</span>
+          <span class="cita-id">#{{ cita.idRecortado }}</span>
         </div>
         <div class="card-body">
           <h3 class="tratamiento-title">{{ cita.tratamiento }}</h3>
@@ -62,14 +68,12 @@
       </div>
     </div>
 
-    <ng-template #noResultados>
-      <div class="no-data-box">
-        <mat-icon>search_off</mat-icon>
-        <h3>No se encontraron citas</h3>
-        <p>Prueba modificando los filtros de búsqueda o la fecha seleccionada.</p>
-        <button class="btn-primary" (click)="limpiarFiltros()">Restablecer Búsqueda</button>
-      </div>
-    </ng-template>
+    <div class="no-data-box" *ngIf="!cargando && citasFiltradas.length === 0">
+      <mat-icon>search_off</mat-icon>
+      <h3>No se encontraron citas</h3>
+      <p>Prueba modificando los filtros de búsqueda o la fecha seleccionada.</p>
+      <button class="btn-primary" (click)="limpiarFiltros()">Restablecer Búsqueda</button>
+    </div>
 
     <div class="modal-overlay" *ngIf="citaSeleccionada" (click)="cerrarDetalles()">
       <div class="modal-card" (click)="$event.stopPropagation()">
@@ -109,10 +113,10 @@
                        placeholder="Seleccione un día"
                        readonly 
                        (click)="pickerEdicion.open()"
-                       style="cursor: pointer; background-color: #fff;">
+                       style="cursor: pointer; background-color: #fff; margin-top: 8px;">
                 
                 <mat-icon (click)="pickerEdicion.open()" 
-                          style="position: absolute; right: 15px; color: #502763; cursor: pointer;">
+                          style="position: absolute; right: 15px; color: #502763; cursor: pointer; top: 20px;">
                   event
                 </mat-icon>
                 
@@ -122,12 +126,18 @@
 
             <div class="form-group edit-form mt-3">
               <label><mat-icon>schedule</mat-icon> Nueva Hora</label>
-              <select class="custom-input" [(ngModel)]="citaEditando.hora">
-                <option *ngFor="let hora of horasDisponibles" [value]="hora">{{ hora }}</option>
-              </select>
+              <mat-form-field appearance="outline" style="width: 100%; margin-top: 8px;">
+                <mat-label>Selecciona un horario</mat-label>
+                <mat-select [(ngModel)]="citaEditando.hora">
+                  <mat-option *ngFor="let hora of horasDisponibles" [value]="hora">
+                    {{ hora }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
             </div>
           </ng-container>
         </div>
+        
         <div class="modal-footer">
           <div class="action-buttons-grid" *ngIf="!modoEdicion">
             <button class="btn-primary full-width" *ngIf="citaSeleccionada.estado === 'Pendiente'" (click)="activarEdicion()">
@@ -140,12 +150,13 @@
               <mat-icon>delete</mat-icon> Eliminar Historial
             </button>
           </div>
-          <div class="action-buttons-grid" *ngIf="modoEdicion">
-            <button class="btn-secondary full-width" (click)="modoEdicion = false">Cancelar</button>
-            <button class="btn-primary full-width" (click)="guardarEdicion()">Guardar Cambios</button>
+          
+          <div style="display: flex; gap: 10px; margin-top: 15px;" *ngIf="modoEdicion">
+            <button class="btn-secondary" style="flex: 1; justify-content: center;" (click)="modoEdicion = false">Cancelar</button>
+            <button class="btn-primary" style="flex: 1;" (click)="guardarEdicion()">Guardar Cambios</button>
           </div>
         </div>
-      </div>
+        </div>
     </div>
 
     <div class="modal-overlay dialog-overlay" *ngIf="dialogo.visible">

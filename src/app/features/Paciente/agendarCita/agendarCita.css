@@ -232,3 +232,22 @@
 ::ng-deep .mat-datepicker-toggle-active {
   color: #502763 !important;
 }
+
+/* Estilos para notificaciones del SnackBar */
+.snack-success {
+  background-color: #4CAF50 !important;
+  color: white !important;
+}
+
+.snack-success .mat-mdc-button {
+  color: white !important;
+}
+
+.snack-error {
+  background-color: #F44336 !important;
+  color: white !important;
+}
+
+.snack-error .mat-mdc-button {
+  color: white !important;
+}
