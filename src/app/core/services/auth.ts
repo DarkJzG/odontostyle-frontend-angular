@@ -1,59 +1,88 @@
 import { Injectable, PLATFORM_ID, inject } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
-import { Observable, of, throwError } from 'rxjs';
-import { delay } from 'rxjs/operators';
+import { Observable, throwError } from 'rxjs';
+import { tap, catchError, map } from 'rxjs/operators';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
   
-  //id de la platadforma par asaber si es servidor o navegador
-  private plataformId = inject(PLATFORM_ID);
+  // 1. Identificador de plataforma (Tu enfoque limpio para SSR)
+  private platformId = inject(PLATFORM_ID);
+  
+  // 2. Cliente HTTP para consultar la BD (El enfoque de Anderson)
+  private http = inject(HttpClient);
+  private apiUrl = `${environment.apiUrl}/api/usuarios`;
 
-  // === MODO DEMO: Simula la validación sin ir al backend ===
+  // === LOGIN DINÁMICO (CÉDULA O CORREO PARA CUALQUIER ROL) ===
   iniciarSesion(credenciales: any): Observable<any> {
-    const { username, password } = credenciales;
+    const { username, password } = credenciales; 
+    
+    // Analiza si el input tiene '@' para saber a qué endpoint del backend llamar
+    const esCorreo = username.includes('@');
+    const urlPeticion = esCorreo 
+      ? `${this.apiUrl}/buscar-correo?email=${username}` 
+      : `${this.apiUrl}/buscar?cedula=${username}`;
 
-    // Si escribe "doctor" y la contraseña "123"
-    if (username.toLowerCase() === 'doctor' && password === '123') {
-      return of({ token: 'fake-jwt-token-doctor' }).pipe(delay(800)); // delay simula el tiempo de carga
-    } 
-    // Si escribe "paciente" y la contraseña "123"
-    else if (username.toLowerCase() === 'paciente' && password === '123') {
-      return of({ token: 'fake-jwt-token-paciente' }).pipe(delay(800));
-    }
+    console.log(`Intentando login por ${esCorreo ? 'CORREO' : 'CÉDULA'} con:`, username);
 
-    return throwError(() => new Error('Credenciales inválidas'));
+    // Dispara la petición al backend en Java
+    return this.http.get<any>(urlPeticion).pipe(
+      tap((usuarioReal) => {
+        // Usamos tu validación de plataforma antes de tocar el localStorage
+        if (isPlatformBrowser(this.platformId)) {
+          localStorage.setItem('id_usuario_real', usuarioReal.idUsuario);
+          localStorage.setItem('rol_usuario_real', usuarioReal.rol);
+        }
+      }),
+      map((usuarioReal) => {
+        // Retorna un token simulado basado en el rol real de la BD
+        return { token: `fake-jwt-token-${usuarioReal.rol.toLowerCase()}` };
+      }),
+      catchError((error) => {
+        console.error('Error en el login:', error);
+        return throwError(() => new Error('Credenciales inválidas o el usuario no existe en la BD'));
+      })
+    );
   }
 
+  // === GESTIÓN SEGURA DEL LOCAL STORAGE ===
+
   guardarToken(token: string) {
-    if (isPlatformBrowser(this.plataformId)) {
+    if (isPlatformBrowser(this.platformId)) {
       localStorage.setItem('jwt_token', token);
     }
   }
 
   obtenerToken(): string | null {
-    if (isPlatformBrowser(this.plataformId)) {
+    if (isPlatformBrowser(this.platformId)) {
       return localStorage.getItem('jwt_token');
     }
     return null;
   }
 
-  // En lugar de descodificar un JWT real, leemos el token falso que inventamos arriba
   obtenerRolUsuario(): string | null {
-    const token = this.obtenerToken();
-    if (!token) return null;
-
-    if (token === 'fake-jwt-token-doctor') return 'DOCTOR';
-    if (token === 'fake-jwt-token-paciente') return 'PACIENTE';
-    
+    if (isPlatformBrowser(this.platformId)) {
+      return localStorage.getItem('rol_usuario_real');
+    }
     return null;
   }
 
+  obtenerIdUsuarioLogueado(): string {
+    if (isPlatformBrowser(this.platformId)) {
+      return localStorage.getItem('id_usuario_real') || ''; 
+    }
+    return ''; 
+  }
+
   cerrarSesion() {
-    if (isPlatformBrowser(this.plataformId)) {
+    if (isPlatformBrowser(this.platformId)) {
       localStorage.removeItem('jwt_token');
+      localStorage.removeItem('id_usuario_real'); 
+      localStorage.removeItem('rol_usuario_real'); 
     }
   }
 }

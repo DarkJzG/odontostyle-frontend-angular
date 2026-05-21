@@ -6,7 +6,7 @@ import { PagHome } from './features/Doctor/pagHome/pagHome';
 import { ListaPaciente } from './features/Doctor/ModuloPaciente/listarPaciente/listarPaciente';
 import { RegistroPaciente } from './features/Doctor/ModuloPaciente/registroPaciente/registroPaciente';
 import { roleGuard } from './core/guards/roleGuard';
-import { DetallePaciente } from './features/Doctor/ModuloPacientes/detallePaciente/detallePaciente';
+import { DetallePaciente } from './features/Doctor/ModuloPaciente/detallePaciente/detallePaciente';
 
 export const routes: Routes = [
   { path: '', component: Inicio },
