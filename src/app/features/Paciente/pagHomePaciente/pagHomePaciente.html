@@ -1,6 +1,7 @@
 <div class="admin-wrapper">
   
-    <app-navbar-panel-paciente></app-navbar-panel-paciente>
+  <app-navbar-panel-paciente></app-navbar-panel-paciente>
+  
   <main class="dashboard-container fade-in-up">
     
     <aside class="next-appointment-panel">
@@ -9,35 +10,43 @@
         <p>Tu próxima atención odontológica</p>
       </div>
 
-      <div class="highlight-card" *ngIf="proximaCita; else noCitas">
-        <div class="date-header">
-          <mat-icon>event</mat-icon>
-          <span>{{ proximaCita.fecha }} a las {{ proximaCita.hora }}</span>
-        </div>
-        
-        <div class="card-body">
-          <h4>{{ proximaCita.tratamiento }}</h4>
-          <p class="doctor-name">
-            <mat-icon>medical_services</mat-icon>
-            {{ proximaCita.doctor }}
-          </p>
-        </div>
-
-        <div class="card-footer">
-          <span class="status-badge" [ngClass]="{'confirmed': proximaCita.estado === 'Confirmada'}">
-            {{ proximaCita.estado }}
-          </span>
-          <button class="btn-outline">Ver detalle</button>
-        </div>
+      <div class="highlight-card" *ngIf="cargando" style="text-align: center; padding: 30px;">
+        <mat-icon style="animation: girar 1.5s linear infinite; color: #502763;">sync</mat-icon>
+        <p style="margin-top: 10px; color: #666;">Buscando tu próxima cita...</p>
       </div>
 
-      <ng-template #noCitas>
-        <div class="empty-state">
-          <mat-icon>calendar_today</mat-icon>
-          <p>No tienes citas programadas.</p>
-          <button class="btn-primary" (click)="navegarModulo('/paciente/agendar', 'Agendar Cita')">Agendar ahora</button>
+      <ng-container *ngIf="!cargando">
+        <div class="highlight-card" *ngIf="proximaCita; else noCitas">
+          <div class="date-header">
+            <mat-icon>event</mat-icon>
+            <span>{{ proximaCita.fecha }} a las {{ proximaCita.hora }}</span>
+          </div>
+          
+          <div class="card-body">
+            <h4>{{ proximaCita.tratamiento }}</h4>
+            <p class="doctor-name">
+              <mat-icon>medical_services</mat-icon>
+              {{ proximaCita.doctor }}
+            </p>
+          </div>
+
+          <div class="card-footer">
+            <span class="status-badge" [ngClass]="{'confirmed': proximaCita.estado === 'Confirmada'}">
+              {{ proximaCita.estado }}
+            </span>
+            <button class="btn-outline" (click)="navegarModulo('/paciente/citas', 'Mis Citas')">Ver en Mis Citas</button>
+          </div>
         </div>
-      </ng-template>
+
+        <ng-template #noCitas>
+          <div class="empty-state">
+            <mat-icon>calendar_today</mat-icon>
+            <p>No tienes citas programadas.</p>
+            <button class="btn-primary" (click)="navegarModulo('/paciente/agendar-cita', 'Agendar Cita')">Agendar ahora</button>
+          </div>
+        </ng-template>
+      </ng-container>
+
     </aside>
 
     <section class="modules-panel">
