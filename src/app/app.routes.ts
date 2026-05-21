@@ -6,6 +6,7 @@ import { PagHome } from './features/Doctor/pagHome/pagHome';
 import { ListaPaciente } from './features/Doctor/ModuloPacientes/listarPaciente/listarPaciente';
 import { RegistroPaciente } from './features/Doctor/ModuloPacientes/registroPaciente/registroPaciente';
 import { roleGuard } from './core/guards/roleGuard';
+import { DetallePaciente } from './features/Doctor/ModuloPacientes/detallePaciente/detallePaciente';
 
 export const routes: Routes = [
   { path: '', component: Inicio },
@@ -29,6 +30,11 @@ export const routes: Routes = [
   
   { path: 'doctor/pacientes/:id/perfil', 
     component: PerfilPaciente, 
+    canActivate: [roleGuard], 
+    data: { roles: ['DOCTOR'] } },
+  
+  { path: 'doctor/pacientes/:id/detalle', 
+    component: DetallePaciente, 
     canActivate: [roleGuard], 
     data: { roles: ['DOCTOR'] } },
 

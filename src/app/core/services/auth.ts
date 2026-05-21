@@ -1,4 +1,5 @@
-import { Injectable } from '@angular/core';
+import { Injectable, PLATFORM_ID, inject } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { Observable, of, throwError } from 'rxjs';
 import { delay } from 'rxjs/operators';
 
@@ -7,6 +8,9 @@ import { delay } from 'rxjs/operators';
 })
 export class AuthService {
   
+  //id de la platadforma par asaber si es servidor o navegador
+  private plataformId = inject(PLATFORM_ID);
+
   // === MODO DEMO: Simula la validación sin ir al backend ===
   iniciarSesion(credenciales: any): Observable<any> {
     const { username, password } = credenciales;
@@ -24,11 +28,16 @@ export class AuthService {
   }
 
   guardarToken(token: string) {
-    localStorage.setItem('jwt_token', token);
+    if (isPlatformBrowser(this.plataformId)) {
+      localStorage.setItem('jwt_token', token);
+    }
   }
 
   obtenerToken(): string | null {
-    return localStorage.getItem('jwt_token');
+    if (isPlatformBrowser(this.plataformId)) {
+      return localStorage.getItem('jwt_token');
+    }
+    return null;
   }
 
   // En lugar de descodificar un JWT real, leemos el token falso que inventamos arriba
@@ -43,6 +52,8 @@ export class AuthService {
   }
 
   cerrarSesion() {
-    localStorage.removeItem('jwt_token');
+    if (isPlatformBrowser(this.plataformId)) {
+      localStorage.removeItem('jwt_token');
+    }
   }
 }

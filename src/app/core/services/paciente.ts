@@ -7,6 +7,9 @@ import { environment } from '../../../environments/environment';
   providedIn: 'root'
 })
 export class PacienteService {
+  actualizar(idUsuario: string, payload: { usuario: any; perfilMedico: any; }) {
+    throw new Error('Method not implemented.');
+  }
   private http = inject(HttpClient);
   
   private baseUrl = environment.apiUrl;
@@ -45,5 +48,30 @@ export class PacienteService {
   //Obtener el Perfil del Paciente
   obtenerPerfil(idUsuario: string): Observable<any> {
     return this.http.get(`${this.baseUrl}/pacientes/${idUsuario}/perfil`);
+  }
+
+  //Obtener el Detalle Completo del Paciente (tabla usuario + perfilPaciente)
+  obtenerDetalle(idUsuario: string): Observable<any> {
+    return this.http.get(`${this.baseUrl}/usuarios/${idUsuario}/detalle`);
+  }
+
+  //Actualizar el Usuario y el Perfil del Paciente
+  actualizarDetalle(idUsuario: string, payload: { paciente: any; perfilMedico: any }): Observable<any> {
+    return this.http.put(`${this.baseUrl}/usuarios/${idUsuario}/detalle`, payload);
+  }
+
+  // Registrar un nuevo estado en el odontograma
+  registrarEstadoOdontograma(idPaciente: string, estado: any): Observable<any> {
+    return this.http.post(`${this.baseUrl}/odontogramas/pacientes/${idPaciente}`, estado);
+  }
+
+  // Obtener el ESTADO ACTUAL (la "foto" del momento) para pintar el odontograma
+  obtenerOdontogramaActual(idPaciente: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.baseUrl}/odontogramas/pacientes/${idPaciente}/actual`);
+  }
+
+  // (Opcional) Obtener todo el historial de cambios si luego quieres hacer una tabla
+  obtenerHistorialOdontograma(idPaciente: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.baseUrl}/odontogramas/pacientes/${idPaciente}`);
   }
 }

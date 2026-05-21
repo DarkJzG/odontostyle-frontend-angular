@@ -1,0 +1,81 @@
+<div class="odontograma-layout fade-in-up">
+  
+  <div *ngIf="cargando" class="loading-odontograma mock-placeholder">
+    <mat-icon class="spinner">sync</mat-icon>
+    <p>Cargando estado dental...</p>
+  </div>
+
+  <div class="canvas-area" *ngIf="!cargando">
+    <div class="canvas-header">
+      <h4>Estado Actual (Odontograma Inmutable)</h4>
+      <p>Haga clic en una cara del diente para registrar un hallazgo.</p>
+    </div>
+    
+    <div class="arco-dental superior">
+      <div class="diente-wrapper" *ngFor="let pieza of dientesSuperiores" [title]="pieza + ' - ' + obtenerNombrePieza(pieza)">
+        <span class="pieza-numero">{{ pieza }}</span>
+        
+        <div class="diente-grid">
+          <div class="cara vestibular" [ngClass]="obtenerClaseEstado(pieza, 'VESTIBULAR')" (click)="seleccionarPieza(pieza, 'VESTIBULAR')"></div>
+          <div class="cara lateral-izq" [ngClass]="obtenerClaseEstado(pieza, pieza < 20 ? 'DISTAL' : 'MESIAL')" (click)="seleccionarPieza(pieza, pieza < 20 ? 'DISTAL' : 'MESIAL')"></div>
+          <div class="cara oclusal" [ngClass]="obtenerClaseEstado(pieza, 'OCLUSAL')" (click)="seleccionarPieza(pieza, 'OCLUSAL')"></div>
+          <div class="cara lateral-der" [ngClass]="obtenerClaseEstado(pieza, pieza < 20 ? 'MESIAL' : 'DISTAL')" (click)="seleccionarPieza(pieza, pieza < 20 ? 'MESIAL' : 'DISTAL')"></div>
+          <div class="cara palatino" [ngClass]="obtenerClaseEstado(pieza, 'PALATINO')" (click)="seleccionarPieza(pieza, 'PALATINO')"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="separador-arcos">
+      <span>Línea Media</span>
+    </div>
+
+    <div class="arco-dental inferior">
+      <div class="diente-wrapper" *ngFor="let pieza of dientesInferiores" [title]="pieza + ' - ' + obtenerNombrePieza(pieza)">
+        <div class="diente-grid">
+          <div class="cara vestibular" [ngClass]="obtenerClaseEstado(pieza, 'VESTIBULAR')" (click)="seleccionarPieza(pieza, 'VESTIBULAR')"></div>
+          <div class="cara lateral-izq" [ngClass]="obtenerClaseEstado(pieza, pieza > 40 ? 'DISTAL' : 'MESIAL')" (click)="seleccionarPieza(pieza, pieza > 40 ? 'DISTAL' : 'MESIAL')"></div>
+          <div class="cara oclusal" [ngClass]="obtenerClaseEstado(pieza, 'OCLUSAL')" (click)="seleccionarPieza(pieza, 'OCLUSAL')"></div>
+          <div class="cara lateral-der" [ngClass]="obtenerClaseEstado(pieza, pieza > 40 ? 'MESIAL' : 'DISTAL')" (click)="seleccionarPieza(pieza, pieza > 40 ? 'MESIAL' : 'DISTAL')"></div>
+          <div class="cara palatino" [ngClass]="obtenerClaseEstado(pieza, 'PALATINO')" (click)="seleccionarPieza(pieza, 'PALATINO')"></div>
+        </div>
+        <span class="pieza-numero">{{ pieza }}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel-edicion fade-in-right" *ngIf="piezaSeleccionada">
+    <div class="panel-header">
+      <h3>Registrar Diagnóstico</h3>
+      <button class="btn-close" (click)="piezaSeleccionada = null"><mat-icon>close</mat-icon></button>
+    </div>
+    
+    <div class="info-pieza-seleccionada">
+      <p class="pieza-full-name">
+        {{ piezaSeleccionada }} - {{ obtenerNombrePieza(piezaSeleccionada) }}
+      </p>
+      <div class="badges-row">
+        <span class="badge cara-badge">Cara: {{ posicionSeleccionada }}</span>
+      </div>
+    </div>
+
+    <div class="input-group">
+      <label>Estado Clínico</label>
+      <select [(ngModel)]="nuevoEstado">
+        <option *ngFor="let est of estados" [value]="est">{{ est }}</option>
+      </select>
+    </div>
+
+    <div class="input-group">
+      <label>Notas Clínicas / Plan de Tratamiento</label>
+      <textarea [(ngModel)]="notasEstado" rows="4" placeholder="Escriba observaciones relevantes..."></textarea>
+    </div>
+
+    <div class="botones-accion-panel">
+      <button class="btn-cancelar" (click)="piezaSeleccionada = null">Cancelar</button>
+      <button class="btn-primary" (click)="guardarEstadoDental()">
+        <mat-icon>save</mat-icon> Guardar Hallazgo
+      </button>
+    </div>
+  </div>
+
+</div>

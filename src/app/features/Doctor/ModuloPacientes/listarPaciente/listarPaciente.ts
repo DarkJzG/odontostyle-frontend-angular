@@ -68,7 +68,19 @@ export class ListaPaciente implements OnInit {
     }
   }
 
+  verDetallePaciente(idUsuario: string) {
+    this.router.navigate([`/doctor/pacientes/${idUsuario}/detalle`]);
+  } 
+
   EditarPaciente(idUsuario: string) {
     this.router.navigate([`/doctor/pacientes/${idUsuario}/editar`]);
   }
+
+  buscarPaciente() {
+    //implementa la busqueda del paciente por su nombre o cedula
+    //si encuentra pacientes, actualiza la lista de pacientes
+    //si no encuentra pacientes, muestra un mensaje de error
+    
+  }
+
 }

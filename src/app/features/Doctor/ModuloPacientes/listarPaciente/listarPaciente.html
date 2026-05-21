@@ -32,7 +32,9 @@
           <td class="font-mono">{{ paciente.cedula }}</td>
           <td>
             <div class="paciente-info">
-              <strong>{{ paciente.nombres }} {{ paciente.apellidos }}</strong>
+              <strong style="cursor: pointer;" (click)="verDetallePaciente(paciente.idUsuario)">
+                {{ paciente.nombres }} {{ paciente.apellidos }}
+              </strong>
             </div>
           </td>
           <td>
@@ -42,8 +44,8 @@
             </div>
           </td>
           <td class="acciones-cell">
-            <button class="btn-icon btn-edit" (click)="irAPerfilMedico(paciente.idUsuario)" title="Historia Clínica">
-              <mat-icon>folder</mat-icon> Perfil Clínico
+            <button class="btn-icon btn-edit" (click)="verDetallePaciente(paciente.idUsuario)" title="Ver Detalle">
+              <mat-icon>visibility</mat-icon>
             </button>
             <button class="btn-icon btn-delete" (click)="eliminarPaciente(paciente.idUsuario, paciente.nombres)" title="Eliminar Paciente">
               <mat-icon>delete</mat-icon>
