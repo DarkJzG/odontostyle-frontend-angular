@@ -1,60 +1,86 @@
-import { Injectable } from '@angular/core';
-import { Observable, of, throwError } from 'rxjs';
-import { delay } from 'rxjs/operators';
+import { Injectable, inject } from '@angular/core';
+import { Observable, throwError } from 'rxjs';
+import { tap, catchError, map } from 'rxjs/operators';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
   
-  // === MODO DEMO: Simula la validación sin ir al backend ===
+  // 1. Añadimos HttpClient para poder consultar tu base de datos
+  private http = inject(HttpClient);
+  private apiUrl = `${environment.apiUrl}/api/usuarios`;
+
+  // === LOGIN DINÁMICO (CÉDULA O CORREO) ===
   iniciarSesion(credenciales: any): Observable<any> {
-    const { username, password } = credenciales;
+    const { username, password } = credenciales; // 'username' recibe lo que escribas en la caja de texto
+    
+    // 1. Angular analiza: ¿Tiene un arroba '@'?
+    const esCorreo = username.includes('@');
+    
+    // 2. Arma la URL dinámica
+    const urlPeticion = esCorreo 
+      ? `${this.apiUrl}/buscar-correo?email=${username}` 
+      : `${this.apiUrl}/buscar?cedula=${username}`;
 
-    // Si escribe "doctor" y la contraseña "123"
-    if (username.toLowerCase() === 'doctor' && password === '123') {
-      return of({ token: 'fake-jwt-token-doctor' }).pipe(delay(800)); // delay simula el tiempo de carga
-    } 
-    // Si escribe "paciente" y la contraseña "123"
-    else if (username.toLowerCase() === 'paciente' && password === '123') {
-      return of({ token: 'fake-jwt-token-paciente' }).pipe(delay(800));
-    }
+    console.log(`Intentando login por ${esCorreo ? 'CORREO' : 'CÉDULA'} con:`, username);
 
-    return throwError(() => new Error('Credenciales inválidas'));
+    // 3. Dispara la petición a tu backend
+    return this.http.get<any>(urlPeticion).pipe(
+      tap((usuarioReal) => {
+        if (typeof window !== 'undefined' && window.localStorage) {
+          localStorage.setItem('id_usuario_real', usuarioReal.idUsuario);
+          localStorage.setItem('rol_usuario_real', usuarioReal.rol);
+        }
+      }),
+      map((usuarioReal) => {
+        return { token: `fake-jwt-token-${usuarioReal.rol.toLowerCase()}` };
+      }),
+      catchError((error) => {
+        console.error('Error en el login:', error);
+        return throwError(() => new Error('Credenciales inválidas o el usuario no existe en la BD'));
+      })
+    );
   }
 
   // === MÉTODOS ACTUALIZADOS PARA EVITAR EL ERROR DEL SERVIDOR (SSR) ===
 
   guardarToken(token: string) {
-    // Validamos que estamos en el navegador antes de guardar
     if (typeof window !== 'undefined' && window.localStorage) {
       localStorage.setItem('jwt_token', token);
     }
   }
 
   obtenerToken(): string | null {
-    // Validamos que estamos en el navegador antes de leer
     if (typeof window !== 'undefined' && window.localStorage) {
       return localStorage.getItem('jwt_token');
     }
-    return null; // Si estamos en el servidor, devuelve null
+    return null; 
   }
 
-  // En lugar de descodificar un JWT real, leemos el token falso que inventamos arriba
+  // Ahora leemos el rol real que nos devolvió PostgreSQL
   obtenerRolUsuario(): string | null {
-    const token = this.obtenerToken();
-    if (!token) return null;
-
-    if (token === 'fake-jwt-token-doctor') return 'DOCTOR';
-    if (token === 'fake-jwt-token-paciente') return 'PACIENTE';
-    
+    if (typeof window !== 'undefined' && window.localStorage) {
+      return localStorage.getItem('rol_usuario_real');
+    }
     return null;
   }
 
   cerrarSesion() {
-    // Validamos que estamos en el navegador antes de borrar
     if (typeof window !== 'undefined' && window.localStorage) {
       localStorage.removeItem('jwt_token');
+      localStorage.removeItem('id_usuario_real'); // Limpiamos el ID real al salir
+      localStorage.removeItem('rol_usuario_real'); // Limpiamos el rol real al salir
     }
+  }
+
+  // === AHORA DEVUELVE EL ID DINÁMICO DE POSTGRESQL ===
+  obtenerIdUsuarioLogueado(): string {
+    if (typeof window !== 'undefined' && window.localStorage) {
+      return localStorage.getItem('id_usuario_real') || ''; // Devuelve el UUID exacto de quien inició sesión
+    }
+    return ''; 
   }
 }
