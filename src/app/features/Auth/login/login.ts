@@ -42,7 +42,7 @@ export class Login {
         if (rol === 'DOCTOR' || rol === 'ASISTENTE') {
           this.router.navigate(['/doctor/home']);
         } else if (rol === 'PACIENTE') {
-          this.router.navigate(['/portal-paciente']);
+          this.router.navigate(['/paciente/home']);
         }
         
         this.cargando = false;

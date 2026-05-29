@@ -1,0 +1,36 @@
+<header class="admin-header">
+  
+  <div class="brand" routerLink="/paciente/home" style="cursor: pointer;" title="Ir al Inicio">
+    <img src="./assets/ico-navbar.png" alt="Logo" style="height: 80px;">
+    <h1><span class="badge-paciente">Portal Paciente</span></h1>
+  </div>
+  
+  <nav class="nav-links" [class.show-menu]="menuAbierto">
+    <a routerLink="/paciente/home" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}" (click)="menuAbierto = false">
+      <mat-icon>dashboard</mat-icon> Inicio
+    </a>
+    <a routerLink="/paciente/agendar-cita" routerLinkActive="active-link" (click)="menuAbierto = false">
+      <mat-icon>event_available</mat-icon> Agendar
+    </a>
+    <a routerLink="/paciente/citas" routerLinkActive="active-link" (click)="menuAbierto = false">
+      <mat-icon>calendar_month</mat-icon> Mis Citas
+    </a>
+  </nav>
+
+  <div class="user-profile">
+    <span class="icon-paciente">
+      <mat-icon>person</mat-icon>
+    </span>
+    
+    <div class="user-info">
+      <span class="name">{{ nombrePaciente }}</span>
+      <span class="role">Paciente Registrado</span>
+    </div>
+    
+    <button class="btn-logout" (click)="cerrarSesion()" title="Cerrar Sesión">Salir</button>
+
+    <button class="btn-icon mobile-menu-btn" (click)="toggleMenu()">
+      <mat-icon>{{ menuAbierto ? 'close' : 'menu' }}</mat-icon>
+    </button>
+  </div>
+</header>

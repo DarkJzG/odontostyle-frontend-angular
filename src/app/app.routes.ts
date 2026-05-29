@@ -6,7 +6,15 @@ import { PagHome } from './features/Doctor/pagHome/pagHome';
 import { ListaPaciente } from './features/Doctor/ModuloPaciente/listarPaciente/listarPaciente';
 import { RegistroPaciente } from './features/Doctor/ModuloPaciente/registroPaciente/registroPaciente';
 import { roleGuard } from './core/guards/roleGuard';
+<<<<<<< HEAD
 import { DetallePaciente } from './features/Doctor/ModuloPaciente/detallePaciente/detallePaciente';
+=======
+import { PagHomePaciente } from './features/Paciente/pagHomePaciente/pagHomePaciente';
+import { AgendarCita } from './features/Paciente/agendarCita/agendarCita';
+import { MisCitas } from './features/Paciente/misCitas/misCitas';
+import { AjustesCuentaPaciente } from './features/Paciente/ajustesCuentaPaciente/ajustesCuentaPaciente';
+import { HistorialClinicoPaciente } from './features/Paciente/historialClinicoPaciente/historialClinicoPaciente';
+>>>>>>> origin/PanelPaciente
 
 export const routes: Routes = [
   { path: '', component: Inicio },
@@ -38,5 +46,37 @@ export const routes: Routes = [
     canActivate: [roleGuard], 
     data: { roles: ['DOCTOR'] } },
 
-  { path: '**', redirectTo: '' }
+  // Rutas Portal Paciente
+  { path: 'paciente/home', 
+    component: PagHomePaciente, 
+    canActivate: [roleGuard], 
+    data: { roles: ['PACIENTE'] } },
+  
+  { path: 'paciente/agendar-cita', 
+    component: AgendarCita, 
+    canActivate: [roleGuard], 
+    data: { roles: ['PACIENTE'] } },
+
+  { path: 'paciente/citas', 
+    component: MisCitas, 
+    canActivate: [roleGuard], 
+    data: { roles: ['PACIENTE'] } },
+  
+  { path: 'paciente/cuenta-paciente', 
+    component: AjustesCuentaPaciente, 
+    canActivate: [roleGuard], 
+    data: { roles: ['PACIENTE'] } },
+
+  {
+    path: 'paciente/historial',
+    component: HistorialClinicoPaciente,
+    canActivate: [roleGuard],
+    data: { roles: ['PACIENTE'] }
+  },
+
+  // EL COMODÍN DE RUTAS NO ENCONTRADAS
+  { 
+    path: '**', 
+    redirectTo: '' 
+  }
 ];

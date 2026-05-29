@@ -1,0 +1,195 @@
+/* ===== BARRA SUPERIOR ===== */
+.admin-header {
+  box-sizing: border-box; /* <-- ESTO EVITA LA BARRA HORIZONTAL */
+  width: 100%;            /* <-- ESTO ASEGURA QUE SE AJUSTE A LA VENTANA */
+  background-color: #ffffff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 3%;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.brand h1 {
+  font-size: 1.3rem;
+  color: #502763;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+/* Distintivo para el paciente (Azul en lugar del dorado del doctor) */
+.badge-paciente {
+  background-color: #3b82f6; 
+  color: white;
+  font-size: 0.75rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 12px;
+  font-weight: 600;
+}
+
+.user-profile {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.user-info .name {
+  font-weight: 700;
+  color: #1e293b;
+  font-size: 0.95rem;
+}
+
+.user-info .role {
+  font-size: 0.8rem;
+  color: #64748b;
+}
+
+.btn-logout {
+  background-color: #fee2e2;
+  color: #ef4444;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-left: 1rem;
+}
+
+.btn-logout:hover {
+  background-color: #ef4444;
+  color: white;
+}
+
+/* ===== ICONO DEL PACIENTE EN EL HEADER ===== */
+.icon-paciente {
+  color: #502763;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f5eef8;
+  padding: 8px;
+  border-radius: 50%;
+}
+
+.icon-paciente mat-icon {
+  font-size: 28px;
+  width: 28px;
+  height: 28px;
+}
+
+/* ===== MENÚ DE NAVEGACIÓN CENTRAL ===== */
+.nav-links {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.nav-links a {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  text-decoration: none;
+  color: #64748b;
+  font-weight: 600;
+  font-size: 0.95rem;
+  padding: 0.6rem 1.2rem;
+  border-radius: 10px;
+  transition: all 0.3s ease;
+}
+
+.nav-links a mat-icon { 
+  font-size: 20px; 
+  width: 20px; 
+  height: 20px; 
+}
+
+/* Efectos de hover y link activo */
+.nav-links a:hover { 
+  background-color: #f1f5f9; 
+  color: #1e293b; 
+}
+.nav-links a.active-link { 
+  background-color: #f5eef8; 
+  color: #502763; 
+}
+
+/* Ocultamos el botón hamburguesa en monitores normales */
+.mobile-menu-btn {
+  display: none;
+  color: #502763;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  margin-left: 0.5rem;
+  align-items: center;
+  justify-content: center;
+}
+
+/* =========================================
+   DISEÑO RESPONSIVO (MENÚ HAMBURGUESA Y MÓVILES)
+   ========================================= */
+@media (max-width: 1150px) {
+  /* Ocultamos detalles del header que quitan espacio */
+  .badge-paciente, .role { display: none; }
+  .brand img { height: 60px !important; }
+  .admin-header { padding: 0.8rem 4%; position: relative; }
+  
+  /* Mostramos el botón de la hamburguesa */
+  .mobile-menu-btn { display: flex; }
+
+  /* Transformamos el menú central en una caja desplegable */
+  .nav-links {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background-color: #ffffff;
+    flex-direction: column;
+    padding: 0;
+    box-shadow: 0 10px 15px rgba(0,0,0,0.05);
+    max-height: 0; /* Oculto por defecto */
+    overflow: hidden;
+    transition: max-height 0.3s ease-out; /* Animación suave */
+    z-index: 1000;
+    /* Para que los items queden centrados en vertical pero alineados a la izquierda */
+    align-items: stretch; 
+  }
+  
+  /* Cuando le das clic a la hamburguesa (menuAbierto = true) */
+  .nav-links.show-menu {
+    max-height: 250px; /* Espacio suficiente para los 3 links */
+    padding: 1rem 0;
+    border-top: 1px solid #f1f5f9;
+  }
+  
+  /* Hacemos los botones más anchos para que se vean bien en móvil */
+  .nav-links a {
+    width: 90%;
+    margin: 0.2rem auto;
+    padding: 0.8rem 1rem;
+    justify-content: flex-start;
+  }
+}
+
+/* Para celulares muy pequeños, ocultamos tu nombre y dejamos solo el ícono */
+@media (max-width: 600px) {
+  .user-info { display: none; }
+}
