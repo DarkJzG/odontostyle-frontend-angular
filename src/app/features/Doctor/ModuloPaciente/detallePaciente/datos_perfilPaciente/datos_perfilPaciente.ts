@@ -1,3 +1,4 @@
+//features/Doctor/ModuloPaciente/detallePaciente/datos_perfilPaciente/datos_perfilPaciente.ts
 import { Component, Input, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -22,8 +23,8 @@ export class DatosPerfilPaciente {
   guardando: boolean = false;
 
   copiarId() {
-    if (this.paciente?.idUsuario) {
-      navigator.clipboard.writeText(this.paciente.idUsuario).then(() => {
+    if (this.paciente?.id) {
+      navigator.clipboard.writeText(this.paciente.id).then(() => {
         console.log('ID copiado al portapapeles');
         // Aquí podrías agregar un pequeño aviso visual si lo deseas
       }).catch((err: any) => {
@@ -33,7 +34,7 @@ export class DatosPerfilPaciente {
   }
 
   guardarCambios() {
-    if (!this.paciente?.idUsuario) return;
+    if (!this.paciente?.id) return;
     
     this.guardando = true;
     
@@ -42,7 +43,7 @@ export class DatosPerfilPaciente {
       perfilMedico: this.perfilMedico
     };
 
-    this.pacienteService.actualizarDetalle(this.paciente.idUsuario, payload).subscribe({
+    this.pacienteService.actualizarDetalle(this.paciente.id, payload).subscribe({
       next: (res: any) => {
         this.guardando = false;
         // Actualizamos los objetos locales con la respuesta

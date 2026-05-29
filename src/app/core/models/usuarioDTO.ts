@@ -1,5 +1,6 @@
+//core/models/usuarioDTO.ts
 export interface UsuarioDTO {
-  idUsuario?: string; 
+  id: string; 
   cedula: string;
   nombres: string;
   apellidos: string;

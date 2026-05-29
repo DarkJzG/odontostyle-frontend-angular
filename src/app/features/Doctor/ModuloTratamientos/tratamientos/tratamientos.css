@@ -1,0 +1,200 @@
+/* Agrega estos estilos a tu archivo actual */
+.horarios-wrapper { padding: 2rem 5%; max-width: 1400px; margin: 0 auto; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+.page-header { margin-bottom: 1.5rem; }
+.header-titles h2 { color: #502763; margin: 0 0 0.5rem 0; font-size: 1.8rem; }
+.header-titles p { color: #64748b; margin: 0; font-size: 1rem; }
+
+/* Tabs Navigation */
+.tabs-navigation {
+  display: flex;
+  gap: 1rem;
+  border-bottom: 2px solid #e2e8f0;
+  margin-bottom: 2.5rem;
+}
+.tabs-navigation button {
+  background: none; border: none; padding: 1rem 1.5rem; font-size: 1rem; font-weight: 600;
+  color: #64748b; cursor: pointer; display: flex; align-items: center; gap: 0.5rem;
+  border-bottom: 3px solid transparent; transition: all 0.3s;
+}
+.tabs-navigation button:hover { color: #502763; background-color: #faf7fc; }
+.tabs-navigation button.active { color: #502763; border-bottom-color: #502763; }
+
+/* Grids y Tarjetas */
+.layout-grid { display: grid; grid-template-columns: 380px 1fr; gap: 2rem; align-items: start; }
+.form-card, .list-card { background-color: white; border-radius: 15px; padding: 2rem; box-shadow: 0 10px 30px rgba(80, 39, 99, 0.05); border: 1px solid #f1f5f9; }
+.card-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; color: #1e293b; }
+.card-header h3 { margin: 0; font-size: 1.2rem; }
+.card-header mat-icon { color: #319795; }
+
+/* Banner de Información */
+.info-banner { display: flex; gap: 0.5rem; background-color: #e0f2fe; color: #0284c7; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem; font-size: 0.85rem; }
+.info-banner mat-icon { font-size: 20px; width: 20px; height: 20px; }
+.info-banner p { margin: 0; }
+
+/* Formularios */
+.horario-form { display: flex; flex-direction: column; gap: 1.2rem; }
+.time-row { display: flex; flex-direction: column; gap: 1.2rem; }
+.input-group label { display: block; font-size: 0.85rem; font-weight: 600; color: #64748b; margin-bottom: 0.4rem; }
+.input-group select, .input-group input, .input-group textarea { width: 100%; padding: 0.8rem; border: 1px solid #cbd5e1; border-radius: 8px; font-family: inherit; font-size: 1rem; color: #1e293b; box-sizing: border-box; }
+.input-group select:focus, .input-group input:focus, .input-group textarea:focus { outline: none; border-color: #502763; }
+.checkbox-group { display: flex; align-items: center; gap: 0.5rem; color: #475569; font-weight: 600; font-size: 0.9rem; }
+
+/* Botones */
+.btn-primary, .btn-danger { margin-top: 1rem; color: white; padding: 0.8rem 1.2rem; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 0.5rem; transition: all 0.2s; width: 100%; }
+.btn-primary { background-color: #502763; }
+.btn-primary:hover:not(:disabled) { background-color: #3a1c49; }
+.btn-danger { background-color: #ef4444; }
+.btn-danger:hover:not(:disabled) { background-color: #dc2626; }
+.btn-primary:disabled, .btn-danger:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.btn-icon-delete { background-color: #fee2e2; color: #ef4444; border: none; border-radius: 8px; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; }
+.btn-icon-delete:hover { background-color: #ef4444; color: white; }
+
+/* Tablas */
+.horarios-table { width: 100%; border-collapse: collapse; }
+.horarios-table th { text-align: left; padding: 1rem; background-color: #f8fafc; color: #475569; font-size: 0.85rem; text-transform: uppercase; border-bottom: 2px solid #e2e8f0; }
+.horarios-table td { padding: 1rem; border-bottom: 1px solid #f1f5f9; }
+.text-center { text-align: center !important; }
+.dia-cell { font-weight: 700; color: #1e293b; }
+.horas-cell { display: flex; align-items: center; gap: 0.5rem; }
+.hora-badge { background-color: #f1f5f9; color: #502763; padding: 0.3rem 0.6rem; border-radius: 6px; font-weight: 600; font-size: 0.9rem; border: 1px solid #e2e8f0; }
+.separator { color: #94a3b8; font-size: 0.9rem; }
+.empty-state { text-align: center; padding: 3rem !important; color: #94a3b8; font-style: italic; }
+
+.fade-in-up { animation: fadeInUp 0.4s ease-out; }
+@keyframes fadeInUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.spinner { animation: spin 1s linear infinite; }
+@keyframes spin { 100% { transform: rotate(360deg); } }
+
+@media (max-width: 900px) { .layout-grid { grid-template-columns: 1fr; } }
+
+/* ========================================================
+   ESTILOS DE EXPERIENCIA DE USUARIO (UX) - MODALES Y TOASTS
+   ======================================================== */
+
+/* Notificación Flotante (Toast) */
+.toast-notification {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 1rem 1.5rem;
+  border-radius: 10px;
+  color: white;
+  font-weight: 600;
+  font-size: 0.95rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  z-index: 9999;
+}
+
+.toast-notification.success { background-color: #10b981; border: 1px solid #059669; }
+.toast-notification.error   { background-color: #ef4444; border: 1px solid #b91c1c; }
+.toast-notification.warning { background-color: #f59e0b; border: 1px solid #d97706; }
+
+.toast-notification mat-icon { font-size: 24px; width: 24px; height: 24px; }
+
+/* Fondo Oscuro para Modal */
+.modal-backdrop {
+  position: fixed;
+  top: 0; left: 0; width: 100vw; height: 100vh;
+  background-color: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000; /* Siempre encima de todo */
+}
+
+/* Caja de la Ventana Modal */
+.modal-box {
+  background-color: white;
+  width: 90%;
+  max-width: 450px;
+  border-radius: 15px;
+  padding: 2rem;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin-bottom: 1rem;
+}
+
+.modal-header h3 {
+  margin: 0;
+  color: #1e293b;
+  font-size: 1.3rem;
+}
+
+.warning-icon { color: #ef4444; font-size: 32px; width: 32px; height: 32px; }
+
+.modal-body p {
+  color: #475569;
+  font-size: 1rem;
+  line-height: 1.5;
+  margin: 0 0 2rem 0;
+}
+
+/* Botones del Modal */
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
+.btn-cancelar-modal {
+  background: none;
+  border: 1px solid #cbd5e1;
+  color: #64748b;
+  padding: 0.7rem 1.2rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-cancelar-modal:hover { background-color: #f1f5f9; color: #1e293b; }
+
+.btn-danger-modal {
+  background-color: #ef4444;
+  color: white;
+  border: none;
+  padding: 0.7rem 1.2rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-danger-modal:hover { background-color: #dc2626; }
+
+/* Animaciones extra */
+.fade-in { animation: fadeIn 0.3s ease-out forwards; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+/* Agrega estas clases al final de todo tu CSS reciclado */
+.btn-icon-edit { background-color: #f1f5f9; color: #3b82f6; border: none; border-radius: 8px; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; }
+.btn-icon-edit:hover { background-color: #3b82f6; color: white; }
+.actions-row { display: flex; justify-content: center; gap: 0.5rem; }
+.row-subtext { font-size: 0.8rem; color: #94a3b8; margin-top: 0.2rem; font-weight: normal; }
+.price-cell { font-weight: 600; color: #10b981; }
+.btn-cancelar { background: transparent; color: #64748b; border: 1px solid #cbd5e1; width: 100%; padding: 0.8rem; border-radius: 8px; font-weight: 600; cursor: pointer; margin-top: 0.5rem; transition: 0.2s; }
+.btn-cancelar:hover { background-color: #f1f5f9; }
+
+.btn-back {
+  background: none;
+  border: none;
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-bottom: 1rem;
+  padding: 0;
+}
+.btn-back:hover { color: #502763; }

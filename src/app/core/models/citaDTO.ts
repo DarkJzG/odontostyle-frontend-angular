@@ -1,15 +1,21 @@
+// core/models/citaDTO.ts
+
+// Lo que enviamos al backend para crear la cita
 export interface CitaRequestDTO {
-  pacienteId: string;       // Recibe el UUID del paciente logueado
-  tratamientoId: number;    // Long de Java -> number
-  disponibilidadId: number; // Long de Java -> number
-  fechaHoraInicio: string;  // LocalDateTime viaja en formato ISO (ej: '2026-05-20T10:00:00')
+  idPaciente: string;
+  idTratamiento: number;
+  idDoctor: string;
+  fechaHoraInicio: string; // Formato: 'yyyy-MM-ddTHH:mm:ss'
 }
 
+// Lo que el backend nos devuelve
 export interface CitaResponseDTO {
-  idCita: string;
+  id: string;
+  idPaciente: string;
   nombrePaciente: string;
+  idTratamiento?: number;
   nombreTratamiento: string;
   fechaHoraInicio: string;
   fechaHoraFin: string;
-  estado: string;           // PENDIENTE, COMPLETADA, CANCELADA
+  estado: string; // PENDIENTE, COMPLETADA, CANCELADA, FALTA
 }

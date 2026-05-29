@@ -1,5 +1,7 @@
+
+//core/models/perfilPacienteDTO.ts
 export interface PacientePerfilDTO {
-  idPaciente?: string; // Es opcional (?) porque al crear uno nuevo, el ID va en la URL
+  id?: string; // Es opcional para la creación, obligatorio para la actualización
   grupoSanguineo: string;
   alergias: string;
   medicamentosHabituales: string;

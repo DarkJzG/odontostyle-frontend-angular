@@ -1,6 +1,7 @@
+//core/layout/navbarPanelDoctor/navbarPanelDoctor.ts
 import { Component, inject } from '@angular/core';
-import { Router } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
+import { AuthService } from '../../services/auth';
 
 @Component({
   selector: 'app-navbar-panel-doctor',
@@ -10,9 +11,11 @@ import { MatIconModule } from '@angular/material/icon';
   styleUrl: './navbarPanelDoctor.css'
 })
 export class NavbarPanelDoctor {
-  private router = inject(Router);
+
+  private authService = inject(AuthService);
 
   cerrarSesion() {
-    this.router.navigate(['/login']);
+    this.authService.cerrarSesion();
   }
 }
+

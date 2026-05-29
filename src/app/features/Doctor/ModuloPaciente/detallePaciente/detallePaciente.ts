@@ -1,3 +1,4 @@
+//features/Doctor/ModuloPaciente/detallePaciente/detallePaciente.ts
 import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';

@@ -1,3 +1,5 @@
+
+//features/Paciente/historialClinicoPaciente/historialClinicoPaciente.ts
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';

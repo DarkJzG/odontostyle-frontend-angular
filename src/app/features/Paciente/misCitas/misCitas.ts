@@ -1,30 +1,19 @@
+// features/Paciente/misCitas/misCitas.ts
 import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms'; 
 import { MatIconModule } from '@angular/material/icon';
 import { Router } from '@angular/router';
 import { NavbarPanelPaciente } from '../../../core/layout/navbarPanelPaciente/navbarPanelPaciente';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule } from '@angular/material/core';
-
-// NUEVOS IMPORTS PARA EL MODAL ELEGANTE
-import { MatSelectModule } from '@angular/material/select';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
 
 import { CitaService } from '../../../core/services/cita';
 import { AuthService } from '../../../core/services/auth';
-import { CitaResponseDTO } from '../../../core/models/citaDTO';
 
 @Component({
   selector: 'app-mis-citas',
   standalone: true,
-  // AGREGAMOS LOS MÓDULOS AQUÍ
-  imports: [
-    CommonModule, FormsModule, MatIconModule, NavbarPanelPaciente, 
-    MatDatepickerModule, MatNativeDateModule, MatSelectModule, 
-    MatFormFieldModule, MatInputModule
-  ],
+  // Hemos limpiado módulos innecesarios de DatePicker ya que quitamos la edición directa
+  imports: [CommonModule, FormsModule, MatIconModule, NavbarPanelPaciente],
   templateUrl: './misCitas.html',
   styleUrl: './misCitas.css'
 })
@@ -32,20 +21,16 @@ export class MisCitas implements OnInit {
   private router = inject(Router);
   private citaService = inject(CitaService);
   private authService = inject(AuthService);
-  private cdr = inject(ChangeDetectorRef); // <-- EL DESPERTADOR DE ANGULAR
+  private cdr = inject(ChangeDetectorRef);
 
   citas: any[] = [];
   cargando: boolean = true; 
-
-  horasDisponibles = ['08:30 AM', '09:15 AM', '10:00 AM', '11:30 AM', '02:00 PM', '03:30 PM'];
 
   terminoBusqueda: string = '';
   estadoFiltro: string = 'Todos';
   fechaFiltro: string = '';
 
   citaSeleccionada: any = null;
-  modoEdicion: boolean = false;
-  citaEditando: any = {}; 
 
   dialogo = {
     visible: false,
@@ -63,32 +48,44 @@ export class MisCitas implements OnInit {
 
     if (idPaciente) {
       this.cargando = true; 
+      this.cdr.detectChanges();
 
       this.citaService.obtenerCitasPorPaciente(idPaciente).subscribe({
         next: (listaBackend: any) => {
           this.citas = listaBackend.map((cita: any) => {
             const [fechaPart, horaPart] = cita.fechaHoraInicio.split('T');
-            const idOriginal = cita.id || cita.idCita || '';
+            const idOriginal = cita.id; 
             
+            const nombreCompletoTrat = cita.nombreTratamiento || cita.tratamiento || '';
+            const partes = nombreCompletoTrat.split(' con ');
+            const nombreTratamientoLimpio = partes[0];
+            const nombreDoctorReal = partes[1] || 'Dr. Asignado';
+  
             return {
               id: idOriginal, 
-              idRecortado: idOriginal.toString().substring(0, 8).toUpperCase(), 
-              tratamiento: cita.nombreTratamiento || cita.tratamiento,
+              idRecortado: idOriginal ? idOriginal.toString().substring(0, 8).toUpperCase() : 'N/A', 
+              tratamiento: nombreTratamientoLimpio,
               fecha: fechaPart, 
               hora: this.formatearHoraAMPM(horaPart), 
-              doctor: 'Dr. Odontólogo Asignado', 
+              doctor: nombreDoctorReal,
               estado: this.normalizarEstado(cita.estado), 
-              notes: 'Cita recuperada de forma segura desde la base de datos.'
+              notes: 'Recuerde llegar 10 minutos antes de su turno programado.'
             };
+          });
+          // Ordenar: Las pendientes primero, luego por fecha más reciente
+          this.citas.sort((a, b) => {
+            if (a.estado === 'Pendiente' && b.estado !== 'Pendiente') return -1;
+            if (a.estado !== 'Pendiente' && b.estado === 'Pendiente') return 1;
+            return new Date(b.fecha).getTime() - new Date(a.fecha).getTime();
           });
 
           this.cargando = false; 
-          this.cdr.detectChanges(); // <-- OBLIGAMOS A ANGULAR A DIBUJAR LA PANTALLA INMEDIATAMENTE
+          this.cdr.detectChanges(); 
         },
         error: (err:any) => {
           console.error('Error al recuperar las citas:', err);
           this.cargando = false; 
-          this.cdr.detectChanges(); // <-- TAMBIÉN LO DESPERTAMOS SI HAY ERROR
+          this.cdr.detectChanges(); 
         }
       });
     } else {
@@ -109,10 +106,12 @@ export class MisCitas implements OnInit {
     });
   }
 
+  // ============ GESTIÓN DE ACCIONES ============
+
   pedirCancelacion(id: string) {
     this.dialogo = {
       visible: true,
-      mensaje: '¿Estás seguro de que deseas cancelar esta cita?',
+      mensaje: '¿Estás seguro de que deseas cancelar esta cita? Esta acción no se puede deshacer y el horario quedará libre para otros pacientes.',
       tipo: 'peligro',
       accionConfirmar: () => this.ejecutarCancelacion(id)
     };
@@ -124,14 +123,21 @@ export class MisCitas implements OnInit {
         this.cerrarDialogo();
         this.cerrarDetalles();
         this.mostrarNotificacion('La cita ha sido cancelada con éxito.', 'exito');
-        this.cargarCitasDelPaciente(); 
+        this.cargarCitasDelPaciente(); // Recarga la lista conectándose al backend
       },
       error: (err:any) => {
         console.error('Error:', err);
-        alert('No se pudo procesar la cancelación.');
+        this.cerrarDialogo();
+        this.mostrarNotificacion('No se pudo procesar la cancelación. Intente más tarde.', 'peligro');
       }
     });
   }
+
+  irAAgendar() {
+    this.router.navigate(['/paciente/agendar-cita']);
+  }
+
+  // ============ HELPERS Y UI ============
 
   private normalizarEstado(estadoBackend: string): string {
     if (!estadoBackend) return 'Pendiente';
@@ -161,37 +167,10 @@ export class MisCitas implements OnInit {
 
   verDetalles(cita: any) {
     this.citaSeleccionada = cita;
-    this.modoEdicion = false;
   }
 
   cerrarDetalles() {
     this.citaSeleccionada = null;
-    this.modoEdicion = false;
-  }
-
-  activarEdicion() {
-    this.modoEdicion = true;
-    this.citaEditando = { ...this.citaSeleccionada }; 
-  }
-
-  guardarEdicion() {
-    alert('Función de reprogramación activa.');
-    this.modoEdicion = false;
-  }
-
-  pedirEliminacion(id: any) {
-    this.dialogo = {
-      visible: true,
-      mensaje: '¿Deseas eliminar este registro de tu historial?',
-      tipo: 'alerta',
-      accionConfirmar: () => this.ejecutarEliminacion(id)
-    };
-  }
-
-  ejecutarEliminacion(id: any) {
-    this.citas = this.citas.filter(c => c.id !== id);
-    this.cerrarDialogo();
-    this.cerrarDetalles();
   }
 
   mostrarNotificacion(mensaje: string, tipo: string) {

@@ -6,7 +6,7 @@
     <div class="page-header">
       <div>
         <h2>Mis Citas</h2>
-        <p>Administra tus reservas y revisa tu historial de atenciones</p>
+        <p>Administra tus reservas y revisa tu historial de atenciones clínicas</p>
       </div>
       <button class="btn-secondary btn-back" (click)="volver()">
         <mat-icon>arrow_back</mat-icon> Volver al Inicio
@@ -78,85 +78,46 @@
     <div class="modal-overlay" *ngIf="citaSeleccionada" (click)="cerrarDetalles()">
       <div class="modal-card" (click)="$event.stopPropagation()">
         <div class="modal-header">
-          <h3>{{ modoEdicion ? 'Reprogramar Cita' : 'Detalles de la Cita' }}</h3>
+          <h3>Detalles de la Cita</h3>
           <button class="btn-icon" (click)="cerrarDetalles()"><mat-icon>close</mat-icon></button>
         </div>
         <div class="modal-body">
-          <ng-container *ngIf="!modoEdicion">
-            <div class="detail-group"><label>Tratamiento</label><p>{{ citaSeleccionada.tratamiento }}</p></div>
-            <div class="detail-row">
-              <div class="detail-group"><label>Fecha</label><p>{{ citaSeleccionada.fecha | date:'dd/MM/yyyy' }}</p></div>
-              <div class="detail-group"><label>Hora</label><p>{{ citaSeleccionada.hora }}</p></div>
-            </div>
-            <div class="detail-group"><label>Doctor Asignado</label><p>{{ citaSeleccionada.doctor }}</p></div>
-            <div class="detail-group">
-              <label>Estado actual</label>
-              <p class="status-text" [class.text-pend]="citaSeleccionada.estado === 'Pendiente'" [class.text-comp]="citaSeleccionada.estado === 'Completada'" [class.text-canc]="citaSeleccionada.estado === 'Cancelada'">
-                {{ citaSeleccionada.estado }}
-              </p>
-            </div>
-            <div class="detail-group notes-box"><label>Notas adicionales</label><p>{{ citaSeleccionada.notes || 'Sin notas adicionales.' }}</p></div>
-          </ng-container>
-
-          <ng-container *ngIf="modoEdicion">
-            <div class="detail-group">
-              <label>Tratamiento (No editable)</label>
-              <p>{{ citaEditando.tratamiento }}</p>
-            </div>
-            
-            <div class="form-group edit-form">
-              <label><mat-icon>calendar_today</mat-icon> Nueva Fecha</label>
-              <div style="position: relative; display: flex; align-items: center;">
-                <input class="custom-input" 
-                       [(ngModel)]="citaEditando.fecha" 
-                       [matDatepicker]="pickerEdicion" 
-                       placeholder="Seleccione un día"
-                       readonly 
-                       (click)="pickerEdicion.open()"
-                       style="cursor: pointer; background-color: #fff; margin-top: 8px;">
-                
-                <mat-icon (click)="pickerEdicion.open()" 
-                          style="position: absolute; right: 15px; color: #502763; cursor: pointer; top: 20px;">
-                  event
-                </mat-icon>
-                
-                <mat-datepicker #pickerEdicion></mat-datepicker>
-              </div>
-            </div>
-
-            <div class="form-group edit-form mt-3">
-              <label><mat-icon>schedule</mat-icon> Nueva Hora</label>
-              <mat-form-field appearance="outline" style="width: 100%; margin-top: 8px;">
-                <mat-label>Selecciona un horario</mat-label>
-                <mat-select [(ngModel)]="citaEditando.hora">
-                  <mat-option *ngFor="let hora of horasDisponibles" [value]="hora">
-                    {{ hora }}
-                  </mat-option>
-                </mat-select>
-              </mat-form-field>
-            </div>
-          </ng-container>
+          <div class="detail-group"><label>Tratamiento</label><p>{{ citaSeleccionada.tratamiento }}</p></div>
+          <div class="detail-row">
+            <div class="detail-group"><label>Fecha</label><p>{{ citaSeleccionada.fecha | date:'dd/MM/yyyy' }}</p></div>
+            <div class="detail-group"><label>Hora</label><p>{{ citaSeleccionada.hora }}</p></div>
+          </div>
+          <div class="detail-group"><label>Especialista Asignado</label><p>{{ citaSeleccionada.doctor }}</p></div>
+          <div class="detail-group">
+            <label>Estado actual</label>
+            <p class="status-text" [class.text-pend]="citaSeleccionada.estado === 'Pendiente'" [class.text-comp]="citaSeleccionada.estado === 'Completada'" [class.text-canc]="citaSeleccionada.estado === 'Cancelada'">
+              {{ citaSeleccionada.estado }}
+            </p>
+          </div>
+          <div class="detail-group notes-box">
+            <label>Instrucciones de la clínica</label>
+            <p>{{ citaSeleccionada.notes }}</p>
+          </div>
         </div>
         
         <div class="modal-footer">
-          <div class="action-buttons-grid" *ngIf="!modoEdicion">
-            <button class="btn-primary full-width" *ngIf="citaSeleccionada.estado === 'Pendiente'" (click)="activarEdicion()">
-              <mat-icon>edit</mat-icon> Reprogramar
-            </button>
-            <button class="btn-danger full-width" *ngIf="citaSeleccionada.estado === 'Pendiente'" (click)="pedirCancelacion(citaSeleccionada.id)">
-              Cancelar Cita
-            </button>
-            <button class="btn-outline-danger full-width" *ngIf="citaSeleccionada.estado !== 'Pendiente'" (click)="pedirEliminacion(citaSeleccionada.id)">
-              <mat-icon>delete</mat-icon> Eliminar Historial
+          <div class="action-buttons-grid">
+            <ng-container *ngIf="citaSeleccionada.estado === 'Pendiente'">
+              <button class="btn-danger full-width" (click)="pedirCancelacion(citaSeleccionada.id)">
+                <mat-icon>cancel</mat-icon> Cancelar esta Cita
+              </button>
+              <p style="text-align: center; color: #888; font-size: 0.85rem; margin: 0.5rem 0;">Si necesitas cambiar el horario, cancela esta reserva y genera una nueva.</p>
+              <button class="btn-outline-primary full-width" (click)="irAAgendar()">
+                <mat-icon>add_circle_outline</mat-icon> Agendar Nueva Cita
+              </button>
+            </ng-container>
+
+            <button class="btn-primary full-width" *ngIf="citaSeleccionada.estado !== 'Pendiente'" (click)="irAAgendar()">
+              <mat-icon>event_available</mat-icon> Agendar un nuevo turno
             </button>
           </div>
-          
-          <div style="display: flex; gap: 10px; margin-top: 15px;" *ngIf="modoEdicion">
-            <button class="btn-secondary" style="flex: 1; justify-content: center;" (click)="modoEdicion = false">Cancelar</button>
-            <button class="btn-primary" style="flex: 1;" (click)="guardarEdicion()">Guardar Cambios</button>
-          </div>
         </div>
-        </div>
+      </div>
     </div>
 
     <div class="modal-overlay dialog-overlay" *ngIf="dialogo.visible">
@@ -171,7 +132,7 @@
         <div class="dialog-actions">
           <button *ngIf="dialogo.tipo !== 'exito'" class="btn-secondary" (click)="cerrarDialogo()">No, volver</button>
           <button class="btn-primary" [class.btn-danger]="dialogo.tipo === 'peligro' || dialogo.tipo === 'alerta'" (click)="dialogo.accionConfirmar()">
-            {{ dialogo.tipo === 'exito' ? 'Entendido' : 'Sí, continuar' }}
+            {{ dialogo.tipo === 'exito' ? 'Entendido' : 'Sí, cancelar cita' }}
           </button>
         </div>
       </div>

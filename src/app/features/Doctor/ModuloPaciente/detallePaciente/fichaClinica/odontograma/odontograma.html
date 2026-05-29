@@ -2,51 +2,62 @@
   
   <div *ngIf="cargando" class="loading-odontograma mock-placeholder">
     <mat-icon class="spinner">sync</mat-icon>
-    <p>Cargando estado dental...</p>
+    <p>Sincronizando estado dental del paciente...</p>
   </div>
 
   <div class="canvas-area" *ngIf="!cargando">
     <div class="canvas-header">
-      <h4>Estado Actual (Odontograma Inmutable)</h4>
-      <p>Haga clic en una cara del diente para registrar un hallazgo.</p>
+      <h4>Odontograma Clínico Inicial</h4>
+      <p>Seleccione una cara (Vestibular, Oclusal, Palatino/Lingual, Mesial o Distal) para registrar un hallazgo.</p>
     </div>
     
     <div class="arco-dental superior">
       <div class="diente-wrapper" *ngFor="let pieza of dientesSuperiores" [title]="pieza + ' - ' + obtenerNombrePieza(pieza)">
         <span class="pieza-numero">{{ pieza }}</span>
-        
         <div class="diente-grid">
           <div class="cara vestibular" [ngClass]="obtenerClaseEstado(pieza, 'VESTIBULAR')" (click)="seleccionarPieza(pieza, 'VESTIBULAR')"></div>
-          <div class="cara lateral-izq" [ngClass]="obtenerClaseEstado(pieza, pieza < 20 ? 'DISTAL' : 'MESIAL')" (click)="seleccionarPieza(pieza, pieza < 20 ? 'DISTAL' : 'MESIAL')"></div>
+          <div class="cara lateral-izq" [ngClass]="obtenerClaseEstado(pieza, 'DISTAL')" (click)="seleccionarPieza(pieza, 'DISTAL')"></div>
           <div class="cara oclusal" [ngClass]="obtenerClaseEstado(pieza, 'OCLUSAL')" (click)="seleccionarPieza(pieza, 'OCLUSAL')"></div>
-          <div class="cara lateral-der" [ngClass]="obtenerClaseEstado(pieza, pieza < 20 ? 'MESIAL' : 'DISTAL')" (click)="seleccionarPieza(pieza, pieza < 20 ? 'MESIAL' : 'DISTAL')"></div>
+          <div class="cara lateral-der" [ngClass]="obtenerClaseEstado(pieza, 'MESIAL')" (click)="seleccionarPieza(pieza, 'MESIAL')"></div>
           <div class="cara palatino" [ngClass]="obtenerClaseEstado(pieza, 'PALATINO')" (click)="seleccionarPieza(pieza, 'PALATINO')"></div>
         </div>
       </div>
     </div>
 
     <div class="separador-arcos">
-      <span>Línea Media</span>
+      <span>Línea Media (Mordida)</span>
     </div>
 
     <div class="arco-dental inferior">
       <div class="diente-wrapper" *ngFor="let pieza of dientesInferiores" [title]="pieza + ' - ' + obtenerNombrePieza(pieza)">
         <div class="diente-grid">
           <div class="cara vestibular" [ngClass]="obtenerClaseEstado(pieza, 'VESTIBULAR')" (click)="seleccionarPieza(pieza, 'VESTIBULAR')"></div>
-          <div class="cara lateral-izq" [ngClass]="obtenerClaseEstado(pieza, pieza > 40 ? 'DISTAL' : 'MESIAL')" (click)="seleccionarPieza(pieza, pieza > 40 ? 'DISTAL' : 'MESIAL')"></div>
+          <div class="cara lateral-izq" [ngClass]="obtenerClaseEstado(pieza, 'DISTAL')" (click)="seleccionarPieza(pieza, 'DISTAL')"></div>
           <div class="cara oclusal" [ngClass]="obtenerClaseEstado(pieza, 'OCLUSAL')" (click)="seleccionarPieza(pieza, 'OCLUSAL')"></div>
-          <div class="cara lateral-der" [ngClass]="obtenerClaseEstado(pieza, pieza > 40 ? 'MESIAL' : 'DISTAL')" (click)="seleccionarPieza(pieza, pieza > 40 ? 'MESIAL' : 'DISTAL')"></div>
+          <div class="cara lateral-der" [ngClass]="obtenerClaseEstado(pieza, 'MESIAL')" (click)="seleccionarPieza(pieza, 'MESIAL')"></div>
           <div class="cara palatino" [ngClass]="obtenerClaseEstado(pieza, 'PALATINO')" (click)="seleccionarPieza(pieza, 'PALATINO')"></div>
         </div>
         <span class="pieza-numero">{{ pieza }}</span>
+      </div>
+    </div>
+
+    <div class="odontograma-leyenda">
+      <h5>Leyenda Clínica</h5>
+      <div class="leyenda-grid">
+        <div class="leyenda-item" *ngFor="let item of leyendaClinica">
+          <div class="color-box" [style.backgroundColor]="item.color" [class.border-box]="item.estado === 'SANO'"></div>
+          <span>{{ item.label }}</span>
+        </div>
       </div>
     </div>
   </div>
 
   <div class="panel-edicion fade-in-right" *ngIf="piezaSeleccionada">
     <div class="panel-header">
-      <h3>Registrar Diagnóstico</h3>
-      <button class="btn-close" (click)="piezaSeleccionada = null"><mat-icon>close</mat-icon></button>
+      <h3>Diagnóstico Dental</h3>
+      <button class="btn-close" [disabled]="guardandoHallazgo" (click)="piezaSeleccionada = null">
+        <mat-icon>close</mat-icon>
+      </button>
     </div>
     
     <div class="info-pieza-seleccionada">
@@ -54,26 +65,59 @@
         {{ piezaSeleccionada }} - {{ obtenerNombrePieza(piezaSeleccionada) }}
       </p>
       <div class="badges-row">
-        <span class="badge cara-badge">Cara: {{ posicionSeleccionada }}</span>
+        <span class="badge cara-badge">Sector: {{ posicionSeleccionada }}</span>
       </div>
     </div>
 
-    <div class="input-group">
-      <label>Estado Clínico</label>
-      <select [(ngModel)]="nuevoEstado">
+    <div class="success-banner fade-in-up" *ngIf="mensajeExito">
+      <mat-icon>check_circle</mat-icon>
+      <span>¡Registro clínico actualizado!</span>
+    </div>
+
+    <div class="input-group" *ngIf="!mensajeExito">
+      <label>Estado Clínico Encontrado</label>
+      <select [(ngModel)]="nuevoEstado" [disabled]="guardandoHallazgo">
         <option *ngFor="let est of estados" [value]="est">{{ est }}</option>
       </select>
     </div>
 
-    <div class="input-group">
-      <label>Notas Clínicas / Plan de Tratamiento</label>
-      <textarea [(ngModel)]="notasEstado" rows="4" placeholder="Escriba observaciones relevantes..."></textarea>
+    <div class="input-group" *ngIf="!mensajeExito">
+      <label>Observaciones (Opcional)</label>
+      <textarea [(ngModel)]="notasEstado" rows="4" placeholder="Indique tamaño de caries, tipo de restauración, etc..." [disabled]="guardandoHallazgo"></textarea>
     </div>
 
-    <div class="botones-accion-panel">
-      <button class="btn-cancelar" (click)="piezaSeleccionada = null">Cancelar</button>
-      <button class="btn-primary" (click)="guardarEstadoDental()">
-        <mat-icon>save</mat-icon> Guardar Hallazgo
+    <div class="mini-historial fade-in-up" *ngIf="!mensajeExito">
+      <div class="historial-header">
+        <mat-icon>history</mat-icon>
+        <h4>Historial de esta Pieza</h4>
+      </div>
+      
+      <div class="historial-vacio" *ngIf="historialPiezaSeleccionada.length === 0">
+        <p>No hay registros previos para este diente.</p>
+      </div>
+
+      <ul class="timeline" *ngIf="historialPiezaSeleccionada.length > 0">
+        <li *ngFor="let registro of historialPiezaSeleccionada">
+          <div class="timeline-date">{{ registro.fechaRegistro | date:'dd MMM yyyy, HH:mm' }}</div>
+          <div class="timeline-content">
+            <span class="history-badge" [style.color]="obtenerColorPorEstado(registro.estado)" [style.borderColor]="obtenerColorPorEstado(registro.estado)">
+              Cara {{ registro.posicion }} ➔ {{ registro.estado }}
+            </span>
+            <p class="notas-historial" *ngIf="registro.notas">"{{ registro.notas }}"</p>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+    <div class="botones-accion-panel" *ngIf="!mensajeExito">
+      <button type="button" class="btn-cancelar" [disabled]="guardandoHallazgo" (click)="piezaSeleccionada = null">
+        Descartar
+      </button>
+      <button type="button" class="btn-primary" [disabled]="guardandoHallazgo" (click)="guardarEstadoDental()">
+        <mat-icon [class.spinner]="guardandoHallazgo">
+          {{ guardandoHallazgo ? 'sync' : 'save' }}
+        </mat-icon>
+        <span>{{ guardandoHallazgo ? 'Procesando...' : 'Fijar Diagnóstico' }}</span>
       </button>
     </div>
   </div>

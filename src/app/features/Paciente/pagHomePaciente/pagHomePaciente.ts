@@ -1,3 +1,4 @@
+//features/Paciente/pagHomePaciente/pagHomePaciente.ts
 import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
@@ -37,13 +38,12 @@ export class PagHomePaciente implements OnInit {
   }
 
   cargarDatosIniciales() {
-    const nombreGuardado = localStorage.getItem('usuario_nombres'); 
-    if (nombreGuardado) {
-      this.nombrePaciente = nombreGuardado.split(' ')[0]; 
+    // 1. Obtener nombre seguro desde el Token
+    if (this.authService.estaLogueado()) {
+      this.nombrePaciente = this.authService.obtenerNombreUsuario().split(' ')[0];
     } else {
-      this.nombrePaciente = 'Anderson'; 
+      this.nombrePaciente = 'Paciente';
     }
-
     const idPaciente = this.authService.obtenerIdUsuarioLogueado();
 
     if (idPaciente) {

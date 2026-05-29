@@ -1,3 +1,4 @@
+//features/Paciente/ajustesCuentaPaciente/ajustesCuentaPaciente.ts
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -23,7 +24,7 @@ export class AjustesCuentaPaciente implements OnInit {
 
   // Mezclamos el molde real con los datos estáticos de relleno para no romper el HTML
   paciente: any = {
-    idUsuario: '',
+    id: '',
     nombres: 'Cargando...',
     apellidos: 'Cargando...',
     cedula: '',
@@ -45,10 +46,10 @@ export class AjustesCuentaPaciente implements OnInit {
   }
 
   cargarDatosReales() {
-    const idUsuario = this.authService.obtenerIdUsuarioLogueado();
+    const id = this.authService.obtenerIdUsuarioLogueado();
     
-    if (idUsuario) {
-      this.usuarioService.obtenerPorId(idUsuario).subscribe({
+    if (id) {
+      this.usuarioService.obtenerPorId(id).subscribe({
         next: (datosBackend: UsuarioDTO) => {
           // Sobreescribimos los datos falsos con los reales de Postgres
           this.paciente = { ...this.paciente, ...datosBackend };
@@ -73,12 +74,12 @@ export class AjustesCuentaPaciente implements OnInit {
   }
 
   guardarDatos() {
-    const idUsuario = this.authService.obtenerIdUsuarioLogueado();
+    const id = this.authService.obtenerIdUsuarioLogueado();
 
-    if (idUsuario) {
+    if (id) {
       // Armamos el DTO solo con los datos que espera tu backend
       const usuarioActualizado: UsuarioDTO = {
-        idUsuario: this.paciente.idUsuario,
+        id: this.paciente.id,
         cedula: this.paciente.cedula,
         nombres: this.paciente.nombres,
         apellidos: this.paciente.apellidos,
@@ -87,7 +88,7 @@ export class AjustesCuentaPaciente implements OnInit {
         rol: this.paciente.rol
       };
 
-      this.usuarioService.actualizarUsuario(idUsuario, usuarioActualizado).subscribe({
+      this.usuarioService.actualizarUsuario(id, usuarioActualizado).subscribe({
         next: (respuestaBackend) => {
           this.paciente = { ...this.paciente, ...respuestaBackend, direccion: this.datosEditando.direccion };
           this.modoEdicion = false;
