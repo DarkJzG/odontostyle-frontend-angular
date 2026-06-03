@@ -73,7 +73,7 @@ export class ListaPaciente implements OnInit {
   }
 
   verDetallePaciente(id: string) {
-    this.router.navigate([`/doctor/pacientes/${id}/detalle`]);
+    this.router.navigate([`/doctor/historias/${id}`]);
   } 
 
   editarPaciente(id: string) {

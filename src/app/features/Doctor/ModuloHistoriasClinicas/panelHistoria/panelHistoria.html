@@ -1,0 +1,95 @@
+<app-navbar-panel-doctor></app-navbar-panel-doctor>
+
+<div class="dashboard-wrapper fade-in-up">
+  
+  <div class="loading-state" *ngIf="cargando">
+    <mat-icon class="spinner">sync</mat-icon>
+    <p>Abriendo expediente clínico...</p>
+  </div>
+
+  <ng-container *ngIf="!cargando && paciente">
+    <div class="back-navigation">
+      <button class="btn-back" (click)="volverAlDirectorio()">
+        <mat-icon>arrow_back</mat-icon> Volver al directorio
+      </button>
+    </div>
+    
+    <header class="patient-header">
+      <div class="basic-info-col">
+        <div class="avatar-large"><mat-icon>person</mat-icon></div>
+        <div class="info-text">
+          <h2>{{ paciente.nombres }} {{ paciente.apellidos }}</h2>
+          <div class="badges">
+            <span class="badge-id">C.I: {{ paciente.cedula }}</span>
+            <span class="badge-age">Rol: {{ paciente.rol }}</span>
+          </div>
+        </div>
+      </div>
+      <div class="medical-alerts-col">
+        <div class="alert-box warning">
+          <div class="alert-title"><mat-icon>warning</mat-icon> Alergias</div>
+          <div class="alert-value">{{ perfilMedico?.alergias || 'No refiere' }}</div>
+        </div>
+        <div class="alert-box info">
+          <div class="alert-title"><mat-icon>medication</mat-icon> Medicamentos</div>
+          <div class="alert-value">{{ perfilMedico?.medicamentosHabituales || 'No refiere' }}</div>
+        </div>
+        <div class="alert-box danger">
+          <div class="alert-title"><mat-icon>health_and_safety</mat-icon> Enfermedades</div>
+          <div class="alert-value">{{ perfilMedico?.enfermedadesCronicas || 'No refiere' }}</div>
+        </div>
+      </div>
+    </header>
+
+    <nav class="tabs-navigation">
+      <button [class.active]="pestanaActiva === 'datos_medicos'" (click)="cambiarPestana('datos_medicos')">
+        <mat-icon>badge</mat-icon> Perfil Base
+      </button>
+      <button [class.active]="pestanaActiva === 'odontograma'" (click)="cambiarPestana('odontograma')">
+        <mat-icon>dentistry</mat-icon> Odontograma
+      </button>
+      <button [class.active]="pestanaActiva === 'evoluciones'" (click)="cambiarPestana('evoluciones')">
+        <mat-icon>timeline</mat-icon> Evoluciones
+      </button>
+      <button [class.active]="pestanaActiva === 'recetas'" (click)="cambiarPestana('recetas')">
+        <mat-icon>receipt_long</mat-icon> Recetas
+      </button>
+      <button [class.active]="pestanaActiva === 'archivos'" (click)="cambiarPestana('archivos')">
+        <mat-icon>folder_shared</mat-icon> Radiografías/Docs
+      </button>
+    </nav>
+
+    <main class="tab-content" [ngSwitch]="pestanaActiva">
+      
+      <app-datos-medicos 
+        *ngSwitchCase="'datos_medicos'"
+        [paciente]="paciente" 
+        [perfilMedico]="perfilMedico">
+      </app-datos-medicos>
+
+      <app-odontograma 
+        *ngSwitchCase="'odontograma'"
+        [idUsuario]="idUsuario">
+      </app-odontograma>
+
+      <div *ngSwitchCase="'evoluciones'" class="mock-placeholder fade-in-up">
+        <mat-icon>edit_note</mat-icon>
+        <h3>Registro de Evoluciones</h3>
+        <p>Próximamente: Tabla de progreso de tratamientos.</p>
+      </div>
+
+      <div *ngSwitchCase="'recetas'" class="mock-placeholder fade-in-up">
+        <mat-icon>medication</mat-icon>
+        <h3>Prescripciones y Recetas</h3>
+        <p>Próximamente: Generador de PDFs de recetas médicas.</p>
+      </div>
+
+      <div *ngSwitchCase="'archivos'" class="mock-placeholder fade-in-up">
+        <mat-icon>collections</mat-icon>
+        <h3>Gestor de Archivos DICOM/PDF</h3>
+        <p>Próximamente: Subida de radiografías panorámicas.</p>
+      </div>
+
+    </main>
+  </ng-container>
+</div>

@@ -1,3 +1,4 @@
+//src/app/features/Doctor/pagHome/pagHome.ts
 import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
@@ -22,14 +23,18 @@ export class PagHome implements OnInit {
 
   fechaHoy: Date = new Date();
   cargandoCitas: boolean = true;
-  citasHoy: any[] = []; // Ahora inicia vacío
-
+  citasHoy: any[] = []; 
   modulos = [
     { nombre: 'Pacientes', icono: 'people', ruta: '/doctor/pacientes' },
     { nombre: 'Horario Laboral', icono: 'schedule', ruta: '/doctor/configuracion-horarios' },
     { nombre: 'Agenda', icono: 'calendar_month', ruta: '/doctor/agenda' },
     { nombre: 'Historias Clínicas', icono: 'assignment_ind', ruta: '/doctor/historias' },
     { nombre: 'Tratamientos', icono: 'medical_services', ruta: '/doctor/tratamientos' },
+  ];
+
+  meses: string[] = [
+    'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+    'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
   ];
 
   ngOnInit(): void {

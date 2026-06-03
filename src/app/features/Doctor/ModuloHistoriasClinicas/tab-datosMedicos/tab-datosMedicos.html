@@ -1,0 +1,78 @@
+<div class="tab-pane fade-in-up">
+  <div class="pane-header">
+    <div>
+      <h3>Expediente Integral</h3>
+      <p style="color: #64748b; margin-top: 0.2rem; font-size: 0.9rem;">Gestione la información personal y médica del paciente</p>
+    </div>
+    <button class="btn-primary" (click)="guardarCambios()" [disabled]="guardando">
+      <mat-icon *ngIf="!guardando">save</mat-icon>
+      <mat-icon *ngIf="guardando" class="spinner">sync</mat-icon>
+      {{ guardando ? 'Guardando...' : 'Guardar Cambios' }}
+    </button>
+  </div>
+  
+  <h4 class="section-title">Información del Sistema</h4>
+  <div class="form-grid">
+    <div class="input-group">
+      <label>ID de Usuario</label>
+      <div class="copy-field">
+        <input type="text" [value]="paciente.idUsuario" readonly class="readonly-input">
+        <button class="btn-icon" (click)="copiarId()" title="Copiar ID">
+          <mat-icon>content_copy</mat-icon>
+        </button>
+      </div>
+    </div>
+    <div class="input-group">
+      <label>Rol asignado</label>
+      <input type="text" [value]="paciente.rol" readonly class="readonly-input">
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <h4 class="section-title">Datos Personales (Tabla: Usuario)</h4>
+  <div class="form-grid">
+    <div class="input-group">
+      <label>Nombres</label>
+      <input type="text" [(ngModel)]="paciente.nombres" placeholder="Ingrese los nombres">
+    </div>
+    <div class="input-group">
+      <label>Apellidos</label>
+      <input type="text" [(ngModel)]="paciente.apellidos" placeholder="Ingrese los apellidos">
+    </div>
+    <div class="input-group">
+      <label>Cédula</label>
+      <input type="text" [(ngModel)]="paciente.cedula" placeholder="Número de identidad">
+    </div>
+    <div class="input-group">
+      <label>Teléfono</label>
+      <input type="text" [(ngModel)]="paciente.telefono" placeholder="Número de contacto">
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <h4 class="section-title">Perfil Médico (Tabla: pacientePerfil)</h4>
+  <div class="form-grid">
+    <div class="input-group">
+      <label>Grupo sanguíneo</label>
+      <input type="text" [(ngModel)]="perfilMedico.grupoSanguineo" placeholder="Ej: O+">
+    </div>
+    <div class="input-group">
+      <label>Antecedentes familiares</label>
+      <input type="text" [(ngModel)]="perfilMedico.antecedentesFamiliares" placeholder="Antecedentes familiares">
+    </div>
+    <div class="input-group">
+      <label>Alergias</label>
+      <input type="text" [(ngModel)]="perfilMedico.alergias" placeholder="Especifique alergias">
+    </div>
+    <div class="input-group">
+      <label>Medicamentos habituales</label>
+      <input type="text" [(ngModel)]="perfilMedico.medicamentosHabituales" placeholder="Medicamentos actuales">
+    </div>
+    <div class="input-group">
+      <label>Motivo de consulta inicial</label>
+      <input type="text" [(ngModel)]="perfilMedico.motivoConsultaInicial" placeholder="Razón de la visita">
+    </div>
+  </div>
+</div>

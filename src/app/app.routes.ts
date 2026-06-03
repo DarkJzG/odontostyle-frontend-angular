@@ -16,6 +16,8 @@ import { ConfiguracionHorario } from './features/Doctor/ModuloHorarios/configura
 import { Tratamientos } from './features/Doctor/ModuloTratamientos/tratamientos/tratamientos';
 import { AgendaDoctor } from './features/Doctor/ModuloCitas/agenda/agenda';
 import { AgendarCitaDoctor } from './features/Doctor/ModuloCitas/agendarCitaDoctor/agendarCitaDoctor';
+import { PanelHistoria } from './features/Doctor/ModuloHistoriasClinicas/panelHistoria/panelHistoria';
+import { BuscarHistoria } from './features/Doctor/ModuloHistoriasClinicas/buscarHistoria/buscarHistoria';
 
 export const routes: Routes = [
   { path: '', component: Inicio },
@@ -44,6 +46,17 @@ export const routes: Routes = [
   
   { path: 'doctor/pacientes/:id/detalle', 
     component: DetallePaciente, 
+    canActivate: [roleGuard], 
+    data: { roles: ['DOCTOR'] } },
+  
+  //Modulo Historias Clínicas
+  { path: 'doctor/historias', 
+    component: BuscarHistoria, 
+    canActivate: [roleGuard], 
+    data: { roles: ['DOCTOR'] } },
+
+  { path: 'doctor/historias/:id',
+    component: PanelHistoria, 
     canActivate: [roleGuard], 
     data: { roles: ['DOCTOR'] } },
 

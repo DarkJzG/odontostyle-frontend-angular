@@ -1,0 +1,59 @@
+<app-navbar-panel-doctor></app-navbar-panel-doctor>
+
+<div class="search-wrapper fade-in-up">
+  <button class="btn-back" (click)="volverPagHome()">
+    <mat-icon>arrow_back</mat-icon> Volver al Inicio
+  </button>
+
+  <div class="search-container">
+    <div class="search-header">
+      <div class="icon-circle"><mat-icon>plagiarism</mat-icon></div>
+      <h2>Buscador de Historias Clínicas</h2>
+      <p>Ingrese el número de cédula del paciente para acceder a su expediente médico confidencial.</p>
+    </div>
+
+    <div class="search-box">
+      <input type="text" 
+             placeholder="Ej: 0401234567" 
+             [(ngModel)]="terminoBusqueda" 
+             (keyup.enter)="buscarPacienteClinico()">
+      
+      <button class="btn-clear" *ngIf="terminoBusqueda" (click)="limpiarBuscador()">
+        <mat-icon>close</mat-icon>
+      </button>
+
+      <button class="btn-search" (click)="buscarPacienteClinico()" [disabled]="cargando || !terminoBusqueda">
+        <mat-icon [class.spinner]="cargando">{{ cargando ? 'sync' : 'search' }}</mat-icon>
+        Buscar Expediente
+      </button>
+    </div>
+
+    <div class="result-area" *ngIf="busquedaRealizada">
+      
+      <div class="loading-state" *ngIf="cargando">
+        <p>Buscando en los archivos de la clínica...</p>
+      </div>
+
+      <div class="patient-card fade-in-up" *ngIf="!cargando && pacienteEncontrado">
+        <div class="card-info">
+          <mat-icon class="avatar">account_circle</mat-icon>
+          <div>
+            <h3>{{ pacienteEncontrado.nombres }} {{ pacienteEncontrado.apellidos }}</h3>
+            <p>C.I: {{ pacienteEncontrado.cedula }} | Tel: {{ pacienteEncontrado.telefono }}</p>
+          </div>
+        </div>
+        <button class="btn-open-record" (click)="abrirExpediente(pacienteEncontrado.id)">
+          <mat-icon>folder_open</mat-icon> Abrir Historia Clínica
+        </button>
+      </div>
+
+      <div class="not-found-card fade-in-up" *ngIf="!cargando && !pacienteEncontrado">
+        <mat-icon>folder_off</mat-icon>
+        <h3>Expediente no encontrado</h3>
+        <p>No existe ningún paciente registrado con la cédula "{{ terminoBusqueda }}".</p>
+        <button class="btn-secondary mt-3" (click)="limpiarBuscador()">Intentar otra búsqueda</button>
+      </div>
+
+    </div>
+  </div>
+</div>
