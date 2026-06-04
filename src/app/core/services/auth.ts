@@ -30,7 +30,7 @@ export class AuthService {
 
   obtenerNombreUsuario(): string {
     const tokenParsed = this.keycloak.getKeycloakInstance().tokenParsed;
-    return tokenParsed?.['preferred_username'] || 'Usuario';
+    return tokenParsed?.['given_name'] + ' ' + tokenParsed?.['family_name'] || 'Usuario';
   }
   obtenerIdUsuarioLogueado(): string {
     const tokenParsed = this.keycloak.getKeycloakInstance().tokenParsed;

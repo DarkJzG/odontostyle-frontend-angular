@@ -48,14 +48,20 @@
       <button [class.active]="pestanaActiva === 'odontograma'" (click)="cambiarPestana('odontograma')">
         <mat-icon>dentistry</mat-icon> Odontograma
       </button>
+      <button [class.active]="pestanaActiva === 'historial'" (click)="cambiarPestana('historial')">
+        <mat-icon>history</mat-icon> Historial
+      </button>
       <button [class.active]="pestanaActiva === 'evoluciones'" (click)="cambiarPestana('evoluciones')">
         <mat-icon>timeline</mat-icon> Evoluciones
       </button>
       <button [class.active]="pestanaActiva === 'recetas'" (click)="cambiarPestana('recetas')">
         <mat-icon>receipt_long</mat-icon> Recetas
       </button>
-      <button [class.active]="pestanaActiva === 'archivos'" (click)="cambiarPestana('archivos')">
-        <mat-icon>folder_shared</mat-icon> Radiografías/Docs
+      <button [class.active]="pestanaActiva === 'radiografias'" (click)="cambiarPestana('radiografias')">
+        <mat-icon>folder_shared</mat-icon> Radiografías
+      </button>
+      <button [class.active]="pestanaActiva === 'documentos'" (click)="cambiarPestana('documentos')">
+        <mat-icon>article</mat-icon> Documentos
       </button>
     </nav>
 
@@ -72,23 +78,33 @@
         [idUsuario]="idUsuario">
       </app-odontograma>
 
-      <div *ngSwitchCase="'evoluciones'" class="mock-placeholder fade-in-up">
-        <mat-icon>edit_note</mat-icon>
-        <h3>Registro de Evoluciones</h3>
-        <p>Próximamente: Tabla de progreso de tratamientos.</p>
-      </div>
+      <app-tab-evoluciones 
+        *ngSwitchCase="'evoluciones'"
+        [idUsuario]="idUsuario">
+      </app-tab-evoluciones>
 
-      <div *ngSwitchCase="'recetas'" class="mock-placeholder fade-in-up">
-        <mat-icon>medication</mat-icon>
-        <h3>Prescripciones y Recetas</h3>
-        <p>Próximamente: Generador de PDFs de recetas médicas.</p>
-      </div>
+      <app-tab-historial 
+        *ngSwitchCase="'historial'"
+        [idUsuario]="idUsuario">
+      </app-tab-historial>
 
-      <div *ngSwitchCase="'archivos'" class="mock-placeholder fade-in-up">
-        <mat-icon>collections</mat-icon>
-        <h3>Gestor de Archivos DICOM/PDF</h3>
-        <p>Próximamente: Subida de radiografías panorámicas.</p>
-      </div>
+      <app-tab-recetas 
+        *ngSwitchCase="'recetas'"
+        [idUsuario]="idUsuario"
+        [paciente]="paciente">
+      </app-tab-recetas>
+
+      <app-tab-radiografias 
+        *ngSwitchCase="'radiografias'"
+        [idUsuario]="idUsuario">
+      </app-tab-radiografias>
+
+      <app-tab-documentos 
+        *ngSwitchCase="'documentos'"
+        [idUsuario]="idUsuario"
+        [paciente]="paciente">
+      </app-tab-documentos>
+
 
     </main>
   </ng-container>

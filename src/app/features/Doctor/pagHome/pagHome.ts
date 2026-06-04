@@ -30,6 +30,7 @@ export class PagHome implements OnInit {
     { nombre: 'Agenda', icono: 'calendar_month', ruta: '/doctor/agenda' },
     { nombre: 'Historias Clínicas', icono: 'assignment_ind', ruta: '/doctor/historias' },
     { nombre: 'Tratamientos', icono: 'medical_services', ruta: '/doctor/tratamientos' },
+    { nombre: 'Documentos', icono: 'description', ruta: '/doctor/documentos' },
   ];
 
   meses: string[] = [

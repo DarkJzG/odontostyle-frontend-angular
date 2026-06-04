@@ -1,0 +1,76 @@
+<div class="tab-pane fade-in-up">
+  <div class="pane-header">
+    <div>
+      <h3>Imágenes y Radiografías</h3>
+      <p style="color: #64748b; margin-top: 0.2rem; font-size: 0.9rem;">Gestione el registro fotográfico y radiológico del paciente.</p>
+    </div>
+  </div>
+
+  <div class="radiografias-layout">
+    
+    <div class="upload-section">
+      <h4 class="section-title">Añadir Nueva Imagen</h4>
+      
+      <div class="upload-box" *ngIf="!previewUrl">
+        <mat-icon>cloud_upload</mat-icon>
+        <p>Haga clic para buscar en su computadora</p>
+        <input type="file" accept="image/*" (change)="alSeleccionarArchivo($event)">
+      </div>
+
+      <div class="preview-box fade-in-up" *ngIf="previewUrl">
+        <img [src]="previewUrl" alt="Vista previa">
+        <div class="form-group mt-3">
+          <label>Tipo de Estudio:</label>
+          <select [(ngModel)]="tipoRadiografia">
+            <option *ngFor="let tipo of tiposDisponibles" [value]="tipo">{{ tipo }}</option>
+          </select>
+        </div>
+        
+        <div class="action-buttons mt-3">
+          <button class="btn-cancelar" (click)="descartarArchivo()" [disabled]="subiendoArchivo">Descartar</button>
+          <button class="btn-primary" (click)="subirImagen()" [disabled]="subiendoArchivo">
+            <mat-icon [class.spinner]="subiendoArchivo">{{ subiendoArchivo ? 'sync' : 'upload' }}</mat-icon> 
+            {{ subiendoArchivo ? 'Subiendo...' : 'Guardar en Expediente' }}
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="gallery-section">
+      <h4 class="section-title">Galería del Paciente</h4>
+
+      <div class="loading-box" *ngIf="cargandoLista">
+        <mat-icon class="spinner">sync</mat-icon> Cargando galería...
+      </div>
+
+      <div class="empty-state" *ngIf="!cargandoLista && radiografias.length === 0">
+        <mat-icon>collections</mat-icon>
+        <p>El paciente no tiene imágenes registradas.</p>
+      </div>
+
+      <div class="image-grid" *ngIf="!cargandoLista && radiografias.length > 0">
+        <div class="image-card" *ngFor="let rx of radiografias">
+          <div class="img-container" (click)="abrirImagen(rx.urlArchivo)" title="Clic para ampliar">
+            <img [src]="rx.urlArchivo" alt="Radiografía">
+            <div class="zoom-overlay"><mat-icon>zoom_in</mat-icon></div>
+          </div>
+          <div class="img-info">
+            <span class="img-type">{{ rx.tipo }}</span>
+            <span class="img-date">{{ rx.creadoEn | date:'dd MMM yyyy' }}</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="lightbox-overlay" *ngIf="imagenAmpliada" (click)="cerrarImagen()">
+  
+  <button class="btn-close-lightbox" (click)="cerrarImagen()">
+    <mat-icon>close</mat-icon>
+  </button>
+
+  <img [src]="imagenAmpliada" class="lightbox-img" (click)="$event.stopPropagation()" alt="Radiografía Ampliada">
+  
+</div>

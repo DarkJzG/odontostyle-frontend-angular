@@ -9,6 +9,8 @@ import { NavbarPanelDoctor } from '../../../../core/layout/navbarPanelDoctor/nav
 import { CitaService } from '../../../../core/services/cita';
 import { HorarioDoctorService } from '../../../../core/services/horarioDoctor';
 import { AuthService } from '../../../../core/services/auth';
+import { EvolucionService } from '../../../../core/services/evolucion';
+import {EvolucionDTO} from '../../../../core/models/evolucionDTO';
 
 interface CeldaAgenda {
   diaDate: Date;
@@ -31,6 +33,7 @@ export class AgendaDoctor implements OnInit {
   private authService = inject(AuthService);
   private router = inject(Router);
   private cdr = inject(ChangeDetectorRef);
+  private evolucionService = inject(EvolucionService);
 
   cargando: boolean = true; 
   citasTotales: any[] = [];
@@ -45,6 +48,19 @@ export class AgendaDoctor implements OnInit {
   tituloSemanaVisual: string = '';
 
   dialogo = { visible: false, mensaje: '', tipo: '', accionConfirmar: () => {} };
+
+  modalEvolucionVisible: boolean = false;
+  guardandoEvolucion: boolean = false;
+  citaAAtender: any = null;
+  agendarProximaAutomaticamente: boolean = false;
+  
+  formularioEvolucion: EvolucionDTO = {
+    idCita: '',
+    descripcionProcedimiento: '',
+    prescripcionMedica: '',
+    observaciones: '',
+    proximaCitaSugerida: null
+  };
 
   ngOnInit(): void {
     // Calculamos el lunes de la semana actual al iniciar
@@ -85,9 +101,11 @@ export class AgendaDoctor implements OnInit {
           const [fecha, horaCompleta] = cita.fechaHoraInicio.split('T');
           const horaLimpia = horaCompleta.substring(0, 5); // "14:30"
           const tratamientoLimpio = (cita.nombreTratamiento || '').split(' con ')[0];
+          const idPaciente = cita.idPaciente || cita.pacienteId;
 
           return {
             id: cita.id, 
+            idPaciente: idPaciente,
             idRecortado: cita.id ? cita.id.toString().substring(0, 8).toUpperCase() : '',
             paciente: cita.nombrePaciente,
             tratamiento: tratamientoLimpio,
@@ -193,23 +211,48 @@ export class AgendaDoctor implements OnInit {
   // ================= ACCIONES Y HELPERS =================
 
   actualizarEstado(id: string, nuevoEstado: string) {
-    const msj = nuevoEstado === 'COMPLETADA' 
-      ? `¿Marcar esta consulta como completada?` 
-      : `¿Desea cancelar esta cita y liberar el espacio?`;
+    if (nuevoEstado === 'CANCELADA') {
+      this.dialogo = {
+        visible: true,
+        mensaje: `¿Está seguro de que desea cancelar esta cita y liberar el espacio en la agenda?`,
+        tipo: 'peligro',
+        accionConfirmar: () => this.ejecutarCancelacion(id)
+      };
+    } else if (nuevoEstado === 'COMPLETADA') {
+      // Buscamos los datos de la cita seleccionada para mostrarlos en el encabezado del formulario médico
+      this.citaAAtender = this.citasTotales.find(c => c.id === id);
       
-    this.dialogo = {
-      visible: true,
-      mensaje: msj,
-      tipo: nuevoEstado === 'COMPLETADA' ? 'exito' : 'peligro',
-      accionConfirmar: () => this.ejecutarActualizacion(id, nuevoEstado)
-    };
+      this.formularioEvolucion = {
+        idCita: id,
+        descripcionProcedimiento: '',
+        prescripcionMedica: '',
+        observaciones: '',
+        proximaCitaSugerida: null
+      };
+      this.agendarProximaAutomaticamente = false;
+      this.modalEvolucionVisible = true;
+      this.cdr.detectChanges();
+    }
+  }
+
+  ejecutarCancelacion(id: string) {
+    this.citaService.cambiarEstadoCita(id, 'CANCELADA').subscribe({
+      next: () => {
+        this.cerrarDialogo();
+        this.cargarDatosAgenda();
+      },
+      error: () => {
+        alert('Ocurrió un error al procesar la cancelación.');
+        this.cerrarDialogo();
+      }
+    });
   }
 
   ejecutarActualizacion(id: string, nuevoEstado: string) {
     this.citaService.cambiarEstadoCita(id, nuevoEstado).subscribe({
       next: () => {
         this.cerrarDialogo();
-        this.cargarDatosAgenda(); // Recargamos para actualizar la vista
+        this.cargarDatosAgenda(); 
       },
       error: () => {
         alert('Error al actualizar la cita.');
@@ -218,6 +261,47 @@ export class AgendaDoctor implements OnInit {
     });
   }
 
+  guardarEvolucionMedica() {
+    if (!this.formularioEvolucion.descripcionProcedimiento || this.formularioEvolucion.descripcionProcedimiento.trim().length < 10) {
+      alert('Por favor, redacte una descripción detallada del procedimiento realizado (mínimo 10 caracteres).');
+      return;
+    }
+
+    this.guardandoEvolucion = true;
+    this.cdr.detectChanges();
+
+    if (!this.formularioEvolucion.proximaCitaSugerida) {
+      this.formularioEvolucion.proximaCitaSugerida = null;
+    } else {
+      this.formularioEvolucion.proximaCitaSugerida = `${this.formularioEvolucion.proximaCitaSugerida}T00:00:00`;
+    }
+
+    this.evolucionService.registrarEvolucion(this.formularioEvolucion).subscribe({
+      next: () => {
+        this.guardandoEvolucion = false;
+        this.modalEvolucionVisible = false;
+        if (this.agendarProximaAutomaticamente && this.citaAAtender) {
+           const idPaciente = this.citaAAtender.idPaciente || this.citaAAtender.pacienteId; 
+           this.router.navigate(['/doctor/agendar-cita', this.citaAAtender.idPaciente]);
+        } else {
+           alert('Evolución clínica registrada e historial actualizado correctamente.');
+           this.cargarDatosAgenda(); 
+        }
+        this.citaAAtender = null;
+      },
+      error: (err) => {
+        this.guardandoEvolucion = false;
+        console.error(err);
+        alert('Error al guardar la evolución médica en el servidor.');
+      }
+    });
+  }
+
+  cerrarModalEvolucion() {
+    if (this.guardandoEvolucion) return;
+    this.modalEvolucionVisible = false;
+    this.citaAAtender = null;
+  }
   // Traductores Matemáticos de Horas
   private horaToDecimal(hora: string): number {
     const [hh, mm] = hora.split(':').map(Number);

@@ -7,11 +7,16 @@ import { NavbarPanelDoctor } from '../../../../core/layout/navbarPanelDoctor/nav
 import { PacienteService } from '../../../../core/services/paciente';
 import { DatosMedicos } from '../tab-datosMedicos/tab-datosMedicos'; 
 import { Odontograma } from '../tab-odontograma/tab-odontograma';
+import { TabEvoluciones } from '../tab-evoluciones/tab-evoluciones';
+import { TabHistorial } from '../tab-historial/tab-historial';
+import { TabRecetas } from '../tab-recetas/tab-recetas';
+import { TabRadiografias } from '../tab-radiografias/tab-radiografias';
+import { TabDocumentos } from '../tab-documentos/tab-documentos';
 
 @Component({
   selector: 'app-panel-historia',
   standalone: true,
-  imports: [CommonModule, MatIconModule, NavbarPanelDoctor, DatosMedicos, Odontograma],
+  imports: [CommonModule, MatIconModule, NavbarPanelDoctor, DatosMedicos, Odontograma, TabEvoluciones, TabHistorial, TabRecetas, TabRadiografias, TabDocumentos],
   templateUrl: './panelHistoria.html',
   styleUrl: './panelHistoria.css'
 })

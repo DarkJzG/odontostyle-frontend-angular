@@ -1,17 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { DatosPerfilPaciente } from './datos_perfilPaciente';
+import { TabHistorial } from './tab-historial';
 
-describe('DatosPerfilPaciente', () => {
-  let component: DatosPerfilPaciente;
-  let fixture: ComponentFixture<DatosPerfilPaciente>;
+describe('TabHistorial', () => {
+  let component: TabHistorial;
+  let fixture: ComponentFixture<TabHistorial>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [DatosPerfilPaciente],
+      imports: [TabHistorial],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(DatosPerfilPaciente);
+    fixture = TestBed.createComponent(TabHistorial);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });

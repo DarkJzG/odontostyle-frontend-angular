@@ -1,17 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { Odontograma } from './odontograma';
+import { TabRadiografias } from './tab-radiografias';
 
-describe('Odontograma', () => {
-  let component: Odontograma;
-  let fixture: ComponentFixture<Odontograma>;
+describe('TabRadiografias', () => {
+  let component: TabRadiografias;
+  let fixture: ComponentFixture<TabRadiografias>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [Odontograma],
+      imports: [TabRadiografias],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(Odontograma);
+    fixture = TestBed.createComponent(TabRadiografias);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });

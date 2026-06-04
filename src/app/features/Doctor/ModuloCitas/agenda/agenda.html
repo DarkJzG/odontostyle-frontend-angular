@@ -120,5 +120,82 @@
       </div>
     </div>
 
+    <div class="modal-overlay" *ngIf="modalEvolucionVisible" (click)="cerrarModalEvolucion()">
+    <div class="modal-card medical-form-card animate-slide-up" (click)="$event.stopPropagation()">
+      
+      <div class="modal-header-medical">
+        <div>
+          <h3>Registro de Evolución Odontológica</h3>
+          <p *ngIf="citaAAtender">Paciente: <strong>{{ citaAAtender.paciente }}</strong> ({{ citaAAtender.tratamiento }})</p>
+        </div>
+        <button class="btn-close-modal" [disabled]="guardandoEvolucion" (click)="cerrarModalEvolucion()">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+
+      <div class="modal-body-medical">
+        
+        <div class="input-group-medical">
+          <label>Descripción del Procedimiento Ejecutado *</label>
+          <textarea 
+            [(ngModel)]="formularioEvolucion.descripcionProcedimiento" 
+            rows="4" 
+            placeholder="Describa de forma detallada las intervenciones, cavidades tratadas, anestesia utilizada, materiales empleados, etc..."
+            [disabled]="guardandoEvolucion">
+          </textarea>
+          <small class="helper-input-text">Mínimo 10 caracteres. Esta nota se indexará directo en la historia clínica.</small>
+        </div>
+
+        <div class="input-group-medical">
+          <label>Prescripción Médica / Receta (Opcional)</label>
+          <textarea 
+            [(ngModel)]="formularioEvolucion.prescripcionMedica" 
+            rows="3" 
+            placeholder="Ej: Amoxicilina 500mg cada 8 horas por 5 días. Paracetamol 1g en caso de dolor."
+            [disabled]="guardandoEvolucion">
+          </textarea>
+        </div>
+
+        <div class="input-group-medical">
+          <label>Observaciones Clínicas Posteriores (Opcional)</label>
+          <input 
+            type="text" 
+            [(ngModel)]="formularioEvolucion.observaciones" 
+            placeholder="Ej: Paciente presenta ligera sensibilidad al frío o requiere control radiográfico."
+            [disabled]="guardandoEvolucion">
+        </div>
+
+        <div class="input-group-medical">
+          <label>Fecha Sugerida para Próxima Cita (Opcional)</label>
+        </div>
+
+        <div class="toggle-schedule-group">
+          <label class="toggle-switch">
+            <input type="checkbox" [(ngModel)]="agendarProximaAutomaticamente" [disabled]="guardandoEvolucion">
+            <span class="slider round"></span>
+          </label>
+          <div class="toggle-text">
+            <strong>Agendar siguiente turno inmediatamente</strong>
+            <p>Al guardar, el sistema abrirá el módulo de agendamiento para este paciente.</p>
+          </div>
+        </div>
+
+      </div>
+
+
+      <div class="modal-footer-medical">
+        <button type="button" class="btn-secondary" [disabled]="guardandoEvolucion" (click)="cerrarModalEvolucion()">
+          Cancelar
+        </button>
+        <button type="button" class="btn-success-clinical" [disabled]="guardandoEvolucion" (click)="guardarEvolucionMedica()">
+          <mat-icon class="spinner" *ngIf="guardandoEvolucion">sync</mat-icon>
+          <mat-icon *ngIf="!guardandoEvolucion">save_as</mat-icon>
+          <span>{{ guardandoEvolucion ? 'Procesando Ficha...' : (agendarProximaAutomaticamente ? 'Guardar y Agendar' : 'Cerrar Consulta') }}</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
   </main>
 </div>

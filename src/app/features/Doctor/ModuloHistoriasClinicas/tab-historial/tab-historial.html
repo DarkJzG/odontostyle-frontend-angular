@@ -1,0 +1,37 @@
+<div class="tab-pane fade-in-up">
+  <div class="pane-header">
+    <div>
+      <h3>Historial de Movimientos de Agenda</h3>
+      <p style="color: #64748b; margin-top: 0.2rem; font-size: 0.9rem;">Registro cronológico de todas las citas agendadas por el paciente.</p>
+    </div>
+  </div>
+
+  <div class="loading-box" *ngIf="cargando">
+    <mat-icon class="spinner">sync</mat-icon>
+    <p>Cargando historial...</p>
+  </div>
+
+  <div class="empty-state" *ngIf="!cargando && citas.length === 0">
+    <mat-icon>event_busy</mat-icon>
+    <p>El paciente no tiene citas registradas en el sistema.</p>
+  </div>
+
+  <div class="timeline-container" *ngIf="!cargando && citas.length > 0">
+    <div class="timeline-item" *ngFor="let cita of citas">
+      <div class="timeline-marker" [ngClass]="cita.estado.toLowerCase()">
+        <mat-icon *ngIf="cita.estado === 'COMPLETADA'">check_circle</mat-icon>
+        <mat-icon *ngIf="cita.estado === 'PENDIENTE'">schedule</mat-icon>
+        <mat-icon *ngIf="cita.estado === 'CANCELADA'">cancel</mat-icon>
+      </div>
+      <div class="timeline-content">
+        <div class="timeline-header">
+          <h4>{{ cita.nombreTratamiento }}</h4>
+          <span class="badge" [ngClass]="cita.estado.toLowerCase()">{{ cita.estado }}</span>
+        </div>
+        <div class="timeline-details">
+          <p><mat-icon>calendar_today</mat-icon> {{ cita.fechaHoraInicio | date:'longDate' }} a las {{ cita.fechaHoraInicio | date:'shortTime' }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
