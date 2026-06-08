@@ -1,0 +1,201 @@
+<div class="admin-wrapper">
+  <app-navbar-panel-doctor></app-navbar-panel-doctor>
+
+  <main class="dashboard-container fade-in-up">
+    <button class="btn-back" (click)="volverPagHome()">
+        <mat-icon>arrow_back</mat-icon> Volver al Inicio
+      </button>
+    <div class="page-header">
+      <div>
+        <h2>Agenda Clínica</h2>
+        <p>Monitorice su semana y gestione el flujo de pacientes.</p>
+      </div>
+      <button class="btn-primary" (click)="irA('/doctor/pacientes/registro')">
+        <mat-icon>person_add</mat-icon> Registrar Paciente Nuevo
+      </button>
+    </div>
+
+    <div class="agenda-layout">
+      <section class="calendar-section">
+        
+        <div class="calendar-controls">
+          <button class="btn-icon" (click)="cambiarSemana(-1)"><mat-icon>chevron_left</mat-icon></button>
+          <h3>{{ tituloSemanaVisual }}</h3>
+          <button class="btn-icon" (click)="cambiarSemana(1)"><mat-icon>chevron_right</mat-icon></button>
+        </div>
+
+        <div class="loading-box" *ngIf="cargando">
+          <mat-icon class="spinner-icon">sync</mat-icon>
+          <h3>Sincronizando calendario...</h3>
+        </div>
+
+        <div class="table-container" *ngIf="!cargando">
+          <table class="calendar-table">
+            <thead>
+              <tr>
+                <th class="time-col-header">Hora</th>
+                <th *ngFor="let dia of diasDeLaSemana" class="day-col-header">
+                  <div class="day-name">{{ obtenerNombreDia(dia) }}</div>
+                  <div class="day-date">{{ obtenerFechaCortaEsp(dia) }}</div>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let fila of matrizCalendario; let i = index">
+                <td class="time-cell">{{ bloquesHorarios[i] }}</td>
+                
+                <td *ngFor="let celda of fila" class="agenda-cell" [ngClass]="{'is-available': celda.disponible}">
+                  
+                  <div class="empty-block" *ngIf="!celda.disponible && !celda.cita"></div>
+                  
+                  <div class="available-block" *ngIf="celda.disponible">
+                    <span>Libre</span>
+                  </div>
+
+                  <div class="cita-chip" *ngIf="celda.cita"
+                       [ngClass]="{'chip-pendiente': celda.cita.estadoVisual === 'Pendiente', 
+                                   'chip-completada': celda.cita.estadoVisual === 'Completada', 
+                                   'chip-cancelada': celda.cita.estadoVisual === 'Cancelada'}">
+                    <div class="chip-patient">{{ celda.cita.paciente }}</div>
+                    <div class="chip-treat">{{ celda.cita.tratamiento }}</div>
+                  </div>
+
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <aside class="sidebar-section">
+        <div class="next-appointment-card">
+          <div class="card-header">
+            <h3>Atención Actual / Próxima</h3>
+            <div class="live-indicator" *ngIf="proximaCita"></div>
+          </div>
+
+          <div class="card-content" *ngIf="proximaCita">
+            <div class="time-huge">{{ proximaCita.horaAMPM }}</div>
+            <div class="date-sub">{{ formatearFechaLargaEsp(proximaCita.fecha) }}</div>
+            
+            <div class="patient-details">
+              <mat-icon class="avatar-icon">account_circle</mat-icon>
+              <h4>{{ proximaCita.paciente }}</h4>
+              <p class="treatment-text">{{ proximaCita.tratamiento }}</p>
+            </div>
+
+            <div class="action-buttons-grid">
+              <button class="btn-success" (click)="actualizarEstado(proximaCita.id, 'COMPLETADA')">
+                <mat-icon>check_circle</mat-icon> Marcar Atendida
+              </button>
+              <button class="btn-outline-danger" (click)="actualizarEstado(proximaCita.id, 'CANCELADA')">
+                <mat-icon>cancel</mat-icon> Cancelar Turno
+              </button>
+            </div>
+          </div>
+
+          <div class="empty-next" *ngIf="!proximaCita && !cargando">
+            <mat-icon>coffee</mat-icon>
+            <h4>Tiempo Libre</h4>
+            <p>No tiene pacientes en espera en este momento. Puede registrar pacientes de entrada directa.</p>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <div class="modal-overlay dialog-overlay" *ngIf="dialogo.visible">
+      <div class="dialog-card fade-in-up">
+        <div class="dialog-icon" [class.icon-danger]="dialogo.tipo === 'peligro'" [class.icon-success]="dialogo.tipo === 'exito'">
+          <mat-icon *ngIf="dialogo.tipo === 'peligro'">error_outline</mat-icon>
+          <mat-icon *ngIf="dialogo.tipo === 'exito'">help_outline</mat-icon>
+        </div>
+        <h3>Confirmar Acción</h3>
+        <p>{{ dialogo.mensaje }}</p>
+        <div class="dialog-actions">
+          <button class="btn-secondary" (click)="cerrarDialogo()">No, cancelar</button>
+          <button class="btn-primary" [class.btn-danger]="dialogo.tipo === 'peligro'" [class.btn-success]="dialogo.tipo === 'exito'" (click)="dialogo.accionConfirmar()">
+            Sí, confirmar
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-overlay" *ngIf="modalEvolucionVisible" (click)="cerrarModalEvolucion()">
+    <div class="modal-card medical-form-card animate-slide-up" (click)="$event.stopPropagation()">
+      
+      <div class="modal-header-medical">
+        <div>
+          <h3>Registro de Evolución Odontológica</h3>
+          <p *ngIf="citaAAtender">Paciente: <strong>{{ citaAAtender.paciente }}</strong> ({{ citaAAtender.tratamiento }})</p>
+        </div>
+        <button class="btn-close-modal" [disabled]="guardandoEvolucion" (click)="cerrarModalEvolucion()">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+
+      <div class="modal-body-medical">
+        
+        <div class="input-group-medical">
+          <label>Descripción del Procedimiento Ejecutado *</label>
+          <textarea 
+            [(ngModel)]="formularioEvolucion.descripcionProcedimiento" 
+            rows="4" 
+            placeholder="Describa de forma detallada las intervenciones, cavidades tratadas, anestesia utilizada, materiales empleados, etc..."
+            [disabled]="guardandoEvolucion">
+          </textarea>
+          <small class="helper-input-text">Mínimo 10 caracteres. Esta nota se indexará directo en la historia clínica.</small>
+        </div>
+
+        <div class="input-group-medical">
+          <label>Prescripción Médica / Receta (Opcional)</label>
+          <textarea 
+            [(ngModel)]="formularioEvolucion.prescripcionMedica" 
+            rows="3" 
+            placeholder="Ej: Amoxicilina 500mg cada 8 horas por 5 días. Paracetamol 1g en caso de dolor."
+            [disabled]="guardandoEvolucion">
+          </textarea>
+        </div>
+
+        <div class="input-group-medical">
+          <label>Observaciones Clínicas Posteriores (Opcional)</label>
+          <input 
+            type="text" 
+            [(ngModel)]="formularioEvolucion.observaciones" 
+            placeholder="Ej: Paciente presenta ligera sensibilidad al frío o requiere control radiográfico."
+            [disabled]="guardandoEvolucion">
+        </div>
+
+        <div class="input-group-medical">
+          <label>Fecha Sugerida para Próxima Cita (Opcional)</label>
+        </div>
+
+        <div class="toggle-schedule-group">
+          <label class="toggle-switch">
+            <input type="checkbox" [(ngModel)]="agendarProximaAutomaticamente" [disabled]="guardandoEvolucion">
+            <span class="slider round"></span>
+          </label>
+          <div class="toggle-text">
+            <strong>Agendar siguiente turno inmediatamente</strong>
+            <p>Al guardar, el sistema abrirá el módulo de agendamiento para este paciente.</p>
+          </div>
+        </div>
+
+      </div>
+
+
+      <div class="modal-footer-medical">
+        <button type="button" class="btn-secondary" [disabled]="guardandoEvolucion" (click)="cerrarModalEvolucion()">
+          Cancelar
+        </button>
+        <button type="button" class="btn-success-clinical" [disabled]="guardandoEvolucion" (click)="guardarEvolucionMedica()">
+          <mat-icon class="spinner" *ngIf="guardandoEvolucion">sync</mat-icon>
+          <mat-icon *ngIf="!guardandoEvolucion">save_as</mat-icon>
+          <span>{{ guardandoEvolucion ? 'Procesando Ficha...' : (agendarProximaAutomaticamente ? 'Guardar y Agendar' : 'Cerrar Consulta') }}</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  </main>
+</div>

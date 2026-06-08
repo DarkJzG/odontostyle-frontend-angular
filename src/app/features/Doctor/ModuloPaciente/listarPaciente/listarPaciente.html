@@ -1,59 +1,100 @@
 <app-navbar-panel-doctor></app-navbar-panel-doctor>
+
 <div class="lista-container fade-in-up">
+  <button class="btn-back" (click)="volverPagHome()">
+    <mat-icon>arrow_back</mat-icon> Volver al Inicio
+  </button>
   
   <div class="page-header">
     <div class="header-titles">
       <h2>Directorio de Pacientes</h2>
-      <p>Gestione la información y los perfiles médicos de sus pacientes.</p>
+      <p>Gestione las fichas clínicas, odontogramas e historias médicas del consultorio.</p>
     </div>
+    
     <div class="header-actions">
       <div class="search-box">
-        <span class="icon"><mat-icon>search</mat-icon></span>
-        <input  type="text" placeholder=" Buscar por cédula o nombre...">
+        <mat-icon class="icon">search</mat-icon>
+        <input type="text" placeholder="Buscar por número de cédula..." #inputCedula (keyup)="buscarPaciente(inputCedula.value)">
+        <button class="btn-clear" *ngIf="inputCedula.value" (click)="limpiarBuscador(inputCedula)">
+          <mat-icon>close</mat-icon>
+        </button>
       </div>
+      
       <button class="btn-primary" (click)="irARegistroNuevo()">
-        <mat-icon>add</mat-icon> Nuevo Paciente
+        <mat-icon>person_add</mat-icon> Nuevo Paciente
       </button>
     </div>
   </div>
 
-  <div class="table-card">
+  <div class="summary-widgets">
+    <div class="widget-card">
+      <div class="widget-icon primary-bg"><mat-icon>groups</mat-icon></div>
+      <div class="widget-info">
+        <h3>{{ pacientes.length }}</h3>
+        <p>Pacientes Totales</p>
+      </div>
+    </div>
+    <div class="widget-card">
+      <div class="widget-icon success-bg"><mat-icon>assignment_turned_in</mat-icon></div>
+      <div class="widget-info">
+        <h3>{{ pacientesFiltrados.length }}</h3>
+        <p>Resultados Activos</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="loading-container" *ngIf="cargando">
+    <div class="spinner-circle"></div>
+    <p>Sincronizando registros médicos...</p>
+  </div>
+
+  <div class="table-card" *ngIf="!cargando">
     <table class="pacientes-table">
       <thead>
         <tr>
           <th>Cédula</th>
           <th>Paciente</th>
-          <th>Contacto</th>
-          <th class="text-center">Acciones</th>
+          <th>Contacto de Urgencia / Correo</th>
+          <th class="text-center">Acciones Clínicas</th>
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let paciente of pacientes">
-          <td class="font-mono">{{ paciente.cedula }}</td>
+        <tr *ngFor="let paciente of pacientesFiltrados">
+          <td class="font-mono font-bold">{{ paciente.cedula }}</td>
           <td>
-            <div class="paciente-info">
-              <strong>{{ paciente.nombres }} {{ paciente.apellidos }}</strong>
+            <div class="paciente-profile-cell">
+              <div class="avatar-mini"><mat-icon>person</mat-icon></div>
+              <div class="paciente-info">
+                <strong class="clickable-name" (click)="verDetallePaciente(paciente.id)">
+                  {{ paciente.nombres }} {{ paciente.apellidos }}
+                </strong>
+                <span class="role-badge">Paciente Activo</span>
+              </div>
             </div>
           </td>
           <td>
             <div class="contacto-info">
               <span class="email-text"><mat-icon>phone</mat-icon> {{ paciente.telefono }}</span>
-              <span class="email-text"><mat-icon>email</mat-icon> {{ paciente.email }}</span>
+              <span class="email-text"><mat-icon>mail</mat-icon> {{ paciente.email }}</span>
             </div>
           </td>
           <td class="acciones-cell">
-            <button class="btn-icon btn-edit" (click)="irAPerfilMedico(paciente.idUsuario)" title="Historia Clínica">
-              <mat-icon>folder</mat-icon> Perfil Clínico
+            <button class="btn-action btn-view" (click)="verDetallePaciente(paciente.id)" title="Ver Expediente Médico Completo">
+              <mat-icon>visibility</mat-icon> Historia Clinica
             </button>
-            <button class="btn-icon btn-delete" (click)="eliminarPaciente(paciente.idUsuario, paciente.nombres)" title="Eliminar Paciente">
-              <mat-icon>delete</mat-icon>
+            <button class="btn-action btn-delete-profile" (click)="eliminarPaciente(paciente.id, paciente.nombres)" title="Dar de Baja del Sistema">
+              <mat-icon>delete_forever</mat-icon>
             </button>
           </td>
         </tr>
         
-        <tr *ngIf="pacientes.length === 0">
+        <tr *ngIf="pacientesFiltrados.length === 0">
           <td colspan="4" class="empty-state">
-            No hay pacientes registrados en el sistema.
+            <mat-icon class="empty-icon">person_search</mat-icon>
+            <p *ngIf="terminoBusqueda; else noData">No se encontró ningún paciente que coincida con la cédula "{{ terminoBusqueda }}".</p>
+            <ng-template #noData>
+              <p>No hay pacientes registrados en el sistema de OdontoStyle todavía.</p>
+            </ng-template>
           </td>
         </tr>
       </tbody>

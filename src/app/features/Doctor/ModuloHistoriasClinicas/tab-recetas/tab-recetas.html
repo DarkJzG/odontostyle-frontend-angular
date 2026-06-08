@@ -1,0 +1,98 @@
+<div class="tab-pane fade-in-up no-print">
+  <div class="pane-header">
+    <div>
+      <h3>Prescripciones y Recetario</h3>
+      <p style="color: #64748b; margin-top: 0.2rem; font-size: 0.9rem;">Genere o imprima las indicaciones farmacológicas para el paciente.</p>
+    </div>
+  </div>
+
+  <div class="recetas-layout">
+    
+    <div class="sesiones-list">
+      <h4 class="list-title">Historial de Consultas</h4>
+      
+      <div class="loading-box-small" *ngIf="cargandoLista">
+        <mat-icon class="spinner">sync</mat-icon> Buscando...
+      </div>
+      
+      <div class="empty-state-small" *ngIf="!cargandoLista && citasCompletadas.length === 0">
+        No hay registros clínicos previos.
+      </div>
+
+      <button class="sesion-btn" 
+              *ngFor="let cita of citasCompletadas" 
+              (click)="verReceta(cita.id, cita.fechaHoraInicio)">
+        <div class="date-badge">
+          <span class="day">{{ cita.fechaHoraInicio | date:'dd' }}</span>
+          <span class="month">{{ cita.fechaHoraInicio | date:'MMM' }}</span>
+        </div>
+        <div class="sesion-info">
+          <strong>Revisar Prescripción</strong>
+          <span>{{ cita.nombreTratamiento }}</span>
+        </div>
+        <mat-icon>receipt</mat-icon>
+      </button>
+    </div>
+
+    <div class="recetario-viewer">
+      
+      <div class="viewer-placeholder" *ngIf="!cargandoDetalle && !recetaSeleccionada">
+        <mat-icon>medication</mat-icon>
+        <p>Seleccione una consulta a la izquierda para visualizar la receta médica emitida ese día.</p>
+      </div>
+
+      <div class="loading-box" *ngIf="cargandoDetalle">
+        <mat-icon class="spinner">sync</mat-icon>
+        <p>Buscando medicamentos prescritos...</p>
+      </div>
+
+      <div class="viewer-placeholder" *ngIf="!cargandoDetalle && recetaSeleccionada === 'NO_APLICA'">
+        <mat-icon style="color: #ef4444;">block</mat-icon>
+        <p style="color: #ef4444;">No se emitieron medicamentos ni prescripciones en esta sesión.</p>
+      </div>
+
+      <div class="print-actions" *ngIf="!cargandoDetalle && recetaSeleccionada && recetaSeleccionada !== 'NO_APLICA'">
+        <button class="btn-primary" (click)="imprimirReceta()">
+          <mat-icon>print</mat-icon> Imprimir
+        </button>
+      </div>
+
+      <div class="receta-imprimible fade-in-up" *ngIf="!cargandoDetalle && recetaSeleccionada && recetaSeleccionada !== 'NO_APLICA'">
+        
+        <div class="receta-header">
+          <div class="logo-area">
+            <mat-icon>dentistry</mat-icon>
+            <h2>OdontoStyle</h2>
+          </div>
+          <div class="doctor-info">
+            <strong>Dr. {{ nombreDoctor ? nombreDoctor : 'OdontoStyle' }}</strong>
+            <p>Odontólogo General</p>
+            <p>Reg. Profesional: 12345678-MSP</p>
+          </div>
+        </div>
+
+        <div class="paciente-info-bar">
+          <div class="info-item"><span>Paciente:</span> <strong>{{ paciente?.nombres }} {{ paciente?.apellidos }}</strong></div>
+          <div class="info-item"><span>C.I:</span> <strong>{{ paciente?.cedula }}</strong></div>
+          <div class="info-item"><span>Fecha:</span> <strong>{{ fechaReceta | date:'longDate' }}</strong></div>
+        </div>
+
+        <div class="receta-body">
+          <div class="rx-symbol">OdontoStyle</div>
+          <div class="prescripcion-texto">{{ recetaSeleccionada }}</div>
+        </div>
+
+        <div class="receta-footer">
+          <div class="firma-linea">
+            Firma y Sello del Especialista
+          </div>
+          <div class="footer-contact">
+            <p>Dir: Tulcán, Ecuador | Tel: (06) 222-3333 | urgencias@odontostyle.com</p>
+            <p>Validez de esta receta: 3 días a partir de su emisión.</p>
+          </div>
+        </div>
+
+      </div>
+      </div>
+  </div>
+</div>

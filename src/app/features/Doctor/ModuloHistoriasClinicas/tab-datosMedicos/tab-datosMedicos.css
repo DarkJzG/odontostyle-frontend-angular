@@ -1,0 +1,139 @@
+.pane-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.pane-header h3 {
+  margin: 0;
+  color: #1e293b;
+  font-size: 1.3rem;
+}
+
+.section-title {
+  color: #502763;
+  font-size: 1.1rem;
+  margin-top: 0;
+  margin-bottom: 1rem;
+  border-left: 4px solid #22c55e;
+  padding-left: 0.5rem;
+}
+
+.divider {
+  height: 1px;
+  background-color: #e2e8f0;
+  margin: 2rem 0;
+  width: 100%;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+}
+
+.input-group label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #64748b;
+  margin-bottom: 0.4rem;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 0.8rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 1rem;
+  color: #1e293b;
+  box-sizing: border-box;
+}
+
+.input-group input:focus {
+  outline: none;
+  border-color: #502763;
+}
+
+.readonly-input {
+  background-color: #f8fafc !important;
+  color: #64748b !important;
+  border-color: #e2e8f0 !important;
+  cursor: not-allowed;
+  font-weight: 500;
+}
+
+.readonly-input:focus {
+  border-color: #e2e8f0 !important;
+  box-shadow: none !important;
+}
+
+.copy-field {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.copy-field input {
+  flex: 1;
+}
+
+.btn-icon {
+  background-color: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  color: #64748b;
+  border-radius: 8px;
+  width: 42px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-icon:hover {
+  background-color: #e2e8f0;
+  color: #502763;
+  border-color: #502763;
+}
+
+.btn-primary {
+  background-color: #22c55e;
+  color: white;
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn-primary:hover { background-color: #16a34a; }
+
+.btn-primary:disabled {
+  background-color: #94a3b8;
+  cursor: not-allowed;
+}
+
+.spinner {
+  animation: spin 1.5s linear infinite;
+}
+
+@keyframes spin { 100% { transform: rotate(360deg); } }
+
+.fade-in-up {
+  animation: fadeInUp 0.4s ease-out;
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}

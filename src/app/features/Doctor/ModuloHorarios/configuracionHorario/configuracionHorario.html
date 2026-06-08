@@ -1,0 +1,197 @@
+<app-navbar-panel-doctor></app-navbar-panel-doctor>
+
+<div class="horarios-wrapper fade-in-up">
+  <button class="btn-back" (click)="volverPagHome()">
+    <mat-icon>arrow_back</mat-icon> Volver al Inicio
+  </button>
+  <div class="page-header">
+    <div class="header-titles">
+      <h2>Gestión de Agenda y Horarios</h2>
+      <p>Configure su jornada habitual y registre sus ausencias médicas o días feriados.</p>
+    </div>
+  </div>
+
+  <nav class="tabs-navigation">
+    <button [class.active]="pestanaActiva === 'jornada'" (click)="cambiarPestana('jornada')">
+      <mat-icon>schedule</mat-icon> Jornada Habitual
+    </button>
+    <button [class.active]="pestanaActiva === 'ausencias'" (click)="cambiarPestana('ausencias')">
+      <mat-icon>event_busy</mat-icon> Días Libres / Feriados
+    </button>
+  </nav>
+
+  <div class="layout-grid fade-in-up" *ngIf="pestanaActiva === 'jornada'">
+    
+    <div class="form-card">
+      <div class="card-header">
+        <mat-icon>add_box</mat-icon>
+        <h3>Añadir Bloque Laboral</h3>
+      </div>
+      <div class="info-banner">
+        <mat-icon>info</mat-icon>
+        <p>Para incluir hora de almuerzo, agregue dos bloques (Ej: 08:00 a 13:00 y 14:00 a 18:00).</p>
+      </div>
+      
+      <form [formGroup]="horarioForm" (ngSubmit)="guardarHorario()" class="horario-form">
+        <div class="input-group">
+          <label>Día de la Semana</label>
+          <select formControlName="diaSemana">
+            <option value="" disabled selected>Seleccione un día...</option>
+            <option *ngFor="let dia of diasSemana" [value]="dia.id">{{ dia.nombre }}</option>
+          </select>
+        </div>
+
+        <div class="time-row">
+          <div class="input-group">
+            <label>Hora de Inicio</label>
+            <input type="time" formControlName="horaInicio">
+          </div>
+          <div class="input-group">
+            <label>Hora de Fin</label>
+            <input type="time" formControlName="horaFin">
+          </div>
+        </div>
+
+        <button type="submit" class="btn-primary" [disabled]="guardandoHorario">
+          <mat-icon [class.spinner]="guardandoHorario">{{ guardandoHorario ? 'sync' : 'save' }}</mat-icon>
+          <span>{{ guardandoHorario ? 'Guardando...' : 'Añadir Bloque' }}</span>
+        </button>
+      </form>
+    </div>
+
+    <div class="list-card">
+      <div class="card-header">
+        <mat-icon>calendar_month</mat-icon>
+        <h3>Su Plantilla Semanal</h3>
+      </div>
+
+      <div class="table-container">
+        <table class="horarios-table">
+          <thead>
+            <tr>
+              <th>Día</th>
+              <th>Bloque de Atención</th>
+              <th class="text-center">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let h of horariosActuales">
+              <td class="dia-cell">{{ obtenerNombreDia(h.diaSemana) }}</td>
+              <td class="horas-cell">
+                <span class="hora-badge">{{ h.horaInicio.substring(0, 5) }}</span>
+                <span class="separator">a</span>
+                <span class="hora-badge">{{ h.horaFin.substring(0, 5) }}</span>
+              </td>
+              <td class="text-center">
+                <button class="btn-icon-delete" (click)="eliminarHorario(h.id)" title="Eliminar bloque">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </td>
+            </tr>
+            <tr *ngIf="horariosActuales.length === 0">
+              <td colspan="3" class="empty-state">No hay horarios configurados.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="layout-grid fade-in-up" *ngIf="pestanaActiva === 'ausencias'">
+    
+    <div class="form-card">
+      <div class="card-header">
+        <mat-icon>do_not_disturb_on</mat-icon>
+        <h3>Registrar Excepción</h3>
+      </div>
+      
+      <form [formGroup]="ausenciaForm" (ngSubmit)="guardarAusencia()" class="horario-form">
+        
+        <div class="input-group">
+          <label>Motivo de la ausencia</label>
+          <input type="text" formControlName="motivo" placeholder="Ej: Feriado Nacional, Vacaciones...">
+        </div>
+
+        <div class="checkbox-group">
+          <input type="checkbox" id="diaCompleto" formControlName="esDiaCompleto">
+          <label for="diaCompleto">Bloquear días completos</label>
+        </div>
+
+        <div class="time-row">
+          <div class="input-group">
+            <label>Desde</label>
+            <input [type]="ausenciaForm.value.esDiaCompleto ? 'date' : 'datetime-local'" formControlName="fechaInicio">
+          </div>
+          <div class="input-group">
+            <label>Hasta</label>
+            <input [type]="ausenciaForm.value.esDiaCompleto ? 'date' : 'datetime-local'" formControlName="fechaFin">
+          </div>
+        </div>
+
+        <button type="submit" class="btn-danger" [disabled]="guardandoAusencia">
+          <mat-icon [class.spinner]="guardandoAusencia">{{ guardandoAusencia ? 'sync' : 'block' }}</mat-icon>
+          <span>{{ guardandoAusencia ? 'Bloqueando...' : 'Bloquear Agenda' }}</span>
+        </button>
+      </form>
+    </div>
+
+    <div class="list-card">
+      <div class="card-header">
+        <mat-icon>format_list_bulleted</mat-icon>
+        <h3>Bloqueos Activos</h3>
+      </div>
+
+      <div class="table-container">
+        <table class="horarios-table">
+          <thead>
+            <tr>
+              <th>Motivo</th>
+              <th>Periodo de Ausencia</th>
+              <th class="text-center">Acciones</th> </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let a of ausenciasActuales">
+              <td class="dia-cell">{{ a.motivo }}</td>
+              <td class="horas-cell">
+                <span class="hora-badge">{{ a.fechaInicio | date:'dd MMM yyyy' }}</span>
+                <span class="separator">hasta</span>
+                <span class="hora-badge">{{ a.fechaFin | date:'dd MMM yyyy' }}</span>
+              </td>
+              <td class="text-center">
+                <button class="btn-icon-delete" (click)="eliminarAusencia(a.id)" title="Quitar Bloqueo">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </td>
+            </tr>
+            <tr *ngIf="ausenciasActuales.length === 0">
+              <td colspan="3" class="empty-state">No tiene ausencias programadas.</td> </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast-notification fade-in-up" *ngIf="toastMensaje" [ngClass]="toastTipo">
+    <mat-icon *ngIf="toastTipo === 'success'">check_circle</mat-icon>
+    <mat-icon *ngIf="toastTipo === 'error'">error</mat-icon>
+    <mat-icon *ngIf="toastTipo === 'warning'">warning_amber</mat-icon>
+    <span>{{ toastMensaje }}</span>
+  </div>
+
+  <div class="modal-backdrop fade-in" *ngIf="modalVisible">
+    <div class="modal-box fade-in-up">
+      <div class="modal-header">
+        <mat-icon class="warning-icon">error_outline</mat-icon>
+        <h3>Confirmar Acción</h3>
+      </div>
+      <div class="modal-body">
+        <p>{{ modalMensaje }}</p>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-cancelar-modal" (click)="cerrarModal()">Cancelar</button>
+        <button class="btn-danger-modal" (click)="ejecutarAccionConfirmada()">Sí, proceder</button>
+      </div>
+    </div>
+  </div>
+
+</div>

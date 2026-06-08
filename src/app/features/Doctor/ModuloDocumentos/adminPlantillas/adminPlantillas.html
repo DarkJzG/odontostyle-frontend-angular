@@ -1,0 +1,112 @@
+<app-navbar-panel-doctor></app-navbar-panel-doctor>
+
+<div class="admin-templates-wrapper fade-in-up">
+  <button class="btn-back" (click)="volverAlInicio()">
+    <mat-icon>arrow_back</mat-icon> Volver al Inicio
+  </button>
+
+  <div class="page-header">
+    <div class="header-titles">
+      <h2>Configurador de Plantillas y Consentimientos</h2>
+      <p>Diseñe y edite los formatos legales que el consultorio utilizará para las firmas de los pacientes.</p>
+    </div>
+    <button class="btn-primary" (click)="iniciarNuevaPlantilla()" [disabled]="guardando">
+      <mat-icon>add_circle</mat-icon> Crear Nueva Plantilla
+    </button>
+  </div>
+
+  <div class="manager-layout">
+    
+    <div class="templates-sidebar">
+      <h4 class="sidebar-title">Formatos del Consultorio</h4>
+
+      <div class="loading-box" *ngIf="cargandoLista">
+        <mat-icon class="spinner">sync</mat-icon> Sincronizando...
+      </div>
+
+      <div class="empty-state" *ngIf="!cargandoLista && plantillas.length === 0">
+        <mat-icon>description</mat-icon>
+        <p>No hay formatos base guardados aún.</p>
+      </div>
+
+      <div class="templates-list" *ngIf="!cargandoLista && plantillas.length > 0">
+        <div class="template-card" 
+             *ngFor="let p of plantillas" 
+             [class.active]="plantillaSeleccionada?.id === p.id"
+             (click)="seleccionarPlantilla(p)">
+          <div class="card-body">
+            <mat-icon class="doc-icon">gavel</mat-icon>
+            <div class="info">
+              <strong>{{ p.titulo }}</strong>
+              <p>{{ (p.contenido.length > 60) ? (p.contenido | slice:0:60) + '...' : p.contenido }}</p>
+            </div>
+          </div>
+          <button class="btn-delete" (click)="eliminarPlantilla(p.id!, $event)" title="Eliminar Formato">
+            <mat-icon>delete_outline</mat-icon>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="editor-area">
+      
+      <div class="editor-placeholder" *ngIf="!plantillaSeleccionada">
+        <mat-icon>edit_note</mat-icon>
+        <h3>Editor Clínico Global</h3>
+        <p>Seleccione un formato de la izquierda para modificarlo o presione el botón superior para redactar uno desde cero.</p>
+      </div>
+
+      <div class="editor-card fade-in-up" *ngIf="plantillaSeleccionada">
+        <div class="editor-header">
+          <h3>{{ esNuevaPlantilla ? 'Nueva Plantilla de Soporte Legal' : 'Modificación de Formato Colectivo' }}</h3>
+        </div>
+
+        <div class="editor-body">
+          <div class="input-group">
+            <label>Título del Documento *</label>
+            <input type="text" [(ngModel)]="plantillaSeleccionada.titulo" placeholder="Ej: Consentimiento para Cirugía de Terceros Molares" [disabled]="guardando">
+          </div>
+
+          <div class="editor-split-container">
+            <div class="input-group textarea-col">
+              <label>Cuerpo y Cláusulas del Formato *</label>
+              <textarea #textareaEditor
+                        [(ngModel)]="plantillaSeleccionada.contenido" 
+                        rows="15" 
+                        placeholder="Redacte aquí los acuerdos, términos legales y advertencias sanitarias..."
+                        [disabled]="guardando">
+              </textarea>
+            </div>
+
+            <div class="tags-helper-panel">
+              <h5>Variables Dinámicas</h5>
+              <p class="helper-desc">Haga clic en cualquiera de estas variables para inyectarla en la posición del cursor de su texto. El sistema las reemplazará automáticamente con los datos reales de cada paciente.</p>
+              
+              <div class="tags-grid">
+                <button type="button" 
+                        class="tag-btn" 
+                        *ngFor="let tag of etiquetasMagicas" 
+                        (click)="inyectarEtiqueta(tag.tag)"
+                        [disabled]="guardando"
+                        [title]="tag.desc">
+                  <span class="tag-name">{{ tag.tag }}</span>
+                  <span class="tag-desc">{{ tag.desc }}</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="editor-footer">
+          <button type="button" class="btn-cancelar" (click)="plantillaSeleccionada = null" [disabled]="guardando">Cancelar</button>
+          <button type="button" class="btn-primary" (click)="guardarPlantilla()" [disabled]="guardando">
+            <mat-icon class="spinner" *ngIf="guardando">sync</mat-icon>
+            <span>{{ guardando ? 'Guardando Formato...' : 'Publicar Formato en Consultorio' }}</span>
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>

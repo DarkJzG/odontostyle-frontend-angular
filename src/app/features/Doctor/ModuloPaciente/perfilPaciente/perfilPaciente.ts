@@ -1,10 +1,11 @@
+
+//features/Doctor/ModuloPaciente/perfilPaciente/perfilPaciente.ts
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-// Importamos el servicio desde el CORE
 import { PacienteService } from '../../../../core/services/paciente';
-import { PacientePerfilDTO } from '../../../../core/models/perfilPaciente';
+import { PacientePerfilDTO } from '../../../../core/models/perfilPacienteDTO';
 
 @Component({
   selector: 'app-perfil-paciente',

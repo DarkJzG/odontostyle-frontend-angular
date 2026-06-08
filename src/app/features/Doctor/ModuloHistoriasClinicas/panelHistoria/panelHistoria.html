@@ -1,0 +1,111 @@
+<app-navbar-panel-doctor></app-navbar-panel-doctor>
+
+<div class="dashboard-wrapper fade-in-up">
+  
+  <div class="loading-state" *ngIf="cargando">
+    <mat-icon class="spinner">sync</mat-icon>
+    <p>Abriendo expediente clínico...</p>
+  </div>
+
+  <ng-container *ngIf="!cargando && paciente">
+    <div class="back-navigation">
+      <button class="btn-back" (click)="volverAlDirectorio()">
+        <mat-icon>arrow_back</mat-icon> Volver al directorio
+      </button>
+    </div>
+    
+    <header class="patient-header">
+      <div class="basic-info-col">
+        <div class="avatar-large"><mat-icon>person</mat-icon></div>
+        <div class="info-text">
+          <h2>{{ paciente.nombres }} {{ paciente.apellidos }}</h2>
+          <div class="badges">
+            <span class="badge-id">C.I: {{ paciente.cedula }}</span>
+            <span class="badge-age">Rol: {{ paciente.rol }}</span>
+          </div>
+        </div>
+      </div>
+      <div class="medical-alerts-col">
+        <div class="alert-box warning">
+          <div class="alert-title"><mat-icon>warning</mat-icon> Alergias</div>
+          <div class="alert-value">{{ perfilMedico?.alergias || 'No refiere' }}</div>
+        </div>
+        <div class="alert-box info">
+          <div class="alert-title"><mat-icon>medication</mat-icon> Medicamentos</div>
+          <div class="alert-value">{{ perfilMedico?.medicamentosHabituales || 'No refiere' }}</div>
+        </div>
+        <div class="alert-box danger">
+          <div class="alert-title"><mat-icon>health_and_safety</mat-icon> Enfermedades</div>
+          <div class="alert-value">{{ perfilMedico?.enfermedadesCronicas || 'No refiere' }}</div>
+        </div>
+      </div>
+    </header>
+
+    <nav class="tabs-navigation">
+      <button [class.active]="pestanaActiva === 'datos_medicos'" (click)="cambiarPestana('datos_medicos')">
+        <mat-icon>badge</mat-icon> Perfil Base
+      </button>
+      <button [class.active]="pestanaActiva === 'odontograma'" (click)="cambiarPestana('odontograma')">
+        <mat-icon>dentistry</mat-icon> Odontograma
+      </button>
+      <button [class.active]="pestanaActiva === 'historial'" (click)="cambiarPestana('historial')">
+        <mat-icon>history</mat-icon> Historial
+      </button>
+      <button [class.active]="pestanaActiva === 'evoluciones'" (click)="cambiarPestana('evoluciones')">
+        <mat-icon>timeline</mat-icon> Evoluciones
+      </button>
+      <button [class.active]="pestanaActiva === 'recetas'" (click)="cambiarPestana('recetas')">
+        <mat-icon>receipt_long</mat-icon> Recetas
+      </button>
+      <button [class.active]="pestanaActiva === 'radiografias'" (click)="cambiarPestana('radiografias')">
+        <mat-icon>folder_shared</mat-icon> Radiografías
+      </button>
+      <button [class.active]="pestanaActiva === 'documentos'" (click)="cambiarPestana('documentos')">
+        <mat-icon>article</mat-icon> Documentos
+      </button>
+    </nav>
+
+    <main class="tab-content" [ngSwitch]="pestanaActiva">
+      
+      <app-datos-medicos 
+        *ngSwitchCase="'datos_medicos'"
+        [paciente]="paciente" 
+        [perfilMedico]="perfilMedico">
+      </app-datos-medicos>
+
+      <app-odontograma 
+        *ngSwitchCase="'odontograma'"
+        [idUsuario]="idUsuario">
+      </app-odontograma>
+
+      <app-tab-evoluciones 
+        *ngSwitchCase="'evoluciones'"
+        [idUsuario]="idUsuario">
+      </app-tab-evoluciones>
+
+      <app-tab-historial 
+        *ngSwitchCase="'historial'"
+        [idUsuario]="idUsuario">
+      </app-tab-historial>
+
+      <app-tab-recetas 
+        *ngSwitchCase="'recetas'"
+        [idUsuario]="idUsuario"
+        [paciente]="paciente">
+      </app-tab-recetas>
+
+      <app-tab-radiografias 
+        *ngSwitchCase="'radiografias'"
+        [idUsuario]="idUsuario">
+      </app-tab-radiografias>
+
+      <app-tab-documentos 
+        *ngSwitchCase="'documentos'"
+        [idUsuario]="idUsuario"
+        [paciente]="paciente">
+      </app-tab-documentos>
+
+
+    </main>
+  </ng-container>
+</div>

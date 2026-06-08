@@ -1,0 +1,125 @@
+<app-navbar-panel-doctor></app-navbar-panel-doctor>
+
+<div class="horarios-wrapper fade-in-up">
+  <div class="page-header">
+    <button type="button" class="btn-back" (click)="volverPagHome()">
+      <mat-icon>arrow_back</mat-icon>
+      Volver al Inicio
+    </button>
+    <div class="header-titles">
+      <h2>Catálogo de Tratamientos</h2>
+      <p>Defina los procedimientos odontológicos, su duración para la agenda y el costo base.</p>
+    </div>
+  </div>
+
+  <div class="layout-grid">
+    
+    <div class="form-card">
+      <div class="card-header">
+        <mat-icon>{{ modoEdicion ? 'edit' : 'medical_services' }}</mat-icon>
+        <h3>{{ modoEdicion ? 'Editar Tratamiento' : 'Nuevo Tratamiento' }}</h3>
+      </div>
+      
+      <form [formGroup]="tratamientoForm" (ngSubmit)="guardarTratamiento()" class="horario-form">
+        <div class="input-group">
+          <label>Nombre del Procedimiento *</label>
+          <input type="text" formControlName="nombre" placeholder="Ej: Profilaxis Dental">
+        </div>
+
+        <div class="time-row">
+          <div class="input-group">
+            <label>Duración (Minutos) *</label>
+            <input type="number" formControlName="duracionMin" min="5" max="480">
+          </div>
+          <div class="input-group">
+            <label>Costo Base ($) *</label>
+            <input type="number" formControlName="precioBase" step="0.01" min="0">
+          </div>
+        </div>
+
+        <div class="input-group">
+          <label>Descripción (Opcional)</label>
+          <textarea formControlName="descripcion" rows="3" placeholder="Detalles del procedimiento..."></textarea>
+        </div>
+
+        <button type="submit" class="btn-primary" [disabled]="guardando">
+          <mat-icon [class.spinner]="guardando">{{ guardando ? 'sync' : 'save' }}</mat-icon>
+          <span>{{ guardando ? 'Guardando...' : (modoEdicion ? 'Actualizar' : 'Añadir al Catálogo') }}</span>
+        </button>
+        
+        <button type="button" class="btn-cancelar" *ngIf="modoEdicion" (click)="cancelarEdicion()" [disabled]="guardando">
+          Cancelar Edición
+        </button>
+      </form>
+    </div>
+
+    <div class="list-card">
+      <div class="card-header">
+        <mat-icon>list_alt</mat-icon>
+        <h3>Procedimientos Disponibles</h3>
+      </div>
+
+      <div class="loading-state" *ngIf="cargando">
+        <mat-icon class="spinner">sync</mat-icon>
+        <p>Cargando catálogo...</p>
+      </div>
+
+      <div class="table-container" *ngIf="!cargando">
+        <table class="horarios-table">
+          <thead>
+            <tr>
+              <th>Procedimiento</th>
+              <th>Tiempo</th>
+              <th>Precio Base</th>
+              <th class="text-center">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let t of tratamientos">
+              <td class="dia-cell">
+                {{ t.nombre }}
+                <div class="row-subtext" *ngIf="t.descripcion">{{ t.descripcion }}</div>
+              </td>
+              <td><span class="hora-badge">{{ t.duracionMin }} min</span></td>
+              <td class="price-cell">${{ t.precioBase }}</td>
+              <td class="text-center">
+                <div class="actions-row">
+                  <button class="btn-icon-edit" (click)="editarTratamiento(t)" title="Editar">
+                    <mat-icon>edit</mat-icon>
+                  </button>
+                  <button class="btn-icon-delete" (click)="eliminarTratamiento(t.id)" title="Eliminar">
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                </div>
+              </td>
+            </tr>
+            <tr *ngIf="tratamientos.length === 0">
+              <td colspan="4" class="empty-state">No hay tratamientos configurados.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast-notification fade-in-up" *ngIf="toastMensaje" [ngClass]="toastTipo">
+    <mat-icon *ngIf="toastTipo === 'success'">check_circle</mat-icon>
+    <mat-icon *ngIf="toastTipo === 'error'">error</mat-icon>
+    <mat-icon *ngIf="toastTipo === 'warning'">warning_amber</mat-icon>
+    <span>{{ toastMensaje }}</span>
+  </div>
+
+  <div class="modal-backdrop fade-in" *ngIf="modalVisible">
+    <div class="modal-box fade-in-up">
+      <div class="modal-header">
+        <mat-icon class="warning-icon">error_outline</mat-icon>
+        <h3>Confirmar Acción</h3>
+      </div>
+      <div class="modal-body"><p>{{ modalMensaje }}</p></div>
+      <div class="modal-actions">
+        <button class="btn-cancelar-modal" (click)="cerrarModal()">Cancelar</button>
+        <button class="btn-danger-modal" (click)="ejecutarAccionConfirmada()">Sí, eliminar</button>
+      </div>
+    </div>
+  </div>
+</div>

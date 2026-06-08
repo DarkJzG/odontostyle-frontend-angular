@@ -1,3 +1,4 @@
+//core/services/usuario.ts
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -16,6 +17,10 @@ export class UsuarioService {
   private apiUrl = `${environment.apiUrl}/api/usuarios`;
 
   // --- MÉTODOS QUE HABLAN CON TU BACKEND ---
+
+  listarUsuarios(): Observable<UsuarioDTO[]> {
+    return this.http.get<UsuarioDTO[]>(this.apiUrl);
+  }
 
   obtenerPorId(id: string): Observable<UsuarioDTO> {
     return this.http.get<UsuarioDTO>(`${this.apiUrl}/${id}`);
@@ -36,4 +41,9 @@ export class UsuarioService {
   eliminarUsuario(id: string): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
+
+  obtenerListaDoctores(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/lista/doctores`);
+  }
+
 }

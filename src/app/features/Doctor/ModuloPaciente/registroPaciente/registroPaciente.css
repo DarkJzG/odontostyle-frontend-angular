@@ -174,8 +174,47 @@
   cursor: not-allowed;
 }
 
+.btn-secondary {
+  background-color: #64748b;
+  color: white;
+  padding: 1rem 2rem;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.btn-secondary:hover {
+  background-color: #475569;
+  transform: translateY(-2px);
+}
+
+
 @media (max-width: 600px) {
   .form-grid {
     grid-template-columns: 1fr;
   }
 }
+
+.success-step { text-align: center; padding: 3rem 1rem; }
+.success-icon-huge { font-size: 80px; width: 80px; height: 80px; color: #10b981; margin-bottom: 1rem; }
+.success-step h3 { color: #1e293b; font-size: 1.8rem; margin: 0 0 0.5rem 0; }
+.success-step p { color: #64748b; margin-bottom: 2.5rem; font-size: 1.1rem; }
+.success-actions { display: flex; gap: 1.5rem; justify-content: center; }
+.large-btn { padding: 1.2rem 2rem; font-size: 1.1rem; display: flex; align-items: center; gap: 10px; }
+
+.btn-back {
+  background: none;
+  border: none;
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-bottom: 1rem;
+  padding: 0;
+}
+.btn-back:hover { color: #502763; }

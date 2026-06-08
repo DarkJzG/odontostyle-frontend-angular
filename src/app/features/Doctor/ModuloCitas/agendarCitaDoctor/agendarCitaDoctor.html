@@ -1,0 +1,122 @@
+<app-navbar-panel-doctor></app-navbar-panel-doctor>
+
+<div class="booking-wrapper fade-in-up">
+  
+  <div class="page-header" *ngIf="!citaConfirmada">
+    <button class="btn-back" (click)="volverAlInicio()">
+      <mat-icon>arrow_back</mat-icon> Cancelar y volver a Agenda
+    </button>
+    <h2>Asignación de Turno Rápido</h2>
+    <p>Agendando atención inmediata para: <strong>{{ nombrePacienteTarget }}</strong></p>
+  </div>
+
+  <div class="success-state fade-in-up" *ngIf="citaConfirmada">
+    <div class="success-icon">
+      <mat-icon>check_circle</mat-icon>
+    </div>
+    <h2>¡Consulta Agendada!</h2>
+    <p>El turno de {{ nombrePacienteTarget }} ha sido registrado en su agenda.</p>
+    
+    <div class="appointment-summary-card">
+      <div class="summary-row">
+        <span>Tratamiento:</span> <strong>{{ tratamientoSeleccionado?.nombre }}</strong>
+      </div>
+      <div class="summary-row highlight">
+        <span>Fecha y Hora:</span> <strong>{{ fechaSeleccionada }} a las {{ horaSeleccionada }}</strong>
+      </div>
+    </div>
+
+    <button class="btn-primary-large" (click)="volverAlInicio()">
+      <mat-icon>calendar_month</mat-icon> Ver mi Agenda
+    </button>
+  </div>
+
+  <div class="loading-state" *ngIf="cargandoDatos && !citaConfirmada">
+    <mat-icon class="spinner">sync</mat-icon>
+    <p>Preparando itinerarios de la clínica...</p>
+  </div>
+
+  <div class="wizard-container" *ngIf="!cargandoDatos && !citaConfirmada">
+    
+    <div class="wizard-step" [class.active]="pasoActual === 1" [class.completed]="pasoActual > 1">
+      <div class="step-header" (click)="volverPaso(1)">
+        <div class="step-number">1</div>
+        <h3>¿Qué procedimiento requiere el paciente?</h3>
+        <mat-icon class="check-icon" *ngIf="pasoActual > 1">check_circle</mat-icon>
+      </div>
+      
+      <div class="step-content" *ngIf="pasoActual === 1">
+        <div class="treatments-grid">
+          <button class="treatment-card" *ngFor="let t of listaTratamientos" (click)="seleccionarTratamiento(t)">
+            <mat-icon>medical_services</mat-icon>
+            <div class="text">
+              <h4>{{ t.nombre }}</h4>
+              <p>Tiempo asignado: {{ t.duracionMin }} min</p>
+            </div>
+            <mat-icon class="arrow">chevron_right</mat-icon>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="wizard-step" [class.active]="pasoActual === 3" [class.completed]="pasoActual > 3">
+      <div class="step-header" (click)="pasoActual > 3 ? volverPaso(3) : null">
+        <div class="step-number">2</div>
+        <h3>Elegir Espacio en Agenda</h3>
+        <mat-icon class="check-icon" *ngIf="pasoActual > 3">check_circle</mat-icon>
+      </div>
+      
+      <div class="step-content" *ngIf="pasoActual === 3">
+        <div class="datetime-picker">
+          <div class="calendar-section">
+            <label>Seleccione el día de atención:</label>
+            <input type="date" [value]="fechaSeleccionada" (change)="cambiarFecha($event)" class="date-input">
+          </div>
+
+          <div class="hours-section">
+            <label>Horarios Disponibles para usted:</label>
+            
+            <div class="loading-state-small" *ngIf="buscandoHoras">
+              <mat-icon class="spinner">sync</mat-icon> Calculando espacios libres...
+            </div>
+
+            <div class="hours-grid" *ngIf="!buscandoHoras && horasDisponibles.length > 0">
+              <button class="hour-btn" *ngFor="let hora of horasDisponibles" (click)="seleccionarHora(hora)">
+                {{ hora }}
+              </button>
+            </div>
+
+            <div class="empty-hours" *ngIf="!buscandoHoras && horasDisponibles.length === 0">
+              <mat-icon>event_busy</mat-icon>
+              <p>No tiene espacios suficientes este día para realizar un(a) {{ tratamientoSeleccionado?.nombre }}.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="wizard-step" [class.active]="pasoActual === 4">
+      <div class="step-header">
+        <div class="step-number">3</div>
+        <h3>Confirmar Cita</h3>
+      </div>
+      
+      <div class="step-content" *ngIf="pasoActual === 4">
+        <div class="confirmation-box">
+          <p>Está a punto de apartar un turno para:</p>
+          <h2>{{ tratamientoSeleccionado?.nombre }}</h2>
+          <div class="details">
+            <p><mat-icon>event</mat-icon> {{ fechaSeleccionada }}</p>
+            <p><mat-icon>schedule</mat-icon> {{ horaSeleccionada }}</p>
+          </div>
+          
+          <button class="btn-primary-large" (click)="confirmarCita()" [disabled]="guardandoCita">
+            <mat-icon [class.spinner]="guardandoCita">{{ guardandoCita ? 'sync' : 'verified' }}</mat-icon>
+            {{ guardandoCita ? 'Guardando en agenda...' : 'Finalizar y Bloquear Horario' }}
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

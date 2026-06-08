@@ -1,0 +1,80 @@
+<div class="tab-pane fade-in-up">
+  <div class="pane-header">
+    <div>
+      <h3>Registro Clínico de Evoluciones</h3>
+      <p style="color: #64748b; margin-top: 0.2rem; font-size: 0.9rem;">Hojas clínicas, intervenciones y prescripciones de cada sesión.</p>
+    </div>
+  </div>
+
+  <div class="evoluciones-layout">
+    
+    <div class="sesiones-list">
+      <h4 class="list-title">Sesiones Realizadas</h4>
+      
+      <div class="loading-box-small" *ngIf="cargandoLista">
+        <mat-icon class="spinner">sync</mat-icon> Buscando...
+      </div>
+      
+      <div class="empty-state-small" *ngIf="!cargandoLista && citasCompletadas.length === 0">
+        No hay registros clínicos.
+      </div>
+
+      <button class="sesion-btn" 
+              *ngFor="let cita of citasCompletadas" 
+              (click)="verNotaMedica(cita.id)">
+        <div class="date-badge">
+          <span class="day">{{ cita.fechaHoraInicio | date:'dd' }}</span>
+          <span class="month">{{ cita.fechaHoraInicio | date:'MMM' }}</span>
+        </div>
+        <div class="sesion-info">
+          <strong>{{ cita.nombreTratamiento }}</strong>
+          <span>{{ cita.fechaHoraInicio | date:'yyyy' }}</span>
+        </div>
+        <mat-icon>chevron_right</mat-icon>
+      </button>
+    </div>
+
+    <div class="evolucion-viewer">
+      
+      <div class="viewer-placeholder" *ngIf="!cargandoDetalle && !evolucionSeleccionada">
+        <mat-icon>find_in_page</mat-icon>
+        <p>Seleccione una sesión en el panel izquierdo para leer la nota médica.</p>
+      </div>
+
+      <div class="loading-box" *ngIf="cargandoDetalle">
+        <mat-icon class="spinner">sync</mat-icon>
+        <p>Extrayendo registro...</p>
+      </div>
+
+      <div class="medical-record-paper fade-in-up" *ngIf="!cargandoDetalle && evolucionSeleccionada">
+        <div class="paper-header">
+          <h2>Hoja de Evolución Clínica</h2>
+          <span class="registry-date">Registrado el: {{ evolucionSeleccionada.creadoEn | date:'longDate' }}</span>
+        </div>
+
+        <div class="paper-section">
+          <h3><mat-icon>medical_information</mat-icon> Procedimiento Ejecutado</h3>
+          <div class="paper-content text-body">{{ evolucionSeleccionada.descripcionProcedimiento }}</div>
+        </div>
+
+        <div class="paper-section" *ngIf="evolucionSeleccionada.prescripcionMedica">
+          <h3><mat-icon>prescriptions</mat-icon> Prescripción Médica (Receta)</h3>
+          <div class="paper-content text-body">{{ evolucionSeleccionada.prescripcionMedica }}</div>
+        </div>
+
+        <div class="paper-section" *ngIf="evolucionSeleccionada.observaciones">
+          <h3><mat-icon>edit_note</mat-icon> Observaciones Adicionales</h3>
+          <div class="paper-content text-body">{{ evolucionSeleccionada.observaciones }}</div>
+        </div>
+
+        <div class="paper-section" *ngIf="evolucionSeleccionada.proximaCitaSugerida">
+          <h3><mat-icon>event_available</mat-icon> Próxima Cita Sugerida</h3>
+          <div class="paper-content highlight-date">
+            {{ evolucionSeleccionada.proximaCitaSugerida | date:'longDate' }}
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

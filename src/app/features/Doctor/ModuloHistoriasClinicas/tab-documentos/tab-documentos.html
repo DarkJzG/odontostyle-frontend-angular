@@ -1,0 +1,83 @@
+<div class="tab-pane fade-in-up no-print">
+  <div class="pane-header">
+    <div>
+      <h3>Generador de Documentos y Consentimientos</h3>
+      <p style="color: #64748b; margin-top: 0.2rem; font-size: 0.9rem;">Seleccione una plantilla legal para adaptarla automáticamente a los datos de este expediente.</p>
+    </div>
+  </div>
+
+  <div class="docs-layout">
+    
+    <div class="formatos-list">
+      <h4 class="list-title">Formatos Disponibles</h4>
+      
+      <div class="loading-box-small" *ngIf="cargandoLista">
+        <mat-icon class="spinner">sync</mat-icon> Buscando...
+      </div>
+      
+      <div class="empty-state-small" *ngIf="!cargandoLista && listaPlantillas.length === 0">
+        No hay plantillas creadas en el sistema.
+      </div>
+
+      <button class="formato-btn" 
+              *ngFor="let p of listaPlantillas" 
+              [class.active]="plantillaSeleccionada?.id === p.id"
+              (click)="seleccionarYProcesarDocumento(p)">
+        <mat-icon>article</mat-icon>
+        <div class="btn-text">
+          <strong>{{ p.titulo }}</strong>
+          <span>Formato Estándar</span>
+        </div>
+        <mat-icon class="arrow">chevron_right</mat-icon>
+      </button>
+    </div>
+
+    <div class="documento-viewer">
+      
+      <div class="viewer-placeholder" *ngIf="!plantillaSeleccionada">
+        <mat-icon>history_edu</mat-icon>
+        <p>Seleccione un tipo de formato del catálogo izquierdo para redactar el consentimiento de este paciente.</p>
+      </div>
+
+      <div class="print-actions" *ngIf="plantillaSeleccionada">
+        <button class="btn-primary" (click)="imprimirDocumento()">
+          <mat-icon>print</mat-icon> Imprimir Consentimiento
+        </button>
+      </div>
+
+      <div class="hoja-documento-legal fade-in-up" *ngIf="plantillaSeleccionada">
+        
+        <div class="doc-header">
+          <div class="clinic-brand">
+            <mat-icon>dentistry</mat-icon>
+            <h2>OdontoStyle</h2>
+          </div>
+          <span class="doc-type-label">Expediente Clínico Oficial</span>
+        </div>
+
+        <div class="doc-body">
+          <h1 class="doc-title-render">{{ tituloProcesado }}</h1>
+          <div class="doc-text-render">{{ cuerpoProcesado }}</div>
+        </div>
+
+        <div class="doc-signatures">
+          <div class="signature-block">
+            <div class="line"></div>
+            <strong>{{ paciente?.nombres }} {{ paciente?.apellidos }}</strong>
+            <p>Firma del Paciente / Tutor</p>
+            <p>C.I: {{ paciente?.cedula }}</p>
+          </div>
+
+          <div class="signature-block">
+            <div class="line"></div>
+            <strong>Dr(a). {{ nombreDoctor ? nombreDoctor : 'Odontólogo Especialista' }}</strong>
+            <p>Firma del Profesional</p>
+            <p>OdontoStyle S.A.</p>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+</div>

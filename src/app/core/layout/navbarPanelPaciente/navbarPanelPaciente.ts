@@ -1,8 +1,9 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { AuthService } from '../../services/auth';
 
 @Component({
   selector: 'app-navbar-panel-paciente',
@@ -11,20 +12,24 @@ import { RouterModule } from '@angular/router';
   templateUrl: './navbarPanelPaciente.html',
   styleUrl: './navbarPanelPaciente.css'
 })
-export class NavbarPanelPaciente {
+export class NavbarPanelPaciente implements OnInit {
   private router = inject(Router);
+  private authService = inject(AuthService);
 
-  nombrePaciente: string = 'Anderson';
+  nombrePaciente: string = '';
   menuAbierto: boolean = false;
+
+  ngOnInit() {
+    if (this.authService.estaLogueado()) {
+      this.nombrePaciente = this.authService.obtenerNombreUsuario();
+    }
+  }
 
   toggleMenu() {
     this.menuAbierto = !this.menuAbierto;
   }
 
   cerrarSesion() {
-    if (typeof window !== 'undefined' && window.localStorage) {
-      localStorage.removeItem('jwt_token');
-    }
-    this.router.navigate(['/login']);
+    this.authService.cerrarSesion();
   }
 }

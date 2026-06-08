@@ -7,22 +7,36 @@
     <aside class="appointments-panel">
       <div class="panel-header">
         <h2>Citas de Hoy</h2>
-        <p class="date">{{ fechaHoy | date:'longDate' }}</p>
+        <p class="date">{{ fechaHoy | date:'longDate' }}</p> 
       </div>
 
       <div class="appointments-list">
-        <div class="appointment-card" *ngFor="let cita of citasHoy">
-          <div class="time-column">
-            <span class="time">{{ cita.hora }}</span>
-          </div>
-          <div class="details-column">
-            <h4>{{ cita.paciente }}</h4>
-            <p>{{ cita.tratamiento }}</p>
-            <span class="status-badge" [ngClass]="{'confirmed': cita.estado === 'Confirmada'}">
-              {{ cita.estado }}
-            </span>
-          </div>
+        
+        <div *ngIf="cargandoCitas" style="text-align: center; padding: 2rem; color: #502763;">
+          <mat-icon style="animation: girar 1.5s linear infinite; font-size: 30px; width: 30px; height: 30px;">sync</mat-icon>
+          <p style="margin-top: 10px; font-weight: 500;">Cargando tu agenda...</p>
         </div>
+
+        <div *ngIf="!cargandoCitas && citasHoy.length === 0" style="text-align: center; padding: 2rem; color: #64748b;">
+          <mat-icon style="font-size: 40px; width: 40px; height: 40px; color: #cbd5e1;">event_available</mat-icon>
+          <p style="margin-top: 10px;">No tienes citas programadas para hoy.</p>
+        </div>
+
+        <ng-container *ngIf="!cargandoCitas && citasHoy.length > 0">
+          <div class="appointment-card" *ngFor="let cita of citasHoy">
+            <div class="time-column">
+              <span class="time">{{ cita.hora }}</span>
+            </div>
+            <div class="details-column">
+              <h4>{{ cita.paciente }}</h4>
+              <p>{{ cita.tratamiento }}</p>
+              <span class="status-badge" [ngClass]="{'confirmed': cita.estado === 'Confirmada' || cita.estado === 'Completada'}">
+                {{ cita.estado }}
+              </span>
+            </div>
+          </div>
+        </ng-container>
+
       </div>
     </aside>
 

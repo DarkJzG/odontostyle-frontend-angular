@@ -1,0 +1,36 @@
+.tab-pane { padding-top: 1rem; }
+.pane-header { margin-bottom: 2rem; border-bottom: 1px solid #f1f5f9; padding-bottom: 1rem; }
+.pane-header h3 { margin: 0; color: #1e293b; font-size: 1.3rem; }
+
+.loading-box, .empty-state { text-align: center; padding: 3rem; color: #94a3b8; }
+.spinner { animation: spin 1s linear infinite; }
+@keyframes spin { 100% { transform: rotate(360deg); } }
+
+/* Timeline */
+.timeline-container { position: relative; padding-left: 2rem; margin-top: 1rem; }
+.timeline-container::before { content: ''; position: absolute; left: 0; top: 0; height: 100%; width: 2px; background: #e2e8f0; }
+
+.timeline-item { position: relative; margin-bottom: 2rem; padding-left: 1.5rem; }
+.timeline-marker { position: absolute; left: -2.7rem; top: 0; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: white; border: 2px solid; }
+.timeline-marker mat-icon { font-size: 16px; width: 16px; height: 16px; color: inherit; }
+
+.timeline-marker.completada { border-color: #10b981; color: #10b981; }
+.timeline-marker.pendiente { border-color: #f59e0b; color: #f59e0b; }
+.timeline-marker.cancelada { border-color: #ef4444; color: #ef4444; }
+
+.timeline-content { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 1.5rem; transition: 0.2s; }
+.timeline-content:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+
+.timeline-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.8rem; }
+.timeline-header h4 { margin: 0; color: #1e293b; font-size: 1.1rem; }
+
+.timeline-details p { margin: 0; display: flex; align-items: center; gap: 0.5rem; color: #64748b; font-size: 0.95rem; }
+.timeline-details mat-icon { font-size: 18px; width: 18px; height: 18px; }
+
+.badge { padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; text-transform: uppercase; }
+.badge.completada { background: #dcfce7; color: #166534; }
+.badge.pendiente { background: #fef3c7; color: #92400e; }
+.badge.cancelada { background: #fee2e2; color: #991b1b; }
+
+.fade-in-up { animation: fadeInUp 0.4s ease-out forwards; }
+@keyframes fadeInUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }

@@ -1,119 +1,200 @@
-import { Component, OnInit, inject } from '@angular/core';
+// features/Paciente/agendarCita/agendarCita.ts
+import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { MatIconModule } from '@angular/material/icon';
 import { Router } from '@angular/router';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule } from '@angular/material/core';
-import { MatInputModule } from '@angular/material/input';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { HttpClient } from '@angular/common/http';
-
-// AQUÍ ESTÁN LAS HERRAMIENTAS QUE FALTABAN
-import { MatSelectModule } from '@angular/material/select';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-
+import { MatIconModule } from '@angular/material/icon';
 import { NavbarPanelPaciente } from '../../../core/layout/navbarPanelPaciente/navbarPanelPaciente';
-import { CitaService } from '../../../core/services/cita';
+
 import { AuthService } from '../../../core/services/auth';
-import { environment } from '../../../../environments/environment';
+import { UsuarioService } from '../../../core/services/usuario';
+import { CitaService } from '../../../core/services/cita';
+import { TratamientoService} from '../../../core/services/tratamiento';
+import { TratamientoDTO } from '../../../core/models/tratamientoDTO';
 
 @Component({
   selector: 'app-agendar-cita',
   standalone: true,
-  // SE INCLUYEN EN LOS IMPORTS DEL COMPONENTE
-  imports: [
-    CommonModule, FormsModule, MatIconModule, NavbarPanelPaciente, 
-    MatDatepickerModule, MatNativeDateModule, MatInputModule, 
-    MatFormFieldModule, MatSelectModule, MatSnackBarModule
-  ],
+  imports: [CommonModule, MatIconModule, NavbarPanelPaciente],
   templateUrl: './agendarCita.html',
   styleUrl: './agendarCita.css'
 })
 export class AgendarCita implements OnInit {
   
   private router = inject(Router);
-  private citaService = inject(CitaService);
   private authService = inject(AuthService);
-  private http = inject(HttpClient);
-  private snackBar = inject(MatSnackBar); 
+  private citaService = inject(CitaService);
+  private tratamientoService = inject(TratamientoService);
+  private usuarioService = inject(UsuarioService);
+  private cdr = inject(ChangeDetectorRef);
 
-  tratamientos: any[] = [];
-  horasDisponibles = ['08:30 AM', '09:15 AM', '10:00 AM', '11:30 AM', '02:00 PM', '03:30 PM'];
+  // Pasos del Wizard (1, 2, 3, 4)
+  pasoActual: number = 1;
 
-  cita = {
-    tratamientoId: null as number | null,
-    fecha: null as Date | null,
-    horaSeleccionada: '' 
-  };
+  // Listas de Datos
+  listaTratamientos: TratamientoDTO[] = [];
+  listaDoctores: any[] = [];
+  fechasDisponibles: Date[] = []; // Opcional, para un calendario avanzado
+  horasDisponibles: string[] = [];
+
+  // Selecciones del Usuario
+  idPacienteLogueado: string = '';
+  tratamientoSeleccionado: TratamientoDTO | null = null;
+  doctorSeleccionado: any | null = null;
+  fechaSeleccionada: string = ''; // Formato YYYY-MM-DD
+  horaSeleccionada: string = '';
+
+  // Estados
+  cargandoDatos: boolean = true;
+  buscandoHoras: boolean = false;
+  guardandoCita: boolean = false;
+  citaConfirmada: boolean = false;
 
   ngOnInit(): void {
-    this.http.get<any[]>(`${environment.apiUrl}/api/tratamientos`).subscribe({
-      next: (data) => this.tratamientos = data,
-      error: (err) => console.error('Error al cargar tratamientos', err)
-    });
-  }
-
-  agendar() {
-    const idPaciente = this.authService.obtenerIdUsuarioLogueado();
-    
-    if (!idPaciente || !this.cita.fecha || !this.cita.horaSeleccionada || !this.cita.tratamientoId) {
-      this.mostrarNotificacion('Por favor completa todos los campos.', 'error');
+    this.idPacienteLogueado = this.authService.obtenerIdUsuarioLogueado();
+    if (!this.idPacienteLogueado) {
+      alert("Error de sesión. Inicie sesión nuevamente.");
+      this.router.navigate(['/']);
       return;
     }
+    this.cargarCatalogos();
+  }
 
-    const fechaISO = this.convertirAFormatoJava(this.cita.fecha, this.cita.horaSeleccionada);
-
-    const nuevaCita: any = {
-      pacienteId: idPaciente,
-      tratamientoId: Number(this.cita.tratamientoId),
-      fechaHoraInicio: fechaISO
-    };
-
-    this.citaService.agendarCita(nuevaCita).subscribe({
-      next: (respuesta) => {
-        this.mostrarNotificacion(`¡Reserva confirmada! Tratamiento: ${respuesta.nombreTratamiento}`, 'exito');
-        this.router.navigate(['/paciente/citas']); // Te redirigimos a "Mis Citas" de una vez
+  cargarCatalogos() {
+    this.cargandoDatos = true;
+    this.cdr.detectChanges();
+    
+    // 1. Cargar Tratamientos
+    this.tratamientoService.obtenerTratamientosActivos().subscribe({
+      next: (trats) => {
+        this.listaTratamientos = trats;
+        
+        // 2. Cargar Doctores
+        this.usuarioService.obtenerListaDoctores().subscribe({
+          next: (docs) => {
+            this.listaDoctores = docs;
+            setTimeout(() => {
+              this.cargandoDatos = false;
+              this.cdr.detectChanges();
+            });
+          },
+          error: (err) => {
+            console.error('Error al cargar doctores:', err);
+            this.finalizarCargaConError();
+          }
+        });
       },
       error: (err) => {
-        const mensajeError = err.error?.message || 'No se pudo agendar. Verifica la disponibilidad.';
-        this.mostrarNotificacion(mensajeError, 'error');
+        console.error('Error al cargar tratamientos:', err);
+        this.finalizarCargaConError();
       }
     });
   }
 
-  cancelar() {
-    this.router.navigate(['/paciente/home']);
+  finalizarCargaConError() {
+    this.cargandoDatos = false;
+    alert("Error al conectar con la clínica. Intente de nuevo más tarde.");
+    this.cdr.detectChanges();
   }
 
-  obtenerNombreTratamiento(): string {
-    const trat = this.tratamientos.find(t => t.id === this.cita.tratamientoId);
-    return trat ? trat.nombre : 'Seleccione un tratamiento';
+  // ================== CONTROL DEL WIZARD ==================
+
+  seleccionarTratamiento(tratamiento: TratamientoDTO) {
+    this.tratamientoSeleccionado = tratamiento;
+    this.pasoActual = 2;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  // MÉTODO PARA MANEJAR LAS ALERTAS MODERNAS
-  private mostrarNotificacion(mensaje: string, tipo: 'exito' | 'error') {
-    this.snackBar.open(mensaje, 'Cerrar', {
-      duration: 4000, 
-      horizontalPosition: 'center',
-      verticalPosition: 'bottom',
-      panelClass: tipo === 'exito' ? ['snack-success'] : ['snack-error']
+  seleccionarDoctor(doctor: any) {
+    this.doctorSeleccionado = doctor;
+    this.pasoActual = 3;
+    
+    // Pre-seleccionar la fecha de hoy si no hay ninguna
+    if(!this.fechaSeleccionada) {
+      const hoy = new Date();
+      this.fechaSeleccionada = hoy.toISOString().split('T')[0];
+    }
+    
+    this.buscarHorarios();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  cambiarFecha(event: Event) {
+    const input = event.target as HTMLInputElement;
+    this.fechaSeleccionada = input.value;
+    this.horaSeleccionada = ''; // Resetear hora si cambia de día
+    this.buscarHorarios();
+  }
+
+  seleccionarHora(hora: string) {
+    this.horaSeleccionada = hora;
+    this.pasoActual = 4;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  volverPaso(paso: number) {
+    if (this.guardandoCita || this.citaConfirmada) return;
+    this.pasoActual = paso;
+  }
+
+  // ================== LÓGICA CORE (BACKEND) ==================
+
+  buscarHorarios() {
+    if (!this.doctorSeleccionado || !this.fechaSeleccionada || !this.tratamientoSeleccionado) return;
+
+    this.buscandoHoras = true;
+    this.horasDisponibles = [];
+    this.cdr.detectChanges();
+
+    this.citaService.obtenerHorasDisponibles(
+      this.doctorSeleccionado.keycloakId || this.doctorSeleccionado.id, // Depende de cómo venga del backend
+      this.fechaSeleccionada,
+      this.tratamientoSeleccionado.id!
+    ).subscribe({
+      next: (horas) => {
+        this.horasDisponibles = horas;
+        this.buscandoHoras = false;
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error("Error buscando horas:", err);
+        this.buscandoHoras = false;
+        this.cdr.detectChanges();
+      }
     });
   }
 
-  private convertirAFormatoJava(fecha: Date, horaStr: string): string {
-    const year = fecha.getFullYear();
-    const month = (fecha.getMonth() + 1).toString().padStart(2, '0');
-    const day = fecha.getDate().toString().padStart(2, '0');
+  confirmarCita() {
+    if (!this.tratamientoSeleccionado || !this.doctorSeleccionado || !this.fechaSeleccionada || !this.horaSeleccionada) return;
 
-    const [time, modifier] = horaStr.split(' ');
-    let [hours, minutes] = time.split(':');
+    this.guardandoCita = true;
+    this.cdr.detectChanges();
 
-    if (hours === '12') hours = '00';
-    if (modifier === 'PM') hours = (parseInt(hours, 10) + 12).toString();
+    // Ensamblar el DTO para el backend
+    const payload = {
+      idPaciente: this.idPacienteLogueado,
+      idTratamiento: this.tratamientoSeleccionado.id!,
+      idDoctor: this.doctorSeleccionado.id,
+      fechaHoraInicio: `${this.fechaSeleccionada}T${this.horaSeleccionada}:00`
+    };
 
-    hours = hours.padStart(2, '0');
+    this.citaService.agendarCita(payload as any).subscribe({
+      next: () => {
+        this.guardandoCita = false;
+        this.citaConfirmada = true;
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        this.guardandoCita = false;
+        const mensajeError = err.error?.mensaje || "El horario seleccionado ya no está disponible. Por favor, seleccione otro.";
+        alert(mensajeError);
+        this.pasoActual = 3; 
+        this.buscarHorarios();
+        this.cdr.detectChanges();
+      }
+    });
+  }
 
-    return `${year}-${month}-${day}T${hours}:${minutes}:00`;
+  volverAlInicio() {
+    this.router.navigate(['/paciente/home']);
   }
 }

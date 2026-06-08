@@ -1,0 +1,45 @@
+.search-wrapper { padding: 3rem 5%; max-width: 900px; margin: 0 auto; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+.btn-back { background: none; border: none; color: #64748b; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; padding: 0; margin-bottom: 2rem; transition: 0.2s; }
+.btn-back:hover { color: #502763; }
+
+.search-container { background: white; border-radius: 20px; box-shadow: 0 10px 40px rgba(80, 39, 99, 0.05); padding: 4rem 3rem; text-align: center; border: 1px solid #e2e8f0; }
+.search-header { margin-bottom: 3rem; }
+.icon-circle { width: 80px; height: 80px; background: #faf7fc; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem auto; color: #502763; }
+.icon-circle mat-icon { font-size: 40px; width: 40px; height: 40px; }
+.search-header h2 { color: #1e293b; font-size: 2rem; margin: 0 0 0.5rem 0; }
+.search-header p { color: #64748b; font-size: 1.1rem; margin: 0; }
+
+.search-box { display: flex; align-items: center; background: #f8fafc; border: 2px solid #e2e8f0; border-radius: 12px; padding: 0.5rem; max-width: 650px; margin: 0 auto 3rem auto; transition: 0.3s; }
+.search-box:focus-within { border-color: #502763; background: white; }
+.search-box input { flex: 1; border: none; background: transparent; padding: 0.8rem 1rem; font-size: 1.1rem; outline: none; color: #1e293b; }
+.btn-clear { background: none; border: none; color: #94a3b8; cursor: pointer; padding: 0.5rem; display: flex; align-items: center; transition: 0.2s; }
+.btn-clear:hover { color: #ef4444; }
+
+.btn-search { background: #502763; color: white; border: none; padding: 0.8rem 1.5rem; border-radius: 8px; font-weight: 600; font-size: 1rem; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: 0.3s; margin-left: 0.5rem; }
+.btn-search:hover:not(:disabled) { background: #3a1c49; transform: translateY(-2px); }
+.btn-search:disabled { opacity: 0.7; cursor: not-allowed; }
+
+.result-area { border-top: 2px dashed #e2e8f0; padding-top: 3rem; }
+.loading-state { color: #64748b; font-weight: 500; }
+
+.patient-card { background: white; border: 2px solid #10b981; border-radius: 12px; padding: 1.5rem 2rem; display: flex; justify-content: space-between; align-items: center; text-align: left; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.1); }
+.card-info { display: flex; align-items: center; gap: 1.5rem; }
+.avatar { font-size: 50px; width: 50px; height: 50px; color: #cbd5e1; }
+.card-info h3 { margin: 0 0 0.3rem 0; color: #1e293b; font-size: 1.3rem; }
+.card-info p { margin: 0; color: #64748b; font-weight: 500; }
+
+.btn-open-record { background: #10b981; color: white; border: none; padding: 1rem 1.5rem; border-radius: 10px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: 0.3s; }
+.btn-open-record:hover { background: #059669; }
+
+.not-found-card { padding: 2rem; }
+.not-found-card mat-icon { font-size: 60px; width: 60px; height: 60px; margin-bottom: 1rem; color: #cbd5e1; }
+.not-found-card h3 { color: #475569; margin: 0 0 0.5rem 0; font-size: 1.4rem; }
+.not-found-card p { color: #94a3b8; margin: 0; }
+.mt-3 { margin-top: 1.5rem; }
+.btn-secondary { background: #f1f5f9; color: #475569; border: none; padding: 0.8rem 1.5rem; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.2s; }
+.btn-secondary:hover { background: #e2e8f0; }
+
+.fade-in-up { animation: fadeInUp 0.4s ease-out forwards; }
+@keyframes fadeInUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+.spinner { animation: spin 1s linear infinite; }
+@keyframes spin { 100% { transform: rotate(360deg); } }
