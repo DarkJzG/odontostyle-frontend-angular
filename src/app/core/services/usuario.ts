@@ -46,4 +46,9 @@ export class UsuarioService {
     return this.http.get<any[]>(`${this.apiUrl}/lista/doctores`);
   }
 
+  obtenerPorEmail(email: string) {
+  // Asegúrate de usar 'buscar-correo' que es lo que dice tu UsuarioController
+  return this.http.get<UsuarioDTO>(`${this.apiUrl}/buscar-correo?email=${email}`);
+}
+
 }
