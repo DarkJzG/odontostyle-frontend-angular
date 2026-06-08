@@ -18,6 +18,7 @@ import { AgendarCitaDoctor } from './features/Doctor/ModuloCitas/agendarCitaDoct
 import { PanelHistoria } from './features/Doctor/ModuloHistoriasClinicas/panelHistoria/panelHistoria';
 import { BuscarHistoria } from './features/Doctor/ModuloHistoriasClinicas/buscarHistoria/buscarHistoria';
 import { AdminPlantillas } from './features/Doctor/ModuloDocumentos/adminPlantillas/adminPlantillas';
+import { AdminWhatsapp } from './features/Doctor/ModuloRecordatorios/adminWhatsapp/adminWhatsapp';
 
 
 export const routes: Routes = [
@@ -82,6 +83,12 @@ export const routes: Routes = [
   //Modulo Documentos
   { path: 'doctor/documentos', 
     component: AdminPlantillas, 
+    canActivate: [roleGuard], 
+    data: { roles: ['DOCTOR'] } },
+  
+  //Modulo Recordatorios
+  { path: 'doctor/recordatorios', 
+    component: AdminWhatsapp, 
     canActivate: [roleGuard], 
     data: { roles: ['DOCTOR'] } },
     

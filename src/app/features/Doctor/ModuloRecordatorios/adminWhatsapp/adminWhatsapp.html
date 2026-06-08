@@ -1,0 +1,54 @@
+<app-navbar-panel-doctor></app-navbar-panel-doctor>
+
+<div class="whatsapp-wrapper fade-in-up">
+  <button class="btn-back" (click)="volver()">
+    <mat-icon>arrow_back</mat-icon> Volver al Panel
+  </button>
+
+  <div class="page-header">
+    <div class="header-titles">
+      <h2>Automatización de WhatsApp</h2>
+      <p>Configure los mensajes que el bot de OdontoStyle enviará a los pacientes.</p>
+    </div>
+    <button class="btn-primary" (click)="guardar()" [disabled]="guardando || cargando">
+      <mat-icon class="spinner" *ngIf="guardando">sync</mat-icon>
+      <mat-icon *ngIf="!guardando">save</mat-icon> Guardar Ajustes
+    </button>
+  </div>
+
+  <div class="loading-state" *ngIf="cargando">
+    <mat-icon class="spinner">sync</mat-icon> Cargando configuración...
+  </div>
+
+  <div class="editor-split-container" *ngIf="!cargando">
+    
+    <div class="forms-col">
+      <div class="input-group">
+        <label><mat-icon style="color: #25D366; vertical-align: middle;">calendar_month</mat-icon> Recordatorio 24 Horas Antes</label>
+        <textarea #editor24h
+                  [(ngModel)]="config.mensaje24h" 
+                  (focus)="setCampoActivo('24h')"
+                  rows="7" 
+                  placeholder="Escriba el mensaje aquí...">
+        </textarea>
+      </div>
+
+    </div>
+
+    <div class="tags-helper-panel">
+      <h5>Variables Dinámicas</h5>
+      <p class="helper-desc">Inyecte estas variables en el texto. El bot reemplazará los datos automáticamente en cada envío. Use *asteriscos* para negrita (Ej: *Texto*).</p>
+      
+      <div class="tags-grid">
+        <button type="button" 
+                class="tag-btn" 
+                *ngFor="let tag of etiquetasMagicas" 
+                (click)="inyectarEtiqueta(tag.tag)"
+                [title]="tag.desc">
+          <span class="tag-name">{{ tag.tag }}</span>
+          <span class="tag-desc">{{ tag.desc }}</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
