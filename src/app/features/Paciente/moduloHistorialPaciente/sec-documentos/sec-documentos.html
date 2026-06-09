@@ -1,0 +1,83 @@
+<div class="tab-pane fade-in-up no-print">
+  <div class="pane-header">
+    <div>
+      <h3>Formatos y Consentimientos</h3>
+      <p style="color: #64748b; margin-top: 0.2rem; font-size: 0.9rem;">Consulta y descarga los formularios clínicos necesarios para tus procedimientos.</p>
+    </div>
+  </div>
+
+  <div class="docs-layout">
+    
+    <div class="formatos-list">
+      <h4 class="list-title">Documentos Clínicos</h4>
+      
+      <div class="loading-box-small" *ngIf="cargandoLista">
+        <mat-icon class="spinner">sync</mat-icon> Buscando formatos...
+      </div>
+      
+      <div class="empty-state-small" style="text-align:center; padding: 2rem 0; color: #94a3b8;" *ngIf="!cargandoLista && listaPlantillas.length === 0">
+        No existen formatos cargados en la plataforma.
+      </div>
+
+      <button class="formato-btn" 
+              *ngFor="let p of listaPlantillas" 
+              [class.active]="plantillaSeleccionada?.id === p.id"
+              (click)="seleccionarYProcesarDocumento(p)">
+        <mat-icon>article</mat-icon>
+        <div class="btn-text">
+          <strong>{{ p.titulo }}</strong>
+          <span>OdontoStyle S.A.</span>
+        </div>
+        <mat-icon class="arrow">chevron_right</mat-icon>
+      </button>
+    </div>
+
+    <div class="documento-viewer">
+      
+      <div class="viewer-placeholder" *ngIf="!plantillaSeleccionada">
+        <mat-icon>history_edu</mat-icon>
+        <p>Selecciona un formato del panel izquierdo para leer o imprimir tu documento pre-llenado.</p>
+      </div>
+
+      <div class="print-actions" *ngIf="plantillaSeleccionada">
+        <button class="btn-primary" (click)="imprimirDocumento()">
+          <mat-icon>print</mat-icon> Descargar / Imprimir 
+        </button>
+      </div>
+
+      <div class="hoja-documento-legal fade-in-up" *ngIf="plantillaSeleccionada">
+        
+        <div class="doc-header">
+          <div class="clinic-brand">
+            <mat-icon>dentistry</mat-icon>
+            <h2>OdontoStyle</h2>
+          </div>
+          <span class="doc-type-label">Expediente Clínico Digital</span>
+        </div>
+
+        <div class="doc-body">
+          <h1 class="doc-title-render">{{ tituloProcesado }}</h1>
+          <div class="doc-text-render">{{ cuerpoProcesado }}</div>
+        </div>
+
+        <div class="doc-signatures">
+          <div class="signature-block">
+            <div class="line"></div>
+            <strong>{{ paciente?.nombres }} {{ paciente?.apellidos }}</strong>
+            <p>Firma del Paciente / Tutor Legal</p>
+            <p>C.I: {{ paciente?.cedula }}</p>
+          </div>
+
+          <div class="signature-block">
+            <div class="line"></div>
+            <strong>_____________________________</strong>
+            <p>Firma del Profesional Tratante</p>
+            <p>OdontoStyle S.A.</p>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+</div>

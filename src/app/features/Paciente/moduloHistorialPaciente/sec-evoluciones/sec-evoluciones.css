@@ -1,0 +1,51 @@
+.tab-pane { padding-top: 1rem; }
+.pane-header { margin-bottom: 2rem; border-bottom: 1px solid #f1f5f9; padding-bottom: 1rem; }
+.pane-header h3 { margin: 0; color: #1e293b; font-size: 1.3rem; }
+
+.evoluciones-layout { display: grid; grid-template-columns: 300px 1fr; gap: 2rem; align-items: start; }
+
+/* Lista Izquierda */
+.sesiones-list { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 1rem; height: 600px; overflow-y: auto; }
+.list-title { margin: 0 0 1rem 0; color: #475569; font-size: 0.95rem; text-transform: uppercase; font-weight: 700; border-bottom: 2px solid #e2e8f0; padding-bottom: 0.5rem; }
+
+.sesion-btn { width: 100%; background: white; border: 1px solid #cbd5e1; border-radius: 8px; padding: 0.8rem; margin-bottom: 0.8rem; display: flex; align-items: center; gap: 1rem; cursor: pointer; transition: 0.2s; text-align: left; }
+.sesion-btn:hover { border-color: #502763; transform: translateX(5px); box-shadow: 0 4px 10px rgba(80,39,99,0.1); }
+.sesion-btn mat-icon { margin-left: auto; color: #94a3b8; }
+
+.date-badge { background: #502763; color: white; border-radius: 6px; padding: 0.4rem; display: flex; flex-direction: column; align-items: center; justify-content: center; min-width: 45px; }
+.date-badge .day { font-size: 1.2rem; font-weight: 800; line-height: 1; }
+.date-badge .month { font-size: 0.7rem; text-transform: uppercase; font-weight: 600; margin-top: 2px; }
+
+.sesion-info { display: flex; flex-direction: column; }
+.sesion-info strong { color: #1e293b; font-size: 0.95rem; }
+.sesion-info span { color: #64748b; font-size: 0.8rem; }
+
+/* Hoja Derecha (Viewer) */
+.evolucion-viewer { min-height: 600px; }
+.viewer-placeholder { height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #94a3b8; border: 2px dashed #cbd5e1; border-radius: 12px; }
+.viewer-placeholder mat-icon { font-size: 60px; width: 60px; height: 60px; margin-bottom: 1rem; opacity: 0.5; }
+
+/* El "Papel" de la Historia Clínica */
+.medical-record-paper { background: white; border: 1px solid #e2e8f0; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); padding: 3rem; position: relative; }
+.medical-record-paper::before { content: ''; position: absolute; top: 0; left: 0; width: 6px; height: 100%; background: #10b981; border-radius: 12px 0 0 12px; }
+
+.paper-header { border-bottom: 2px solid #1e293b; padding-bottom: 1rem; margin-bottom: 2rem; }
+.paper-header h2 { margin: 0 0 0.5rem 0; color: #1e293b; font-size: 1.8rem; text-transform: uppercase; letter-spacing: 1px; }
+.registry-date { color: #64748b; font-weight: 600; }
+
+.paper-section { margin-bottom: 2rem; }
+.paper-section h3 { display: flex; align-items: center; gap: 0.5rem; color: #502763; margin: 0 0 0.8rem 0; font-size: 1.1rem; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.5rem; }
+.paper-section h3 mat-icon { font-size: 20px; width: 20px; height: 20px; }
+
+.paper-content { background: #f8fafc; padding: 1.5rem; border-radius: 8px; border-left: 3px solid #cbd5e1; }
+.text-body { white-space: pre-wrap; line-height: 1.6; color: #334155; font-size: 1.05rem; }
+.highlight-date { font-weight: 700; color: #059669; font-size: 1.1rem; border-left-color: #10b981; background: #ecfdf5; }
+
+.loading-box, .loading-box-small { text-align: center; color: #94a3b8; }
+.loading-box { padding: 5rem; }
+.spinner { animation: spin 1s linear infinite; }
+@keyframes spin { 100% { transform: rotate(360deg); } }
+.fade-in-up { animation: fadeInUp 0.4s ease-out forwards; }
+@keyframes fadeInUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+
+@media (max-width: 900px) { .evoluciones-layout { grid-template-columns: 1fr; } .sesiones-list { height: 300px; } }
