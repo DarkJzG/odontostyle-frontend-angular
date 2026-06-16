@@ -1,0 +1,109 @@
+.tab-pane { padding-top: 1rem; }
+.pane-header { margin-bottom: 2rem; border-bottom: 1px solid #f1f5f9; padding-bottom: 1rem; }
+.pane-header h3 { margin: 0; color: #1e293b; font-size: 1.3rem; }
+
+/* Galería al 100% de ancho */
+.gallery-section { width: 100%; }
+.image-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 2rem; }
+
+.image-card { background: white; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.03); transition: 0.2s; }
+.image-card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0,0,0,0.08); }
+
+.img-info { padding: 1rem; display: flex; flex-direction: column; gap: 0.3rem; }
+.img-type { font-weight: 700; color: #1e293b; font-size: 0.95rem; }
+.img-date { color: #64748b; font-size: 0.8rem; }
+
+.empty-state, .loading-box { text-align: center; padding: 4rem; color: #94a3b8; }
+.empty-state mat-icon { font-size: 60px; width: 60px; height: 60px; opacity: 0.5; margin-bottom: 1rem; }
+.spinner { animation: spin 1s linear infinite; }
+@keyframes spin { 100% { transform: rotate(360deg); } }
+.fade-in-up { animation: fadeInUp 0.4s ease-out forwards; }
+@keyframes fadeInUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ========================================================= */
+/* ESTILOS PARA LA GALERÍA (Efecto Hover)                    */
+/* ========================================================= */
+.img-container {
+  height: 220px; /* Un poco más alto ya que ocupa más ancho */
+  background: #1e293b; 
+  overflow: hidden; 
+  display: flex; 
+  align-items: center; 
+  justify-content: center;
+  position: relative;
+  cursor: pointer;
+}
+
+.img-container img { 
+  width: 100%; 
+  height: 100%; 
+  object-fit: cover; 
+  transition: transform 0.3s ease;
+}
+
+.img-container:hover img {
+  transform: scale(1.05); 
+}
+
+.zoom-overlay {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(80, 39, 99, 0.4); 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.zoom-overlay mat-icon {
+  color: white;
+  font-size: 40px;
+  width: 40px;
+  height: 40px;
+  transform: scale(0.5);
+  transition: transform 0.3s ease;
+}
+
+.img-container:hover .zoom-overlay { opacity: 1; }
+.img-container:hover .zoom-overlay mat-icon { transform: scale(1); }
+
+/* ========================================================= */
+/* ESTILOS DEL VISOR A PANTALLA COMPLETA (LIGHTBOX)          */
+/* ========================================================= */
+.lightbox-overlay {
+  position: fixed;
+  top: 0; left: 0; width: 100vw; height: 100vh;
+  background-color: rgba(15, 23, 42, 0.9); 
+  z-index: 9999; 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.2s ease-out;
+  backdrop-filter: blur(5px); 
+}
+
+.lightbox-img {
+  max-width: 90%;
+  max-height: 90vh;
+  object-fit: contain; 
+  border-radius: 8px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+  animation: scaleIn 0.3s ease-out;
+}
+
+.btn-close-lightbox {
+  position: absolute;
+  top: 20px; right: 30px;
+  background: rgba(255,255,255,0.1);
+  border: none; color: white; border-radius: 50%;
+  width: 50px; height: 50px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: all 0.2s; z-index: 10000;
+}
+
+.btn-close-lightbox mat-icon { font-size: 30px; width: 30px; height: 30px; }
+.btn-close-lightbox:hover { background: #ef4444; transform: rotate(90deg); }
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes scaleIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }

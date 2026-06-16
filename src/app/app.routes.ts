@@ -10,7 +10,7 @@ import { PagHomePaciente } from './features/Paciente/pagHomePaciente/pagHomePaci
 import { AgendarCita } from './features/Paciente/agendarCita/agendarCita';
 import { MisCitas } from './features/Paciente/misCitas/misCitas';
 import { AjustesCuentaPaciente } from './features/Paciente/ajustesCuentaPaciente/ajustesCuentaPaciente';
-import { HistorialClinicoPaciente } from './features/Paciente/historialClinicoPaciente/historialClinicoPaciente';
+import { HistorialClinicoPaciente } from './features/Paciente/moduloHistorialPaciente/historialClinicoPaciente/historialClinicoPaciente';
 import { ConfiguracionHorario } from './features/Doctor/ModuloHorarios/configuracionHorario/configuracionHorario';
 import { Tratamientos } from './features/Doctor/ModuloTratamientos/tratamientos/tratamientos';
 import { AgendaDoctor } from './features/Doctor/ModuloCitas/agenda/agenda';

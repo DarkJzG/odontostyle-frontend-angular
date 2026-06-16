@@ -1,0 +1,79 @@
+<app-navbar-panel-paciente></app-navbar-panel-paciente>
+
+<div class="dashboard-wrapper fade-in-up">
+  
+  <div class="loading-state" *ngIf="cargando">
+    <mat-icon class="spinner">sync</mat-icon>
+    <p>Abriendo tu expediente clínico...</p>
+  </div>
+
+  <ng-container *ngIf="!cargando && paciente">
+    <div class="back-navigation">
+      <button class="btn-back" (click)="volver()">
+        <mat-icon>arrow_back</mat-icon> Volver al Inicio
+      </button>
+    </div>
+    
+    <header class="patient-header">
+      <div class="basic-info-col">
+        <div class="avatar-large"><mat-icon>person</mat-icon></div>
+        <div class="info-text">
+          <h2>{{ paciente.nombres }} {{ paciente.apellidos }}</h2>
+          <div class="badges">
+            <span class="badge-id">C.I: {{ paciente.cedula }}</span>
+            <span class="badge-age">Mi Expediente Digital</span>
+          </div>
+        </div>
+      </div>
+      </header>
+
+    <nav class="tabs-navigation">
+      <button [class.active]="pestanaActiva === 'historial'" (click)="cambiarPestana('historial')">
+        <mat-icon>history</mat-icon> Historial de Citas
+      </button>
+      <button [class.active]="pestanaActiva === 'evoluciones'" (click)="cambiarPestana('evoluciones')">
+        <mat-icon>timeline</mat-icon> Notas y Evoluciones
+      </button>
+      <button [class.active]="pestanaActiva === 'recetas'" (click)="cambiarPestana('recetas')">
+        <mat-icon>receipt_long</mat-icon> Recetas
+      </button>
+      <button [class.active]="pestanaActiva === 'radiografias'" (click)="cambiarPestana('radiografias')">
+        <mat-icon>folder_shared</mat-icon> Radiografías
+      </button>
+      <button [class.active]="pestanaActiva === 'documentos'" (click)="cambiarPestana('documentos')">
+        <mat-icon>article</mat-icon> Documentos
+      </button>
+    </nav>
+
+    <main class="tab-content" [ngSwitch]="pestanaActiva">
+      
+      <app-sec-historial 
+        *ngSwitchCase="'historial'"
+        [idUsuario]="idUsuario">
+      </app-sec-historial>
+
+      <app-sec-evoluciones 
+        *ngSwitchCase="'evoluciones'"
+        [idUsuario]="idUsuario">
+      </app-sec-evoluciones>
+
+      <app-sec-recetas 
+        *ngSwitchCase="'recetas'"
+        [idUsuario]="idUsuario"
+        [paciente]="paciente">
+      </app-sec-recetas>
+
+      <app-sec-radiografias 
+        *ngSwitchCase="'radiografias'"
+        [idUsuario]="idUsuario">
+      </app-sec-radiografias>
+
+      <app-sec-documentos 
+        *ngSwitchCase="'documentos'"
+        [idUsuario]="idUsuario"
+        [paciente]="paciente">
+      </app-sec-documentos>
+
+    </main>
+  </ng-container>
+</div>

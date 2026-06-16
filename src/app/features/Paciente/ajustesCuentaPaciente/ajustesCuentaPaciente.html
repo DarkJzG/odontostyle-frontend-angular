@@ -1,125 +1,73 @@
-<div class="admin-wrapper">
-  <app-navbar-panel-paciente></app-navbar-panel-paciente>
+<app-navbar-panel-paciente></app-navbar-panel-paciente>
 
-  <main class="dashboard-container fade-in-up">
+<div class="profile-wrapper fade-in-up">
+  <button class="btn-back" (click)="volver()">
+    <mat-icon>arrow_back</mat-icon> Volver al Inicio
+  </button>
+
+  <div class="profile-container">
     
-    <div class="page-header">
-      <div>
-        <h2>Ajustes de mi Cuenta</h2>
-        <p>Visualiza y actualiza tu información personal y de seguridad</p>
-      </div>
-      <button class="btn-secondary btn-back" (click)="volver()">
-        <mat-icon>arrow_back</mat-icon> Volver
-      </button>
+    <div class="profile-header">
+      <div class="icon-circle"><mat-icon>manage_accounts</mat-icon></div>
+      <h2>Mi Perfil</h2>
+      <p>Visualiza y actualiza tu información personal de contacto.</p>
     </div>
 
-    <div class="profile-layout">
+    <div class="loading-state" *ngIf="cargando">
+      <mat-icon class="spinner" style="font-size: 30px; width: 30px; height: 30px; color: #502763;">sync</mat-icon>
+      <p style="margin-top: 10px;">Procesando información...</p>
+    </div>
+
+    <form [formGroup]="perfilForm" (ngSubmit)="guardarCambios()" *ngIf="!cargando" class="fade-in-up">
       
-      <section class="profile-card">
-        <div class="card-header">
-          <h3><mat-icon>person</mat-icon> Datos Personales</h3>
-          <button class="btn-icon" *ngIf="!modoEdicion" (click)="activarEdicion()" title="Editar Datos">
-            <mat-icon>edit</mat-icon>
-          </button>
+      <div class="form-grid">
+        <div class="input-group">
+          <label>Nombres</label>
+          <div class="input-box" [class.readonly]="!esEditable">
+            <input type="text" formControlName="nombres">
+          </div>
         </div>
 
-        <div class="card-body">
-          
-          <div class="info-grid" *ngIf="!modoEdicion">
-            <div class="info-item">
-              <label>Nombres</label>
-              <p>{{ paciente.nombres }}</p>
-            </div>
-            <div class="info-item">
-              <label>Apellidos</label>
-              <p>{{ paciente.apellidos }}</p>
-            </div>
-            <div class="info-item">
-              <label>Cédula de Identidad</label>
-              <p>{{ paciente.cedula }}</p>
-            </div>
-            <div class="info-item">
-              <label>Fecha de Nacimiento</label>
-              <p>{{ paciente.fechaNacimiento | date:'dd/MM/yyyy' }}</p>
-            </div>
-            <div class="info-item">
-              <label>Correo Electrónico</label>
-              <p>{{ paciente.email }}</p>
-            </div>
-            <div class="info-item">
-              <label>Teléfono</label>
-              <p>{{ paciente.telefono }}</p>
-            </div>
-            <div class="info-item full-width-item">
-              <label>Dirección Domiciliaria</label>
-              <p>{{ paciente.direccion }}</p>
-            </div>
-            <div class="info-item">
-              <label>Tipo de Sangre</label>
-              <p class="highlight-text">{{ paciente.tipoSangre }}</p>
-            </div>
+        <div class="input-group">
+          <label>Apellidos</label>
+          <div class="input-box" [class.readonly]="!esEditable">
+            <input type="text" formControlName="apellidos">
           </div>
-
-          <div class="edit-grid" *ngIf="modoEdicion">
-            <div class="form-group">
-              <label>Teléfono</label>
-              <input type="text" class="custom-input" [(ngModel)]="datosEditando.telefono">
-            </div>
-            <div class="form-group">
-              <label>Correo Electrónico</label>
-              <input type="email" class="custom-input" [(ngModel)]="datosEditando.email">
-            </div>
-            <div class="form-group full-width-item">
-              <label>Dirección Domiciliaria</label>
-              <input type="text" class="custom-input" [(ngModel)]="datosEditando.direccion">
-            </div>
-            
-            <div class="alert-box">
-              <mat-icon>info</mat-icon>
-              <span>Para modificar tu nombre, cédula o fecha de nacimiento, comunícate con recepción.</span>
-            </div>
-
-            <div class="action-buttons-row">
-              <button class="btn-secondary" (click)="cancelarEdicion()">Cancelar</button>
-              <button class="btn-primary" (click)="guardarDatos()">Guardar Cambios</button>
-            </div>
-          </div>
-
         </div>
-      </section>
 
-      <aside class="security-card">
-        <div class="card-header">
-          <h3><mat-icon>lock</mat-icon> Seguridad</h3>
+        <div class="input-group">
+          <label>Cédula de Identidad</label>
+          <div class="input-box readonly">
+            <input type="text" formControlName="cedula">
+          </div>
         </div>
-        
-        <div class="card-body">
-          <p class="helper-text">Actualiza tu contraseña para mantener tu cuenta segura.</p>
-          
-          <div class="form-group mt-3">
-            <label>Contraseña Actual</label>
-            <input type="password" class="custom-input" placeholder="••••••••" [(ngModel)]="passwords.actual">
-          </div>
-          
-          <div class="form-group mt-3">
-            <label>Nueva Contraseña</label>
-            <input type="password" class="custom-input" placeholder="Mínimo 6 caracteres" [(ngModel)]="passwords.nueva">
-          </div>
-          
-          <div class="form-group mt-3 mb-4">
-            <label>Confirmar Nueva Contraseña</label>
-            <input type="password" class="custom-input" placeholder="Repite la contraseña" [(ngModel)]="passwords.confirmacion">
-          </div>
 
-          <button class="btn-primary full-width" 
-                  [disabled]="!passwords.actual || !passwords.nueva || !passwords.confirmacion"
-                  (click)="cambiarPassword()">
-            Actualizar Contraseña
-          </button>
+        <div class="input-group">
+          <label>Teléfono Móvil</label>
+          <div class="input-box" [class.readonly]="!esEditable">
+            <input type="text" formControlName="telefono">
+          </div>
         </div>
-      </aside>
 
-    </div>
+        <div class="input-group full-width">
+          <label>Correo Electrónico</label>
+          <div class="input-box" [class.readonly]="!esEditable">
+            <input type="email" formControlName="email">
+          </div>
+        </div>
+      </div>
 
-  </main>
+      <div class="action-area">
+        <button type="button" class="btn-secondary" (click)="toggleEdicion()">
+          <mat-icon>{{ esEditable ? 'close' : 'edit' }}</mat-icon>
+          {{ esEditable ? 'Cancelar Edición' : 'Editar Información' }}
+        </button>
+
+        <button type="submit" class="btn-primary" *ngIf="esEditable" [disabled]="perfilForm.invalid || cargando">
+          <mat-icon>save</mat-icon> Guardar Cambios
+        </button>
+      </div>
+
+    </form>
+  </div>
 </div>

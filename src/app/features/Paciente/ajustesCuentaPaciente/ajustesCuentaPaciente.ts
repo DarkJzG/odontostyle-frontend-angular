@@ -1,118 +1,137 @@
-//features/Paciente/ajustesCuentaPaciente/ajustesCuentaPaciente.ts
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { MatIconModule } from '@angular/material/icon';
+import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { MatIconModule } from '@angular/material/icon';
 import { NavbarPanelPaciente } from '../../../core/layout/navbarPanelPaciente/navbarPanelPaciente';
-
-import { UsuarioDTO } from '../../../core/models/usuarioDTO';
 import { UsuarioService } from '../../../core/services/usuario';
-import { AuthService } from '../../../core/services/auth';
+import { UsuarioDTO } from '../../../core/models/usuarioDTO';
+import { KeycloakService } from 'keycloak-angular';
 
 @Component({
   selector: 'app-ajustes-cuenta-paciente',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatIconModule, NavbarPanelPaciente],
+  imports: [CommonModule, ReactiveFormsModule, MatIconModule, NavbarPanelPaciente],
   templateUrl: './ajustesCuentaPaciente.html',
   styleUrl: './ajustesCuentaPaciente.css'
 })
 export class AjustesCuentaPaciente implements OnInit {
+  private fb = inject(FormBuilder);
   private router = inject(Router);
   private usuarioService = inject(UsuarioService);
-  private authService = inject(AuthService);
+  private cdr = inject(ChangeDetectorRef);
+  private keycloak = inject(KeycloakService);
 
-  // Mezclamos el molde real con los datos estáticos de relleno para no romper el HTML
-  paciente: any = {
-    id: '',
-    nombres: 'Cargando...',
-    apellidos: 'Cargando...',
-    cedula: '',
-    email: '',
-    telefono: '',
-    rol: '',
-    direccion: 'Ibarra, Ecuador', // Dato estático provisional
-    fechaNacimiento: '2002-06-27', // Dato estático provisional
-    tipoSangre: 'O+' // Dato estático provisional
-  };
-
-  modoEdicion: boolean = false;
-  datosEditando: any = {};
-
-  passwords = { actual: '', nueva: '', confirmacion: '' };
+  perfilForm!: FormGroup;
+  cargando: boolean = false;
+  esEditable: boolean = false;
+  huboError: boolean = false;
+  
+  private emailPaciente: string = ''; // Ahora usamos el email
+  private idInternoBD: string = '';
+  private datosOriginales: any = null;
+  paciente: any = null;
 
   ngOnInit(): void {
-    this.cargarDatosReales();
+    this.perfilForm = this.fb.group({
+      nombres: [{ value: '', disabled: true }, Validators.required],
+      apellidos: [{ value: '', disabled: true }, Validators.required],
+      cedula: [{ value: '', disabled: true }],
+      telefono: [{ value: '', disabled: true }, Validators.required],
+      email: [{ value: '', disabled: true }, [Validators.required, Validators.email]]
+    });
+
+    // Extraemos el email del token de Keycloak
+    const tokenParsed = this.keycloak.getKeycloakInstance().tokenParsed;
+    this.emailPaciente = tokenParsed?.['email'] || tokenParsed?.['preferred_username'] || '';
+
+    if (this.emailPaciente) {
+      this.cargarDatosPerfil();
+    } else {
+      console.error('No se pudo obtener el email del token');
+      this.huboError = true;
+    }
   }
 
-  cargarDatosReales() {
-    const id = this.authService.obtenerIdUsuarioLogueado();
+  cargarDatosPerfil() {
+    this.cargando = true;
+    this.huboError = false;
+
+    // Fíjate bien en la ruta: 'buscar-correo' (como está en tu controller)
+    this.usuarioService.obtenerPorEmail(this.emailPaciente).subscribe({
+      next: (data: any) => {
+        this.paciente = data;
+        this.datosOriginales = data;
+        this.idInternoBD = data.id || '';
+
+        this.perfilForm.patchValue({
+          nombres: data.nombres,
+          apellidos: data.apellidos,
+          cedula: data.cedula,
+          telefono: data.telefono,
+          email: data.email
+        });
+
+        this.cargando = false;
+        this.cdr.detectChanges();
+      },
+      error: (err: any) => {
+        console.error('Error al obtener perfil:', err);
+        this.cargando = false;
+        this.huboError = true;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  toggleEdicion() {
+    this.esEditable = !this.esEditable;
+    const campos = ['nombres', 'apellidos', 'telefono', 'email'];
+    if (this.esEditable) {
+      campos.forEach(c => this.perfilForm.get(c)?.enable());
+    } else {
+      this.perfilForm.patchValue(this.datosOriginales);
+      campos.forEach(c => this.perfilForm.get(c)?.disable());
+    }
+  }
+
+  guardarCambios() {
+    if (this.perfilForm.invalid) return;
     
-    if (id) {
-      this.usuarioService.obtenerPorId(id).subscribe({
-        next: (datosBackend: UsuarioDTO) => {
-          // Sobreescribimos los datos falsos con los reales de Postgres
-          this.paciente = { ...this.paciente, ...datosBackend };
-          console.log('Datos cargados de BD:', this.paciente);
-        },
-        error: (err) => console.error('Error al cargar perfil:', err)
-      });
-    }
+    // 1. Activamos carga
+    this.cargando = true;
+    this.cdr.detectChanges(); // Forzamos mostrar el spinner
+    
+    // Obtenemos datos editados y combinamos con los originales (incluyendo el rol)
+    const datosEditados = this.perfilForm.getRawValue();
+    const payload = {
+      ...this.datosOriginales, 
+      ...datosEditados         
+    };
+
+    // 2. Ejecutamos la petición
+    this.usuarioService.actualizarUsuario(this.idInternoBD, payload).subscribe({
+      next: (data: any) => {
+        // Al tener éxito, actualizamos los datos locales
+        this.datosOriginales = data;
+        this.paciente = data;
+        
+        // 3. ¡IMPORTANTE! Desactivamos el spinner AQUÍ
+        this.cargando = false;
+        this.toggleEdicion(); // Bloqueamos los inputs tras guardar
+        alert('Información actualizada correctamente');
+        this.cdr.detectChanges(); // Forzamos refresco de vista
+      },
+      error: (err: any) => {
+        console.error('Error al actualizar:', err);
+        
+        // 3. ¡IMPORTANTE! Desactivamos el spinner AQUÍ también si falla
+        this.cargando = false;
+        alert('Error al guardar cambios: ' + (err.error?.mensaje || 'Intenta de nuevo'));
+        this.cdr.detectChanges(); // Forzamos refresco para quitar el spinner
+      }
+    });
   }
 
-  volver() {
-    this.router.navigate(['/paciente/home']);
-  }
-
-  activarEdicion() {
-    this.modoEdicion = true;
-    this.datosEditando = { ...this.paciente }; 
-  }
-
-  cancelarEdicion() {
-    this.modoEdicion = false;
-  }
-
-  guardarDatos() {
-    const id = this.authService.obtenerIdUsuarioLogueado();
-
-    if (id) {
-      // Armamos el DTO solo con los datos que espera tu backend
-      const usuarioActualizado: UsuarioDTO = {
-        id: this.paciente.id,
-        cedula: this.paciente.cedula,
-        nombres: this.paciente.nombres,
-        apellidos: this.paciente.apellidos,
-        email: this.datosEditando.email,
-        telefono: this.datosEditando.telefono,
-        rol: this.paciente.rol
-      };
-
-      this.usuarioService.actualizarUsuario(id, usuarioActualizado).subscribe({
-        next: (respuestaBackend) => {
-          this.paciente = { ...this.paciente, ...respuestaBackend, direccion: this.datosEditando.direccion };
-          this.modoEdicion = false;
-          alert('¡Tus datos han sido actualizados en PostgreSQL!');
-        },
-        error: (err) => {
-          console.error('Error actualizando:', err);
-          alert('No se pudieron guardar los cambios.');
-        }
-      });
-    }
-  }
-
-  cambiarPassword() {
-    if (this.passwords.nueva !== this.passwords.confirmacion) {
-      alert('Error: Las contraseñas nuevas no coinciden.');
-      return;
-    }
-    if (this.passwords.nueva.length < 6) {
-      alert('Error: La contraseña debe tener al menos 6 caracteres.');
-      return;
-    }
-    console.log('Cambio de clave solicitado', this.passwords);
-    alert('¡Contraseña actualizada correctamente!');
-    this.passwords = { actual: '', nueva: '', confirmacion: '' };
-  }
+  volver() { this.router.navigate(['/paciente/home']); }
 }

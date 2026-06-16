@@ -1,0 +1,41 @@
+<div class="tab-pane fade-in-up">
+  <div class="pane-header">
+    <div>
+      <h3>Mis Estudios de Imagen</h3>
+      <p style="color: #64748b; margin-top: 0.2rem; font-size: 0.9rem;">Visualiza y descarga tus radiografías y fotografías clínicas registradas.</p>
+    </div>
+  </div>
+
+  <div class="gallery-section">
+    
+    <div class="loading-box" *ngIf="cargandoLista">
+      <mat-icon class="spinner">sync</mat-icon> Buscando imágenes...
+    </div>
+
+    <div class="empty-state" *ngIf="!cargandoLista && radiografias.length === 0">
+      <mat-icon>collections</mat-icon>
+      <p>Aún no tienes estudios de imagen asociados a tu expediente.</p>
+    </div>
+
+    <div class="image-grid" *ngIf="!cargandoLista && radiografias.length > 0">
+      <div class="image-card" *ngFor="let rx of radiografias">
+        <div class="img-container" (click)="abrirImagen(rx.urlArchivo)" title="Haz clic para ampliar imagen">
+          <img [src]="rx.urlArchivo" alt="Radiografía">
+          <div class="zoom-overlay"><mat-icon>zoom_in</mat-icon></div>
+        </div>
+        <div class="img-info">
+          <span class="img-type">{{ rx.tipo }}</span>
+          <span class="img-date">Capturada el: {{ rx.creadoEn | date:'dd MMM yyyy' }}</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="lightbox-overlay" *ngIf="imagenAmpliada" (click)="cerrarImagen()">
+  <button class="btn-close-lightbox" (click)="cerrarImagen()">
+    <mat-icon>close</mat-icon>
+  </button>
+  <img [src]="imagenAmpliada" class="lightbox-img" (click)="$event.stopPropagation()" alt="Imagen Ampliada">
+</div>
