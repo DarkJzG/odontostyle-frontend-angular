@@ -1,3 +1,4 @@
+//src/app/features/Paciente/ajustesCuentaPaciente/ajustesCuentaPaciente.ts
 import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -86,12 +87,23 @@ export class AjustesCuentaPaciente implements OnInit {
 
   toggleEdicion() {
     this.esEditable = !this.esEditable;
-    const campos = ['nombres', 'apellidos', 'telefono', 'email'];
+    
+    // Solo permitimos editar estos 4 campos (la cédula JAMÁS se habilita)
+    const camposPermitidos = ['nombres', 'apellidos', 'telefono', 'email'];
+    
     if (this.esEditable) {
-      campos.forEach(c => this.perfilForm.get(c)?.enable());
+      camposPermitidos.forEach(c => this.perfilForm.get(c)?.enable());
     } else {
-      this.perfilForm.patchValue(this.datosOriginales);
-      campos.forEach(c => this.perfilForm.get(c)?.disable());
+      // Si cancela la edición, restauramos los datos originales antes de bloquear
+      if (this.datosOriginales) {
+        this.perfilForm.patchValue({
+          nombres: this.datosOriginales.nombres,
+          apellidos: this.datosOriginales.apellidos,
+          telefono: this.datosOriginales.telefono,
+          email: this.datosOriginales.email
+        });
+      }
+      camposPermitidos.forEach(c => this.perfilForm.get(c)?.disable());
     }
   }
 
@@ -103,32 +115,38 @@ export class AjustesCuentaPaciente implements OnInit {
     this.cdr.detectChanges(); // Forzamos mostrar el spinner
     
     // Obtenemos datos editados y combinamos con los originales (incluyendo el rol)
-    const datosEditados = this.perfilForm.getRawValue();
-    const payload = {
-      ...this.datosOriginales, 
-      ...datosEditados         
+    const valoresEditados = {
+      nombres: this.perfilForm.get('nombres')?.value,
+      apellidos: this.perfilForm.get('apellidos')?.value,
+      telefono: this.perfilForm.get('telefono')?.value,
+      email: this.perfilForm.get('email')?.value
     };
+
+    const payload = {
+      ...this.datosOriginales,
+      ...valoresEditados
+    };
+
+    console.log("PAQUETE ENVIADO A SPRING BOOT", payload);
 
     // 2. Ejecutamos la petición
     this.usuarioService.actualizarUsuario(this.idInternoBD, payload).subscribe({
       next: (data: any) => {
-        // Al tener éxito, actualizamos los datos locales
         this.datosOriginales = data;
         this.paciente = data;
         
-        // 3. ¡IMPORTANTE! Desactivamos el spinner AQUÍ
         this.cargando = false;
-        this.toggleEdicion(); // Bloqueamos los inputs tras guardar
+        this.esEditable = false; // Forzamos volver al estado inicial seguro
+        this.toggleEdicion(); // Esto bloqueará los campos nuevamente
+        
         alert('Información actualizada correctamente');
-        this.cdr.detectChanges(); // Forzamos refresco de vista
+        this.cdr.detectChanges(); 
       },
       error: (err: any) => {
         console.error('Error al actualizar:', err);
-        
-        // 3. ¡IMPORTANTE! Desactivamos el spinner AQUÍ también si falla
         this.cargando = false;
-        alert('Error al guardar cambios: ' + (err.error?.mensaje || 'Intenta de nuevo'));
-        this.cdr.detectChanges(); // Forzamos refresco para quitar el spinner
+        alert('Error al guardar cambios. Verifica que no haya campos vacíos.');
+        this.cdr.detectChanges(); 
       }
     });
   }

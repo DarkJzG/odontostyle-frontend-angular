@@ -26,7 +26,7 @@ export class Odontograma implements OnInit {
   dientesInferiores = [48, 47, 46, 45, 44, 43, 42, 41, 31, 32, 33, 34, 35, 36, 37, 38];
 
   posiciones = ['VESTIBULAR', 'OCLUSAL', 'PALATINO', 'DISTAL', 'MESIAL', 'GENERAL'];
-  estados = ['SANO', 'CARIES', 'OBTURADO', 'AUSENTE', 'CORONA', 'ENDODONCIA', 'PERDIDA_PARCIAL', 'IMPLANTE', 'OTRO'];
+  
 
   leyendaClinica = [
     { estado: 'SANO', color: '#ffffff', label: 'Sano' },
@@ -35,8 +35,9 @@ export class Odontograma implements OnInit {
     { estado: 'AUSENTE', color: '#cbd5e1', label: 'Ausente (Extracción)' },
     { estado: 'CORONA', color: '#eab308', label: 'Corona' },
     { estado: 'ENDODONCIA', color: '#22c55e', label: 'Trat. Conducto' },
-    { estado: 'PERDIDA_PARCIAL', color: '#f59e0b', label: 'Fractura' },
-    { estado: 'IMPLANTE', color: '#a855f7', label: 'Implante' }
+    { estado: 'PERDIDA_PARCIAL', color: '#f59e0b', label: 'Fractura / Pérdida' },
+    { estado: 'IMPLANTE', color: '#a855f7', label: 'Implante' },
+    { estado: 'OTRO', color: '#8b5cf6', label: 'Otro' } // <-- Añadido
   ];
 
   nombresPiezas: { [key: number]: string } = {
@@ -126,7 +127,7 @@ export class Odontograma implements OnInit {
     this.cdr.detectChanges(); 
   }
 
-  guardarEstadoDental() {
+guardarEstadoDental() {
     if (!this.piezaSeleccionada || !this.idUsuario || this.guardandoHallazgo) return;
 
     this.guardandoHallazgo = true;
@@ -134,6 +135,18 @@ export class Odontograma implements OnInit {
 
     const estadoFormateado = this.nuevoEstado.toUpperCase();
     const posicionFormateada = this.posicionSeleccionada.toUpperCase();
+
+    // --- NUEVO: LIMPIEZA VISUAL ---
+    // Si el doctor selecciona todo el diente, borramos las caras individuales para que no interfieran
+    if (posicionFormateada === 'GENERAL') {
+      ['VESTIBULAR', 'OCLUSAL', 'PALATINO', 'DISTAL', 'MESIAL'].forEach(cara => {
+        this.mapaEstadosActuales.delete(`${this.piezaSeleccionada}_${cara}`);
+      });
+    } else {
+      // Si el doctor selecciona una cara específica, quitamos el estado GENERAL
+      this.mapaEstadosActuales.delete(`${this.piezaSeleccionada}_GENERAL`);
+    }
+    // ------------------------------
 
     const payload = {
       id: null,
@@ -176,6 +189,17 @@ export class Odontograma implements OnInit {
   }
 
   obtenerClaseEstado(idPieza: number, posicion: string): string {
+    // 1. Primero buscamos si el diente completo tiene un diagnóstico GENERAL
+    const keyGeneral = `${idPieza}_GENERAL`;
+    const estadoGeneral = this.mapaEstadosActuales.get(keyGeneral);
+
+    // Si existe un estado general (Corona, Extracción, etc.) y no es 'SANO', 
+    // forzamos a que TODAS las caras se pinten de ese color.
+    if (estadoGeneral && estadoGeneral !== 'SANO') {
+      return estadoGeneral.toUpperCase();
+    }
+
+    // 2. Si no hay estado general, pintamos la cara específica de forma normal
     const key = `${idPieza}_${posicion}`;
     const estado = this.mapaEstadosActuales.get(key);
     return estado ? estado.toUpperCase() : 'SANO';
@@ -190,5 +214,10 @@ export class Odontograma implements OnInit {
   obtenerColorPorEstado(estado: string): string {
     const estadoEncontrado = this.leyendaClinica.find(l => l.estado === estado);
     return estadoEncontrado && estadoEncontrado.estado !== 'SANO' ? estadoEncontrado.color : '#64748b';
+  }
+
+  obtenerLabelPorEstado(estadoTecnico: string): string {
+    const estadoEncontrado = this.leyendaClinica.find(l => l.estado === estadoTecnico);
+    return estadoEncontrado ? estadoEncontrado.label : estadoTecnico;
   }
 }

@@ -33,11 +33,21 @@
         </textarea>
       </div>
 
+      <div class="input-group" style="margin-top: 2rem;">
+        <label><mat-icon style="color: #25D366; vertical-align: middle;">hourglass_bottom</mat-icon> Recordatorio 1 Hora Antes</label>
+        <textarea #editor1h
+                  [(ngModel)]="config.mensaje1h" 
+                  (focus)="setCampoActivo('1h')"
+                  rows="7" 
+                  placeholder="Escriba el mensaje aquí...">
+        </textarea>
+      </div>
+
     </div>
 
     <div class="tags-helper-panel">
       <h5>Variables Dinámicas</h5>
-      <p class="helper-desc">Inyecte estas variables en el texto. El bot reemplazará los datos automáticamente en cada envío. Use *asteriscos* para negrita (Ej: *Texto*).</p>
+      <p class="helper-desc">Inserte estas variables en el texto. El bot reemplazará los datos automáticamente en cada envío. Use *asteriscos* para negrita (Ej: *Texto*).</p>
       
       <div class="tags-grid">
         <button type="button" 

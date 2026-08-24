@@ -221,6 +221,7 @@
 .panel-header h3 { margin: 0; color: #1e293b; font-size: 1.2rem; }
 .btn-close { background: none; border: none; color: #94a3b8; cursor: pointer; padding: 0; }
 .btn-close:hover { color: #ef4444; }
+.btn-general { cursor:pointer; background-color: #502763; color: white; border: none; }
 
 .info-pieza-seleccionada {
   margin-bottom: 2rem;

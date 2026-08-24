@@ -66,6 +66,13 @@
       </p>
       <div class="badges-row">
         <span class="badge cara-badge">Sector: {{ posicionSeleccionada }}</span>
+        
+        <button type="button" class="badge btn-general" 
+                *ngIf="posicionSeleccionada !== 'GENERAL'" 
+                (click)="seleccionarPieza(piezaSeleccionada, 'GENERAL')">
+          Seleccionar Todo el Diente
+        </button>
+
       </div>
     </div>
 
@@ -77,7 +84,9 @@
     <div class="input-group" *ngIf="!mensajeExito">
       <label>Estado Clínico Encontrado</label>
       <select [(ngModel)]="nuevoEstado" [disabled]="guardandoHallazgo">
-        <option *ngFor="let est of estados" [value]="est">{{ est }}</option>
+        <option *ngFor="let item of leyendaClinica" [value]="item.estado">
+          {{ item.label }}
+        </option>
       </select>
     </div>
 
@@ -101,7 +110,7 @@
           <div class="timeline-date">{{ registro.fechaRegistro | date:'dd MMM yyyy, HH:mm' }}</div>
           <div class="timeline-content">
             <span class="history-badge" [style.color]="obtenerColorPorEstado(registro.estado)" [style.borderColor]="obtenerColorPorEstado(registro.estado)">
-              Cara {{ registro.posicion }} ➔ {{ registro.estado }}
+              Cara {{ registro.posicion }} ➔ {{ obtenerLabelPorEstado(registro.estado) }}
             </span>
             <p class="notas-historial" *ngIf="registro.notas">"{{ registro.notas }}"</p>
           </div>
