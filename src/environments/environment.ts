@@ -1,8 +1,10 @@
+//src/envitoments/enviroment.ts
+
 export const environment = {
   production: true,
-  apiUrl: 'http://150.136.116.114:8080/api',
+  apiUrl: 'https://odonto-api.duckdns.org',
   keycloak: {
-    url: 'http://150.136.116.114:8081',
+    url: 'https://odonto-auth.duckdns.org',
     realm: 'odontostyle-realm',
     clientId: 'angular-frontend'
   }

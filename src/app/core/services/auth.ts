@@ -6,17 +6,15 @@ import { KeycloakService } from 'keycloak-angular';
   providedIn: 'root'
 })
 export class AuthService {
-  
   private keycloak = inject(KeycloakService);
 
   iniciarSesion() {
-      this.keycloak.login({
-        redirectUri: window.location.origin + '/'
-      });
+    this.keycloak.login({
+      redirectUri: window.location.origin + '/'
+    });
   }
 
   cerrarSesion() {
-    // Redirige al login de Keycloak para limpiar sesión, y luego vuelve a la raíz de tu app
     this.keycloak.logout(window.location.origin);
   }
 
@@ -30,10 +28,27 @@ export class AuthService {
 
   obtenerNombreUsuario(): string {
     const tokenParsed = this.keycloak.getKeycloakInstance().tokenParsed;
-    return tokenParsed?.['given_name'] + ' ' + tokenParsed?.['family_name'] || 'Usuario';
+    return `${tokenParsed?.['given_name'] || ''} ${tokenParsed?.['family_name'] || ''}`.trim() || 'Usuario';
   }
+
+  obtenerEmailUsuario(): string {
+    const tokenParsed = this.keycloak.getKeycloakInstance().tokenParsed;
+    return tokenParsed?.['email'] || '';
+  }
+
   obtenerIdUsuarioLogueado(): string {
     const tokenParsed = this.keycloak.getKeycloakInstance().tokenParsed;
     return tokenParsed?.sub || ''; 
+  }
+
+  obtenerDatosCompletosToken() {
+    const tokenParsed = this.keycloak.getKeycloakInstance().tokenParsed;
+    return {
+      keycloakId: tokenParsed?.sub || '',
+      email: tokenParsed?.['email'] || '',
+      nombre: tokenParsed?.['given_name'] || 'Usuario',
+      apellido: tokenParsed?.['family_name'] || 'Registrado',
+      username: tokenParsed?.['preferred_username'] || ''
+    };
   }
 }

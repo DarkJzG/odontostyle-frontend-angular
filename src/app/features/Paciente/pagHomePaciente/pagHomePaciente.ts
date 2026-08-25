@@ -7,6 +7,8 @@ import { NavbarPanelPaciente } from '../../../core/layout/navbarPanelPaciente/na
 
 import { AuthService } from '../../../core/services/auth';
 import { CitaService } from '../../../core/services/cita';
+import { UsuarioService } from '../../../core/services/usuario';
+import { UsuarioDTO } from '../../../core/models/usuarioDTO';
 
 @Component({
   selector: 'app-pag-home-paciente',
@@ -20,6 +22,7 @@ export class PagHomePaciente implements OnInit {
   private router = inject(Router);
   private authService = inject(AuthService);
   private citaService = inject(CitaService);
+  private usuarioService = inject(UsuarioService);
   private cdr = inject(ChangeDetectorRef); // <-- EL DESPERTADOR DE ANGULAR
 
   nombrePaciente: string = 'Paciente'; 
@@ -33,56 +36,76 @@ export class PagHomePaciente implements OnInit {
     { nombre: 'Mi Perfil', icono: 'person', ruta: '/paciente/cuenta-paciente' },
   ];
 
-  ngOnInit(): void {
+ngOnInit(): void {
     this.cargarDatosIniciales();
   }
 
   cargarDatosIniciales() {
-    // 1. Obtener nombre seguro desde el Token
-    if (this.authService.estaLogueado()) {
-      this.nombrePaciente = this.authService.obtenerNombreUsuario().split(' ')[0];
-    } else {
-      this.nombrePaciente = 'Paciente';
-    }
-    const idPaciente = this.authService.obtenerIdUsuarioLogueado();
+  if (!this.authService.estaLogueado()) {
+    this.cargando = false;
+    return;
+  }
 
-    if (idPaciente) {
-      this.citaService.obtenerCitasPorPaciente(idPaciente).subscribe({
-        next: (citas: any[]) => {
-          
-          // Validación extra por seguridad: asegurarnos de que la respuesta es realmente un arreglo
-          if (citas && Array.isArray(citas)) {
-            const citasPendientes = citas
-              .filter(c => c.estado && c.estado.toUpperCase() === 'PENDIENTE')
-              .sort((a, b) => new Date(a.fechaHoraInicio).getTime() - new Date(b.fechaHoraInicio).getTime());
+  this.nombrePaciente = this.authService.obtenerNombreUsuario().split(' ')[0];
+  const keycloakId = this.authService.obtenerIdUsuarioLogueado();
 
-            if (citasPendientes.length > 0) {
-              const proxima = citasPendientes[0];
-              const [fechaPart, horaPart] = proxima.fechaHoraInicio.split('T');
-              
-              this.proximaCita = {
-                fecha: this.formatearFechaLarga(fechaPart),
-                hora: this.formatearHoraAMPM(horaPart),
-                doctor: 'Dr. Odontólogo Asignado',
-                tratamiento: proxima.nombreTratamiento || proxima.tratamiento,
-                estado: 'Confirmada' 
-              };
-            }
-          }
+  this.citaService.obtenerCitasPorPaciente(keycloakId).subscribe({
+    next: (citas: any[]) => {
+      if (citas && Array.isArray(citas)) {
+        const citasPendientes = citas
+          .filter(c => c.estado && c.estado.toUpperCase() === 'PENDIENTE')
+          .sort((a, b) => new Date(a.fechaHoraInicio).getTime() - new Date(b.fechaHoraInicio).getTime());
+
+        if (citasPendientes.length > 0) {
+          const proxima = citasPendientes[0];
+          const [fechaPart, horaPart] = proxima.fechaHoraInicio.split('T');
           
-          this.cargando = false;
-          this.cdr.detectChanges(); // <-- OBLIGAMOS A ANGULAR A DIBUJAR EL RESULTADO
-        },
-        error: (err: any) => {
-          console.error('Error al cargar próxima cita:', err);
-          this.cargando = false;
-          this.cdr.detectChanges(); // <-- DESPERTAR A ANGULAR INCLUSO SI HAY ERROR
+          this.proximaCita = {
+            fecha: this.formatearFechaLarga(fechaPart),
+            hora: this.formatearHoraAMPM(horaPart),
+            doctor: 'Dr. Odontólogo Asignado',
+            tratamiento: proxima.nombreTratamiento || proxima.tratamiento,
+            estado: 'Confirmada' 
+          };
         }
-      });
-    } else {
+      }
+      this.cargando = false;
+      this.cdr.detectChanges();
+    },
+    error: (err: any) => {
+      console.warn('No se encontraron citas o el paciente aún no registra historial.');
       this.cargando = false;
       this.cdr.detectChanges();
     }
+  });
+}
+
+  private sincronizarNuevoUsuario(keycloakId: string) {
+    const datosToken = this.authService.obtenerDatosCompletosToken();
+
+    const cedulaTemporal = Math.floor(1000000000 + Math.random() * 9000000000).toString();
+
+    const nuevoUsuario: any = {
+      keycloakId: keycloakId,
+      nombre: datosToken.nombre || 'Nombres',
+      apellidos: datosToken.apellido || 'Apellidos',
+      email: datosToken.email || 'sin-correo@odontostyle.com',
+      cedula: cedulaTemporal, // Cédula por defecto para que complete en 'Mi Perfil'
+      rol: 'PACIENTE'
+    };
+
+    this.usuarioService.crearUsuario(nuevoUsuario).subscribe({
+      next: () => {
+        console.log('Paciente sincronizado exitosamente en la base de datos');
+        this.cargando = false;
+        this.cdr.detectChanges();
+      },
+      error: (e) => {
+        console.error('Error al sincronizar paciente:', e);
+        this.cargando = false;
+        this.cdr.detectChanges();
+      }
+    });
   }
 
   private formatearFechaLarga(fechaStr: string): string {
