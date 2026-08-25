@@ -7,6 +7,7 @@ import { provideClientHydration, withEventReplay } from '@angular/platform-brows
 import { provideHttpClient, withFetch, withInterceptorsFromDi, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { isPlatformBrowser } from '@angular/common';
 import { KeycloakService, KeycloakBearerInterceptor } from 'keycloak-angular';
+import { environment } from '../environments/environment';
 
 // Función protegida que inicializa Keycloak SOLO en el navegador
 export function initializeKeycloak(keycloak: KeycloakService, platformId: Object) {
@@ -14,12 +15,13 @@ export function initializeKeycloak(keycloak: KeycloakService, platformId: Object
     if (isPlatformBrowser(platformId)) {
       return keycloak.init({
         config: {
-          url: 'http://localhost:8080',
-          realm: 'odontostyle-realm',
-          clientId: 'angular-frontend'
+          url: environment.keycloak.url,
+          realm: environment.keycloak.realm,
+          clientId: environment.keycloak.clientId
         },
         initOptions: {
           onLoad: 'check-sso',
+          checkLoginIframe: false,
           silentCheckSsoRedirectUri: window.location.origin + '/silent-check-sso.html'
         },
         enableBearerInterceptor: true,
