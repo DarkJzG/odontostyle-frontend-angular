@@ -16,6 +16,7 @@ import { Tratamientos } from './features/Doctor/ModuloTratamientos/tratamientos/
 import { AgendaDoctor } from './features/Doctor/ModuloCitas/agenda/agenda';
 import { AgendarCitaDoctor } from './features/Doctor/ModuloCitas/agendarCitaDoctor/agendarCitaDoctor';
 import { PanelHistoria } from './features/Doctor/ModuloHistoriasClinicas/panelHistoria/panelHistoria';
+import { PagosPaciente } from './features/Doctor/ModuloHistoriasClinicas/pagosPaciente/pagosPaciente';
 import { BuscarHistoria } from './features/Doctor/ModuloHistoriasClinicas/buscarHistoria/buscarHistoria';
 import { AdminPlantillas } from './features/Doctor/ModuloDocumentos/adminPlantillas/adminPlantillas';
 import { AdminWhatsapp } from './features/Doctor/ModuloRecordatorios/adminWhatsapp/adminWhatsapp';
@@ -56,6 +57,12 @@ export const routes: Routes = [
     component: PanelHistoria, 
     canActivate: [roleGuard], 
     data: { roles: ['DOCTOR'] } },
+
+  // ODO-40: Control de pagos (DOCTOR y ASISTENTE, CLAUDE.md §7)
+  { path: 'doctor/pacientes/:id/pagos',
+    component: PagosPaciente,
+    canActivate: [roleGuard],
+    data: { roles: ['DOCTOR', 'ASISTENTE'] } },
 
   //Modulo Tratamientos
   { path: 'doctor/tratamientos', 

@@ -12,11 +12,12 @@ import { TabHistorial } from '../tab-historial/tab-historial';
 import { TabRecetas } from '../tab-recetas/tab-recetas';
 import { TabRadiografias } from '../tab-radiografias/tab-radiografias';
 import { TabDocumentos } from '../tab-documentos/tab-documentos';
+import { TabPagos } from '../tab-pagos/tab-pagos';
 
 @Component({
   selector: 'app-panel-historia',
   standalone: true,
-  imports: [CommonModule, MatIconModule, NavbarPanelDoctor, DatosMedicos, Odontograma, TabEvoluciones, TabHistorial, TabRecetas, TabRadiografias, TabDocumentos],
+  imports: [CommonModule, MatIconModule, NavbarPanelDoctor, DatosMedicos, Odontograma, TabEvoluciones, TabHistorial, TabRecetas, TabRadiografias, TabDocumentos, TabPagos],
   templateUrl: './panelHistoria.html',
   styleUrl: './panelHistoria.css'
 })

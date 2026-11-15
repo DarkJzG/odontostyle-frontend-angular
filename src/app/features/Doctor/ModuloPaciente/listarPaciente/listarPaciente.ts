@@ -76,6 +76,11 @@ export class ListaPaciente implements OnInit {
     this.router.navigate([`/doctor/historias/${id}`]);
   } 
 
+  // ODO-40: pagos accesibles para DOCTOR y ASISTENTE
+  verPagosPaciente(id: string) {
+    this.router.navigate([`/doctor/pacientes/${id}/pagos`]);
+  }
+
   editarPaciente(id: string) {
     this.router.navigate([`/doctor/pacientes/${id}/editar`]);
   }

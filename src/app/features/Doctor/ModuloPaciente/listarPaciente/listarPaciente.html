@@ -82,6 +82,9 @@
             <button class="btn-action btn-view" (click)="verDetallePaciente(paciente.id)" title="Ver Expediente Médico Completo">
               <mat-icon>visibility</mat-icon> Historia Clinica
             </button>
+            <button class="btn-action btn-view" (click)="verPagosPaciente(paciente.id)" title="Cuentas y abonos del paciente">
+              <mat-icon>payments</mat-icon> Pagos
+            </button>
             <button class="btn-action btn-delete-profile" (click)="eliminarPaciente(paciente.id, paciente.nombres)" title="Dar de Baja del Sistema">
               <mat-icon>delete_forever</mat-icon>
             </button>

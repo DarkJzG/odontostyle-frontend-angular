@@ -1,0 +1,189 @@
+<div class="tab-pane fade-in-up">
+  <div class="pane-header">
+    <div>
+      <h3>Pagos y saldos</h3>
+      <p class="subtitulo">Cuentas por cobrar del paciente y abonos de cada visita.</p>
+    </div>
+    <button class="btn-primary" (click)="abrirFormCuenta()" [disabled]="guardando" *ngIf="!mostrarFormCuenta">
+      <mat-icon>add_card</mat-icon> Nueva cuenta
+    </button>
+  </div>
+
+  <div class="alerta error" *ngIf="mensajeError"><mat-icon>error</mat-icon> {{ mensajeError }}</div>
+  <div class="alerta exito" *ngIf="mensajeExito"><mat-icon>check_circle</mat-icon> {{ mensajeExito }}</div>
+
+  <div class="loading-box" *ngIf="cargando && !resumen">
+    <mat-icon class="spinner">sync</mat-icon>
+    <p>Cargando pagos...</p>
+  </div>
+
+  <!-- Resumen general -->
+  <div class="resumen-grid" *ngIf="resumen">
+    <div class="resumen-card">
+      <span class="resumen-label">Total en cuentas</span>
+      <span class="resumen-valor">{{ resumen.totalCuentas | currency:'USD':'symbol':'1.2-2' }}</span>
+    </div>
+    <div class="resumen-card pagado">
+      <span class="resumen-label">Abonado (pagado)</span>
+      <span class="resumen-valor">{{ resumen.totalPagado | currency:'USD':'symbol':'1.2-2' }}</span>
+    </div>
+    <div class="resumen-card pendiente">
+      <span class="resumen-label">Pendiente de aprobar</span>
+      <span class="resumen-valor">{{ resumen.totalPendiente | currency:'USD':'symbol':'1.2-2' }}</span>
+    </div>
+    <div class="resumen-card saldo">
+      <span class="resumen-label">Saldo por cobrar</span>
+      <span class="resumen-valor">{{ resumen.saldo | currency:'USD':'symbol':'1.2-2' }}</span>
+    </div>
+  </div>
+
+  <!-- Formulario nueva cuenta -->
+  <div class="form-card fade-in-up" *ngIf="mostrarFormCuenta">
+    <h4 class="section-title">Nueva cuenta por cobrar</h4>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Tratamiento (opcional)</label>
+        <select [(ngModel)]="formCuenta.tratamientoId" (change)="alElegirTratamiento()">
+          <option [ngValue]="null">— Sin tratamiento del catálogo —</option>
+          <option *ngFor="let t of tratamientos" [ngValue]="t.id">{{ t.nombre }}</option>
+        </select>
+      </div>
+      <div class="form-group span-2">
+        <label>Descripción *</label>
+        <input type="text" maxlength="255" [(ngModel)]="formCuenta.descripcion" placeholder="Ej.: Ortodoncia, cirugía, ligas">
+      </div>
+      <div class="form-group">
+        <label>Monto total acordado *</label>
+        <input type="number" min="0.01" step="0.01" [(ngModel)]="formCuenta.montoTotal">
+      </div>
+      <div class="form-group">
+        <label>Entrada</label>
+        <input type="number" min="0" step="0.01" [(ngModel)]="formCuenta.entrada">
+      </div>
+      <div class="form-group">
+        <label>Cuota sugerida por visita</label>
+        <input type="number" min="0" step="0.01" [(ngModel)]="formCuenta.cuotaSugerida">
+      </div>
+    </div>
+    <p class="ayuda">La entrada es lo acordado al inicio; regístrela como primer abono cuando el paciente la pague.</p>
+    <div class="action-buttons">
+      <button class="btn-cancelar" (click)="mostrarFormCuenta = false" [disabled]="guardando">Cancelar</button>
+      <button class="btn-primary" (click)="guardarCuenta()" [disabled]="guardando">
+        <mat-icon>save</mat-icon> Guardar cuenta
+      </button>
+    </div>
+  </div>
+
+  <div class="empty-state" *ngIf="resumen && !resumen.cuentas.length && !mostrarFormCuenta">
+    <mat-icon>payments</mat-icon>
+    <p>Este paciente no tiene cuentas por cobrar.</p>
+  </div>
+
+  <!-- Cuentas -->
+  <div class="cuenta-card" *ngFor="let cuenta of resumen?.cuentas; trackBy: trackById"
+       [class.anulada]="cuenta.estado === 'ANULADA'">
+    <div class="cuenta-header" (click)="alternarCuenta(cuenta)">
+      <div class="cuenta-titulo">
+        <mat-icon>{{ cuentaAbiertaId === cuenta.id ? 'expand_less' : 'expand_more' }}</mat-icon>
+        <div>
+          <strong>{{ cuenta.descripcion }}</strong>
+          <span class="detalle" *ngIf="cuenta.tratamientoNombre">{{ cuenta.tratamientoNombre }}</span>
+        </div>
+      </div>
+      <div class="cuenta-cifras">
+        <span>Total <b>{{ cuenta.montoTotal | currency:'USD':'symbol':'1.2-2' }}</b></span>
+        <span>Abonado <b>{{ cuenta.totalPagado | currency:'USD':'symbol':'1.2-2' }}</b></span>
+        <span>Saldo <b>{{ cuenta.saldo | currency:'USD':'symbol':'1.2-2' }}</b></span>
+        <span class="chip" [ngClass]="cuenta.estado.toLowerCase()">{{ cuenta.estado }}</span>
+      </div>
+    </div>
+
+    <div class="cuenta-body" *ngIf="cuentaAbiertaId === cuenta.id">
+      <div class="cuenta-meta">
+        <span>Entrada acordada: {{ cuenta.entrada | currency:'USD':'symbol':'1.2-2' }}</span>
+        <span *ngIf="cuenta.cuotaSugerida">Cuota sugerida: {{ cuenta.cuotaSugerida | currency:'USD':'symbol':'1.2-2' }}</span>
+        <span *ngIf="cuenta.creadoPor">Creada por {{ cuenta.creadoPor }} · {{ cuenta.creadoEn | date:'dd/MM/yyyy' }}</span>
+        <span *ngIf="cuenta.motivoAnulacion" class="texto-anulado">Anulada: {{ cuenta.motivoAnulacion }}</span>
+      </div>
+
+      <table class="tabla-abonos" *ngIf="cuenta.abonos.length; else sinAbonos">
+        <thead>
+          <tr>
+            <th>Fecha</th><th>Monto</th><th>Observación</th><th>Estado</th><th>Aprobación</th><th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let abono of cuenta.abonos; trackBy: trackById" [class.anulado]="abono.anulado">
+            <td>{{ abono.fecha | date:'dd/MM/yyyy' }}</td>
+            <td class="monto">{{ abono.monto | currency:'USD':'symbol':'1.2-2' }}</td>
+            <td>
+              {{ abono.observacion || '—' }}
+              <div class="texto-anulado" *ngIf="abono.anulado">Anulado por {{ abono.anuladoPor }}: {{ abono.motivoAnulacion }}</div>
+            </td>
+            <td>
+              <span class="chip" *ngIf="!abono.anulado" [ngClass]="abono.estado === 'PAGADO' ? 'pagado' : 'pendiente'">
+                {{ abono.estado === 'PAGADO' ? 'Pagado' : 'Pendiente de pago' }}
+              </span>
+              <span class="chip anulada" *ngIf="abono.anulado">Anulado</span>
+            </td>
+            <td class="aprobacion">
+              <ng-container *ngIf="abono.aprobadoPor">{{ abono.aprobadoPor }}<br><small>{{ abono.aprobadoEn | date:'dd/MM/yyyy HH:mm' }}</small></ng-container>
+              <ng-container *ngIf="!abono.aprobadoPor">—</ng-container>
+            </td>
+            <td class="acciones">
+              <button class="btn-mini aprobar" title="Aprobar como pagado" (click)="aprobarAbono(abono)"
+                      *ngIf="!abono.anulado && abono.estado === 'PENDIENTE_DE_PAGO' && cuenta.estado !== 'ANULADA'" [disabled]="guardando">
+                <mat-icon>task_alt</mat-icon> Aprobar
+              </button>
+              <button class="btn-mini anular" title="Anular abono" (click)="anularAbono(abono)"
+                      *ngIf="!abono.anulado" [disabled]="guardando">
+                <mat-icon>block</mat-icon>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <ng-template #sinAbonos><p class="ayuda">Aún no hay abonos en esta cuenta.</p></ng-template>
+
+      <!-- Registrar abono -->
+      <div class="form-card abono" *ngIf="cuenta.estado === 'ACTIVA'">
+        <h4 class="section-title">Registrar abono · por cubrir {{ porCubrir(cuenta) | currency:'USD':'symbol':'1.2-2' }}</h4>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Fecha</label>
+            <input type="date" [(ngModel)]="formAbono.fecha">
+          </div>
+          <div class="form-group">
+            <label>Monto *</label>
+            <input type="number" min="0.01" step="0.01" [(ngModel)]="formAbono.monto">
+          </div>
+          <div class="form-group span-2">
+            <label>Cita relacionada (opcional)</label>
+            <select [(ngModel)]="formAbono.citaId">
+              <option [ngValue]="null">— Ninguna —</option>
+              <option *ngFor="let c of citas" [ngValue]="c.id">{{ etiquetaCita(c) }}</option>
+            </select>
+          </div>
+          <div class="form-group span-3">
+            <label>Observación</label>
+            <input type="text" maxlength="1000" [(ngModel)]="formAbono.observacion" placeholder="Ej.: Control mensual">
+          </div>
+          <div class="form-group">
+            <label>Estado</label>
+            <div class="radio-group">
+              <label><input type="radio" name="estado-{{cuenta.id}}" value="PAGADO" [(ngModel)]="formAbono.estado"> Pagado</label>
+              <label><input type="radio" name="estado-{{cuenta.id}}" value="PENDIENTE_DE_PAGO" [(ngModel)]="formAbono.estado"> Pendiente de pago</label>
+            </div>
+          </div>
+        </div>
+        <div class="action-buttons">
+          <button class="btn-cancelar" (click)="anularCuenta(cuenta)" [disabled]="guardando"
+                  title="Solo si no tiene abonos vigentes">Anular cuenta</button>
+          <button class="btn-primary" (click)="registrarAbono(cuenta)" [disabled]="guardando">
+            <mat-icon>payments</mat-icon> Registrar abono
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
