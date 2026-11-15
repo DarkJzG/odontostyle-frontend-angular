@@ -1,0 +1,19 @@
+<app-navbar-panel-doctor></app-navbar-panel-doctor>
+
+<div class="dashboard-wrapper fade-in-up">
+  <div class="back-navigation">
+    <button class="btn-back" (click)="volver()">
+      <mat-icon>arrow_back</mat-icon> Volver al directorio
+    </button>
+  </div>
+
+  <header class="patient-header">
+    <div class="avatar-large"><mat-icon>payments</mat-icon></div>
+    <div>
+      <h2>{{ nombrePaciente || 'Cargando...' }}</h2>
+      <span class="badge-id" *ngIf="cedula">C.I: {{ cedula }}</span>
+    </div>
+  </header>
+
+  <app-tab-pagos *ngIf="idUsuario" [idUsuario]="idUsuario"></app-tab-pagos>
+</div>

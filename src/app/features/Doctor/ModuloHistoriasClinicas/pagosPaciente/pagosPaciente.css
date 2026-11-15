@@ -1,0 +1,7 @@
+.dashboard-wrapper { max-width: 1200px; margin: 0 auto; padding: 1.5rem; }
+.back-navigation { margin-bottom: 1rem; }
+.btn-back { background: none; border: none; color: #502763; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; padding: 0; }
+.patient-header { display: flex; align-items: center; gap: 1rem; background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 1rem 1.2rem; margin-bottom: 1rem; }
+.patient-header h2 { margin: 0; color: #1e293b; font-size: 1.3rem; }
+.avatar-large { width: 52px; height: 52px; border-radius: 50%; background: #ede9fe; color: #502763; display: flex; align-items: center; justify-content: center; }
+.badge-id { color: #64748b; font-size: 0.85rem; }

@@ -63,6 +63,9 @@
       <button [class.active]="pestanaActiva === 'documentos'" (click)="cambiarPestana('documentos')">
         <mat-icon>article</mat-icon> Documentos
       </button>
+      <button [class.active]="pestanaActiva === 'pagos'" (click)="cambiarPestana('pagos')">
+        <mat-icon>payments</mat-icon> Pagos
+      </button>
     </nav>
 
     <main class="tab-content" [ngSwitch]="pestanaActiva">
@@ -104,6 +107,11 @@
         [idUsuario]="idUsuario"
         [paciente]="paciente">
       </app-tab-documentos>
+
+      <app-tab-pagos
+        *ngSwitchCase="'pagos'"
+        [idUsuario]="idUsuario">
+      </app-tab-pagos>
 
 
     </main>
