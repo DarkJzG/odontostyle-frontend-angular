@@ -17,11 +17,21 @@
 
     <div class="agenda-layout">
       <section class="calendar-section">
-        
+
         <div class="calendar-controls">
-          <button class="btn-icon" (click)="cambiarSemana(-1)"><mat-icon>chevron_left</mat-icon></button>
-          <h3>{{ tituloSemanaVisual }}</h3>
-          <button class="btn-icon" (click)="cambiarSemana(1)"><mat-icon>chevron_right</mat-icon></button>
+          <div class="nav-group">
+            <button class="btn-icon" (click)="cambiarSemana(-1)" aria-label="Semana anterior"><mat-icon>chevron_left</mat-icon></button>
+            <button class="btn-icon" (click)="cambiarSemana(1)" aria-label="Semana siguiente"><mat-icon>chevron_right</mat-icon></button>
+            <h3>{{ tituloSemanaVisual }}</h3>
+          </div>
+          <div class="nav-group">
+            <div class="legend">
+              <span class="legend-item"><i class="dot dot-pendiente"></i>Pendiente</span>
+              <span class="legend-item"><i class="dot dot-completada"></i>Atendida</span>
+              <span class="legend-item"><i class="dot dot-cancelada"></i>Cancelada</span>
+            </div>
+            <button class="btn-today" (click)="irAHoy()">Hoy</button>
+          </div>
         </div>
 
         <div class="loading-box" *ngIf="cargando">
@@ -33,33 +43,29 @@
           <table class="calendar-table">
             <thead>
               <tr>
-                <th class="time-col-header">Hora</th>
-                <th *ngFor="let dia of diasDeLaSemana" class="day-col-header">
-                  <div class="day-name">{{ obtenerNombreDia(dia) }}</div>
-                  <div class="day-date">{{ obtenerFechaCortaEsp(dia) }}</div>
+                <th class="time-col-header"></th>
+                <th *ngFor="let dia of diasDeLaSemana" class="day-col-header" [class.is-today]="esHoy(dia)">
+                  <div class="day-name">{{ obtenerNombreDia(dia).substring(0, 3) }}</div>
+                  <div class="day-date">{{ dia.getDate() }}</div>
                 </th>
               </tr>
             </thead>
             <tbody>
               <tr *ngFor="let fila of matrizCalendario; let i = index">
                 <td class="time-cell">{{ bloquesHorarios[i] }}</td>
-                
-                <td *ngFor="let celda of fila" class="agenda-cell" [ngClass]="{'is-available': celda.disponible}">
-                  
-                  <div class="empty-block" *ngIf="!celda.disponible && !celda.cita"></div>
-                  
-                  <div class="available-block" *ngIf="celda.disponible">
-                    <span>Libre</span>
-                  </div>
 
-                  <div class="cita-chip" *ngIf="celda.cita"
-                       [ngClass]="{'chip-pendiente': celda.cita.estadoVisual === 'Pendiente', 
-                                   'chip-completada': celda.cita.estadoVisual === 'Completada', 
-                                   'chip-cancelada': celda.cita.estadoVisual === 'Cancelada'}">
-                    <div class="chip-patient">{{ celda.cita.paciente }}</div>
-                    <div class="chip-treat">{{ celda.cita.tratamiento }}</div>
+                <td *ngFor="let celda of fila" class="agenda-cell"
+                    [class.is-off]="!celda.disponible && !celda.citas.length"
+                    [class.is-today]="esHoy(celda.diaDate)">
+                  <div class="cita-chip" *ngFor="let cita of celda.citas"
+                       [ngClass]="{'chip-pendiente': cita.estadoVisual === 'Pendiente',
+                                   'chip-completada': cita.estadoVisual === 'Completada',
+                                   'chip-cancelada': cita.estadoVisual === 'Cancelada'}"
+                       [title]="cita.horaAMPM + ' · ' + cita.paciente + ' · ' + cita.tratamiento">
+                    <span class="chip-time">{{ cita.hora24 }}</span>
+                    <span class="chip-patient">{{ cita.paciente }}</span>
+                    <span class="chip-treat">{{ cita.tratamiento }}</span>
                   </div>
-
                 </td>
               </tr>
             </tbody>
