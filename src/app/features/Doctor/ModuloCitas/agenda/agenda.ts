@@ -16,7 +16,7 @@ interface CeldaAgenda {
   diaDate: Date;
   fechaStr: string;
   horaStr: string;
-  cita: any | null;
+  citas: any[];
   disponible: boolean;
 }
 
@@ -46,6 +46,7 @@ export class AgendaDoctor implements OnInit {
   bloquesHorarios: string[] = []; 
   matrizCalendario: CeldaAgenda[][] = []; // [Fila Hora][Columna Día]
   tituloSemanaVisual: string = '';
+  private readonly PASO_HORAS = 0.5; // bloques de 30 minutos
 
   dialogo = { visible: false, mensaje: '', tipo: '', accionConfirmar: () => {} };
 
@@ -79,6 +80,15 @@ export class AgendaDoctor implements OnInit {
   cambiarSemana(incremento: number) {
     this.semanaActualLunes.setDate(this.semanaActualLunes.getDate() + (incremento * 7));
     this.construirCuadricula(); // Solo reconstruimos la vista, no llamamos al backend a menos que sea necesario
+  }
+
+  irAHoy() {
+    this.calcularLunesActual();
+    this.construirCuadricula();
+  }
+
+  esHoy(date: Date): boolean {
+    return this.obtenerFechaISO(date) === this.obtenerFechaISO(new Date());
   }
 
   cargarDatosAgenda() {
@@ -168,7 +178,7 @@ export class AgendaDoctor implements OnInit {
 
     // Crear bloques cada 30 minutos (0.5)
     this.bloquesHorarios = [];
-    for (let h = horaInicioDia; h < horaFinDia; h += 0.25) {
+    for (let h = horaInicioDia; h < horaFinDia; h += this.PASO_HORAS) {
       this.bloquesHorarios.push(this.decimalToHora(h));
     }
 
@@ -193,15 +203,20 @@ export class AgendaDoctor implements OnInit {
           this.estaEnRangoHorario(horaFilaStr, h.horaInicio, h.horaFin)
         );
 
-        // Verificamos si hay una cita que coincida exactamente
-        const citaAsignada = this.citasTotales.find(cita => cita.fecha === fechaStr && cita.hora24 === horaFilaStr);
+        // Citas que empiezan dentro de este bloque de 30 minutos
+        const inicioBloque = this.horaToDecimal(horaFilaStr);
+        const citasDelBloque = this.citasTotales.filter(cita => {
+          if (cita.fecha !== fechaStr) return false;
+          const h = this.horaToDecimal(cita.hora24);
+          return h >= inicioBloque && h < inicioBloque + this.PASO_HORAS;
+        });
 
         fila.push({
           diaDate: diaColumna,
           fechaStr: fechaStr,
           horaStr: horaFilaStr,
-          cita: citaAsignada || null,
-          disponible: !!horarioLaboral && !citaAsignada // True si trabaja y no hay cita
+          citas: citasDelBloque,
+          disponible: !!horarioLaboral && citasDelBloque.length === 0
         });
       }
       this.matrizCalendario.push(fila);
